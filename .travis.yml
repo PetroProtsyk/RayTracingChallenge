@@ -1,0 +1,7 @@
+language: csharp
+mono: none
+dotnet: 2.2.0
+script:
+ - dotnet restore ./src/
+ - dotnet build ./src/
+ - dotnet test ./src/Protsyk.RayTracer.Challenge.UnitTests/
