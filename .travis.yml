@@ -1,6 +1,7 @@
 language: csharp
+dist: bionic
 mono: none
-dotnet: 2.2.0
+dotnet: 2.2.105
 script:
  - dotnet restore ./src/
  - dotnet build ./src/
