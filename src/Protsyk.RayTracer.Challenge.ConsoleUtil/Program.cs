@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Protsyk.RayTracer.Challenge.Console
+namespace Protsyk.RayTracer.Challenge.ConsoleUtil
 {
     class Program
     {

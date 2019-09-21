@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26124.0
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Protsyk.RayTracer.Challenge.Console", "Protsyk.RayTracer.Challenge.Console\Protsyk.RayTracer.Challenge.Console.csproj", "{5DB85C54-0D98-4F73-ABD5-4851CE3B7E4A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Protsyk.RayTracer.Challenge.ConsoleUtil", "Protsyk.RayTracer.Challenge.ConsoleUtil\Protsyk.RayTracer.Challenge.ConsoleUtil.csproj", "{5DB85C54-0D98-4F73-ABD5-4851CE3B7E4A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Protsyk.RayTracer.Challenge.UnitTests", "Protsyk.RayTracer.Challenge.UnitTests\Protsyk.RayTracer.Challenge.UnitTests.csproj", "{40951750-443A-4AE7-86B4-50DB29F2307C}"
 EndProject
