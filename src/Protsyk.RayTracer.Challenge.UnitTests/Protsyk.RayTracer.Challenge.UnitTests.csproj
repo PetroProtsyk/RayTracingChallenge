@@ -20,4 +20,8 @@
     </Content>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Protsyk.RayTracer.Challenge.Core\Protsyk.RayTracer.Challenge.Core.csproj" />
+  </ItemGroup>
+
 </Project>
