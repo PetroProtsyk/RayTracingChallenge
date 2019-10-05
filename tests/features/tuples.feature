@@ -145,6 +145,6 @@ Scenario: Reflecting a vector approaching at 45°
 
 Scenario: Reflecting a vector off a slanted surface
   Given v ← vector(0, -1, 0)
-    And n ← vector(√2/2, √2/2, 0)
+    And n ← vector(0.7071067, 0.7071067, 0)
   When r ← reflect(v, n)
   Then r = vector(1, 0, 0)
