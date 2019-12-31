@@ -81,11 +81,13 @@ Scenario: Computing the magnitude of vector(0, 0, 1)
 
 Scenario: Computing the magnitude of vector(1, 2, 3)
   Given v ← vector(1, 2, 3)
-  Then magnitude(v) = √14
+                      # √14
+  Then magnitude(v) = 3.74166
 
 Scenario: Computing the magnitude of vector(-1, -2, -3)
   Given v ← vector(-1, -2, -3)
-  Then magnitude(v) = √14
+                      # √14
+  Then magnitude(v) = 3.74166
 
 Scenario: Normalizing vector(4, 0, 0) gives (1, 0, 0)
   Given v ← vector(4, 0, 0)
