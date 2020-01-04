@@ -206,9 +206,11 @@ Scenario: Calculating the inverse of a matrix
     And B ← inverse(A)
   Then determinant(A) = 532
     And cofactor(A, 2, 3) = -160
-    And B[3,2] = -160/532
+                 # -160/532
+    And B[3,2] = -0.30075
     And cofactor(A, 3, 2) = 105
-    And B[2,3] = 105/532
+                 # 105/532
+    And B[2,3] = 0.19737
     And B is the following 4x4 matrix:
       |  0.21805 |  0.45113 |  0.24060 | -0.04511 |
       | -0.80827 | -1.45677 | -0.44361 |  0.52068 |

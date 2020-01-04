@@ -1,23 +1,10 @@
 using System;
+using System.IO;
 using System.Text;
 
 namespace Protsyk.RayTracer.Challenge.Core.Geometry
 {
-    class Constants
-    {
-        public static double Epsilon = 0.00001;
-
-        public static bool EpsilonCompare(double a, double b)
-        {
-            if (Math.Abs(a - b) < Epsilon)
-            {
-                return true;
-            }
-            return false;
-        }
-    }
-
-    class Matrix : IEquatable<Matrix>
+    public class Matrix : IEquatable<Matrix>
     {
         #region Fields
         private readonly double[,] m;
@@ -251,7 +238,12 @@ namespace Protsyk.RayTracer.Challenge.Core.Geometry
             return result;
         }
 
-        public static Matrix Indentity(int rank)
+        public static Matrix Zero(int rank)
+        {
+            return new Matrix(rank);
+        }
+
+        public static Matrix Identity(int rank)
         {
             var result = new Matrix(rank);
             for (int i = 0; i < rank; ++i)
@@ -297,6 +289,36 @@ namespace Protsyk.RayTracer.Challenge.Core.Geometry
                     double cij = MultiplyRowAndColumn(i, j, a, b);
                     result.m[i, j] = cij;
                 }
+            }
+            return result;
+        }
+
+        public static Matrix Power(Matrix m, uint pow)
+        {
+            if (m.Rows != m.Columns)
+            {
+                throw new ArgumentException();
+            }
+
+            if (pow == 0)
+            {
+                return Identity(m.Rows);
+            }
+            if (pow == 1)
+            {
+               return m.Clone();
+            }
+
+            var x = m;
+            var result = Identity(m.Rows);
+            while (pow != 0)
+            {
+                if ((pow & 1) == 1)
+                {
+                    result = Multiply(result, x);
+                }
+                x = Multiply(x, x);
+                pow >>= 1;
             }
             return result;
         }
@@ -446,9 +468,9 @@ namespace Protsyk.RayTracer.Challenge.Core.Geometry
         Cofactor
     }
 
-    class MatrixProgram
+    public class MatrixProgram
     {
-        static void Test()
+        public static void AcceptanceTest(TextWriter output)
         {
             {
                 var a = Matrix.FromArray(4, 4, new double[]{
@@ -479,7 +501,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Geometry
                     throw new Exception("What is going on?");
                 }
 
-                Console.WriteLine(c);
+                output.WriteLine(c);
             }
 
             {
@@ -508,7 +530,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Geometry
                     throw new Exception("What is going on?");
                 }
 
-                Console.WriteLine(c);
+                output.WriteLine(c);
             }
 
             {
@@ -522,7 +544,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Geometry
                     throw new Exception("Not good");
                 }
 
-                Console.WriteLine(a.Determinant(MatrixOperation.Cofactor));
+                output.WriteLine(a.Determinant(MatrixOperation.Cofactor));
             }
 
             {
@@ -541,7 +563,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Geometry
                     throw new Exception($"Not good");
                 }
 
-                Console.WriteLine(a.Determinant(MatrixOperation.Cofactor));
+                output.WriteLine(a.Determinant(MatrixOperation.Cofactor));
             }
 
             {
@@ -561,7 +583,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Geometry
                     throw new Exception($"Not good");
                 }
 
-                Console.WriteLine(a.Determinant(MatrixOperation.Cofactor));
+                output.WriteLine(a.Determinant(MatrixOperation.Cofactor));
             }
 
             {
@@ -582,7 +604,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Geometry
                     throw new Exception($"Not good");
                 }
 
-                Console.WriteLine(a.Determinant(MatrixOperation.Cofactor));
+                output.WriteLine(a.Determinant(MatrixOperation.Cofactor));
             }
 
             {
@@ -598,7 +620,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Geometry
                 var r1 = Matrix.Multiply(a, a11);
                 var r2 = Matrix.Multiply(a, a12);
 
-                var i = Matrix.Indentity(4);
+                var i = Matrix.Identity(4);
 
                 if (!a11.Equals(a12))
                 {
@@ -613,7 +635,33 @@ namespace Protsyk.RayTracer.Challenge.Core.Geometry
                     throw new Exception($"Not good");
                 }
 
-                Console.WriteLine(a11);
+                output.WriteLine(a11);
+            }
+
+            {
+                var a = Matrix.FromArray(4, 4, new double[]{
+                    -2, -8, 3, 5,
+                    -3, 1, 7, 3,
+                    1, 2, -9, 6,
+                    -6, 7, 7, -9
+                });
+
+                // NOTE: For this input starts to fail when p = 15
+                for (int p=0; p<15; ++p)
+                {
+                    var b = Matrix.Identity(4);
+                    for (int i=0; i<p; ++i)
+                    {
+                        b = Matrix.Multiply(b, a);
+                    }
+
+                    var c = Matrix.Power(a, (uint)p);
+
+                    if (!c.Equals(b))
+                    {
+                        throw new Exception($"Not good {p} {c} {b}");
+                    }
+                }
             }
 
         }
