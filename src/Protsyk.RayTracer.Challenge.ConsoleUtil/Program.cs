@@ -10,6 +10,7 @@ using Protsyk.RayTracer.Challenge.Core.Scene.Lights;
 using Protsyk.RayTracer.Challenge.Core.Scene.Materials;
 using static Protsyk.RayTracer.Challenge.Core.Geometry.Vectors;
 using static Protsyk.RayTracer.Challenge.ConsoleUtil.Figures;
+using Protsyk.RayTracer.Challenge.Core.Canvas;
 
 namespace Protsyk.RayTracer.Challenge.ConsoleUtil
 {
@@ -193,32 +194,40 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
             return (camera, scene);
         }
 
+        static ICanvas Render(ICamera camera, BaseScene scene)
+        {
+            var canvas = new MemoryCanvas((int)camera.ScreenWidth, (int)camera.ScreenHeight);
+            var x = 0; var y =0;
+            for (float j = 0; j < camera.ScreenHeight; ++j)
+            {
+                x = 0;
+                for (float i = 0; i < camera.ScreenWidth; ++i)
+                {
+                    var direction = camera.GetDirection(i, j);
+                    var color = scene.CastRay(camera.Origin, direction);
+                    canvas.SetPixel(x, y, ColorConverters.Vector3.From(color));
+                    ++x;
+                }
+                ++y;
+            }
+            return canvas;
+        }
+
         static void Main(string[] args)
         {
             // Camera, Scene
             var (camera, scene) = SceneSpheres(false);
 
             var timer = Stopwatch.StartNew();
+            var canvas = Render(camera, scene);
+            Console.WriteLine($"Time to render: {timer.Elapsed}");
+
+            timer.Restart();
             using (var file = File.OpenWrite("out.ppm"))
             {
-                using (var writerB = new BinaryWriter(file))
-                {
-                    writerB.Write(Encoding.ASCII.GetBytes($"P6 {camera.ScreenWidth} {camera.ScreenHeight} 255\n"));
-                    for (float j = 0; j < camera.ScreenHeight; ++j)
-                    {
-                        for (float i = 0; i < camera.ScreenWidth; ++i)
-                        {
-                            var direction = camera.GetDirection(i, j);
-                            var color = scene.CastRay(camera.Origin, direction);
-
-                            writerB.Write((byte)color.X);
-                            writerB.Write((byte)color.Y);
-                            writerB.Write((byte)color.Z);
-                        }
-                    }
-                }
+               CanvasConverters.PPM_P6.Convert(canvas, file);
             }
-            Console.WriteLine($"Elapsed: {timer.Elapsed}");
+            Console.WriteLine($"Time to output: {timer.Elapsed}");
         }
     }
 }
