@@ -36,8 +36,20 @@ namespace Protsyk.RayTracer.Challenge.Core.Geometry
         }
 
         public Matrix(double[,] items)
+            : this(items, true)
         {
-            this.m = (double[,])items.Clone();
+        }
+
+        private Matrix(double[,] items, bool clone)
+        {
+            if (clone)
+            {
+                this.m = (double[,])items.Clone();
+            }
+            else
+            {
+                this.m = items;
+            }
         }
         #endregion
 
@@ -266,6 +278,23 @@ namespace Protsyk.RayTracer.Challenge.Core.Geometry
             return result;
         }
 
+        public static Matrix Subtract(Matrix a, Matrix b)
+        {
+            if ((a.Columns != b.Columns) || (a.Rows != b.Rows))
+            {
+                throw new ArgumentException();
+            }
+            var result = new Matrix(a.Rows, a.Columns);
+            for (int i = 0; i < a.Rows; i++)
+            {
+                for (int j = 0; j < a.Columns; j++)
+                {
+                    result.m[i, j] = a[i, j] - b[i, j];
+                }
+            }
+            return result;
+        }
+
         public static Matrix Multiply(Matrix a, Matrix b)
         {
             if (a == null)
@@ -373,6 +402,11 @@ namespace Protsyk.RayTracer.Challenge.Core.Geometry
             return result;
         }
 
+        public static Matrix Invert(Matrix a)
+        {
+            return Invert(a, MatrixOperation.Cofactor);
+        }
+
         public static Matrix Invert(Matrix a, MatrixOperation operationType)
         {
             switch (operationType)
@@ -459,6 +493,139 @@ namespace Protsyk.RayTracer.Challenge.Core.Geometry
             }
             return result;
         }
+
+        public static class Geometry3D
+        {
+            public static Matrix Translation(double x, double y, double z)
+            {
+                return new Matrix(new double[,]
+                {
+                    { 1.0, 0.0, 0.0,  x  },
+                    { 0.0, 1.0, 0.0,  y  },
+                    { 0.0, 0.0, 1.0,  z  },
+                    { 0.0, 0.0, 0.0, 1.0 }
+                }, false);
+            }
+
+            public static Matrix Scale(double x, double y, double z)
+            {
+                return new Matrix(new double[,]
+                {
+                    {  x , 0.0, 0.0, 0.0 },
+                    { 0.0,  y , 0.0, 0.0 },
+                    { 0.0, 0.0,  z , 0.0 },
+                    { 0.0, 0.0, 0.0, 1.0 }
+                }, false);
+            }
+
+            public static Matrix RotateX(double r)
+            {
+                var s = Math.Sin(r);
+                var c = Math.Cos(r);
+
+                return new Matrix(new double[,]
+                {
+                    { 1.0, 0.0, 0.0, 0.0 },
+                    { 0.0,  c , -s , 0.0 },
+                    { 0.0,  s ,  c , 0.0 },
+                    { 0.0, 0.0, 0.0, 1.0 }
+                }, false);
+            }
+
+            public static Matrix RotateY(double r)
+            {
+                var s = Math.Sin(r);
+                var c = Math.Cos(r);
+
+                return new Matrix(new double[,]
+                {
+                    {  c , 0.0,  s , 0.0 },
+                    { 0.0, 1.0, 0.0, 0.0 },
+                    { -s , 0.0,  c , 0.0 },
+                    { 0.0, 0.0, 0.0, 1.0 }
+                }, false);
+            }
+
+            public static Matrix RotateZ(double r)
+            {
+                var s = Math.Sin(r);
+                var c = Math.Cos(r);
+
+                return new Matrix(new double[,]
+                {
+                    {  c , -s , 0.0, 0.0 },
+                    {  s ,  c , 0.0, 0.0 },
+                    { 0.0, 0.0, 1.0, 0.0 },
+                    { 0.0, 0.0, 0.0, 1.0 }
+                }, false);
+            }
+
+            public static Matrix Shearing(double xy, double xz, double yx, double yz, double zx, double zy)
+            {
+                return new Matrix(new double[,]
+                {
+                    { 1.0 , xy,  xz, 0.0 },
+                    {  yx, 1.0,  yz, 0.0 },
+                    {  zx,  zy, 1.0, 0.0 },
+                    { 0.0, 0.0, 0.0, 1.0 }
+                }, false);
+            }
+
+            public static Matrix Vector(double x, double y, double z)
+            {
+                return new Matrix(new double[,]
+                {
+                    {  x  },
+                    {  y  },
+                    {  z  },
+                    { 0.0 }
+                }, false);
+            }
+
+            public static Matrix Point(double x, double y, double z)
+            {
+                return new Matrix(new double[,]
+                {
+                    {  x  },
+                    {  y  },
+                    {  z  },
+                    { 1.0 }
+                }, false);
+            }
+
+            public static Tuple4 ToTuple(Matrix a)
+            {
+                if (a.Rows == 4 && a.Columns == 1)
+                {
+                    return new Tuple4(a[0, 0], a[1, 0], a[2, 0], a[3, 0]);
+                }
+
+                if (a.Rows == 1 && a.Columns == 4)
+                {
+                    return new Tuple4(a[0, 1], a[0, 1], a[0, 2], a[0, 3]);
+                }
+
+                throw new ArgumentException();
+            }
+
+            public static Matrix ViewTransform(Tuple4 from, Tuple4 to, Tuple4 up)
+            {
+                var forward = Tuple4.Normalize(Tuple4.Subtract(to, from));
+                var upNormalized = Tuple4.Normalize(up);
+                var left = Tuple4.CrossProduct(forward, upNormalized);
+                var trueUp = Tuple4.CrossProduct(left, forward);
+
+                var orientation = new Matrix(new double[,]
+                {
+                    {      left.X,     left.Y,     left.Z, 0.0 },
+                    {    trueUp.X,   trueUp.Y,   trueUp.Z, 0.0 },
+                    {  -forward.X, -forward.Y, -forward.Z, 0.0 },
+                    {         0.0,        0.0,        0.0, 1.0 }
+                }, false);
+
+                return Matrix.Multiply(orientation, Translation(-from.X, -from.Y, -from.Z));
+            }
+        }
         #endregion
     }
 
@@ -498,7 +665,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Geometry
 
                 if (!expected.Equals(c))
                 {
-                    throw new Exception("What is going on?");
+                    throw new Exception();
                 }
 
                 output.WriteLine(c);
@@ -527,7 +694,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Geometry
 
                 if (!expected.Equals(c))
                 {
-                    throw new Exception("What is going on?");
+                    throw new Exception();
                 }
 
                 output.WriteLine(c);
@@ -541,7 +708,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Geometry
 
                 if (!Constants.EpsilonCompare(17, a.Determinant(MatrixOperation.Cofactor)))
                 {
-                    throw new Exception("Not good");
+                    throw new Exception();
                 }
 
                 output.WriteLine(a.Determinant(MatrixOperation.Cofactor));
@@ -556,11 +723,11 @@ namespace Protsyk.RayTracer.Challenge.Core.Geometry
 
                 if (!Constants.EpsilonCompare(-196, a.Determinant(MatrixOperation.Cofactor)))
                 {
-                    throw new Exception($"Not good");
+                    throw new Exception();
                 }
                 if (!Constants.EpsilonCompare(-196, a.Determinant(MatrixOperation.Gauss)))
                 {
-                    throw new Exception($"Not good");
+                    throw new Exception();
                 }
 
                 output.WriteLine(a.Determinant(MatrixOperation.Cofactor));
@@ -576,11 +743,11 @@ namespace Protsyk.RayTracer.Challenge.Core.Geometry
 
                 if (!Constants.EpsilonCompare(-4071, a.Determinant(MatrixOperation.Gauss)))
                 {
-                    throw new Exception("Not good");
+                    throw new Exception();
                 }
                 if (!Constants.EpsilonCompare(-4071, a.Determinant(MatrixOperation.Cofactor)))
                 {
-                    throw new Exception($"Not good");
+                    throw new Exception();
                 }
 
                 output.WriteLine(a.Determinant(MatrixOperation.Cofactor));
@@ -597,11 +764,11 @@ namespace Protsyk.RayTracer.Challenge.Core.Geometry
 
                 if (!Constants.EpsilonCompare(-28497, a.Determinant(MatrixOperation.Gauss)))
                 {
-                    throw new Exception($"Not good");
+                    throw new Exception();
                 }
                 if (!Constants.EpsilonCompare(-28497, a.Determinant(MatrixOperation.Cofactor)))
                 {
-                    throw new Exception($"Not good");
+                    throw new Exception();
                 }
 
                 output.WriteLine(a.Determinant(MatrixOperation.Cofactor));
@@ -624,15 +791,15 @@ namespace Protsyk.RayTracer.Challenge.Core.Geometry
 
                 if (!a11.Equals(a12))
                 {
-                    throw new Exception($"Not good");
+                    throw new Exception();
                 }
                 if (!i.Equals(r1))
                 {
-                    throw new Exception($"Not good");
+                    throw new Exception();
                 }
                 if (!i.Equals(r2))
                 {
-                    throw new Exception($"Not good");
+                    throw new Exception();
                 }
 
                 output.WriteLine(a11);
@@ -659,7 +826,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Geometry
 
                     if (!c.Equals(b))
                     {
-                        throw new Exception($"Not good {p} {c} {b}");
+                        throw new Exception();
                     }
                 }
             }
