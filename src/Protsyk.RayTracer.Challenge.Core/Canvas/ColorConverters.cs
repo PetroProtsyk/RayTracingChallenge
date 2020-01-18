@@ -1,5 +1,6 @@
 using System;
 using System.Numerics;
+using Protsyk.RayTracer.Challenge.Core.Geometry;
 
 namespace Protsyk.RayTracer.Challenge.Core.Canvas
 {

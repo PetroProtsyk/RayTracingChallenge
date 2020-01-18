@@ -1,4 +1,5 @@
 using System;
+using Protsyk.RayTracer.Challenge.Core.Geometry;
 
 namespace Protsyk.RayTracer.Challenge.Core.Canvas
 {

@@ -1,10 +1,9 @@
 using System;
 
-namespace Protsyk.RayTracer.Challenge.Core
+namespace Protsyk.RayTracer.Challenge.Core.Geometry
 {
     public class Tuple4
     {
-
         public readonly double X;
         public readonly double Y;
         public readonly double Z;

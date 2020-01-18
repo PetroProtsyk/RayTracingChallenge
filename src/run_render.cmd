@@ -1,0 +1,1 @@
+dotnet run --project Protsyk.RayTracer.Challenge.ConsoleUtil
