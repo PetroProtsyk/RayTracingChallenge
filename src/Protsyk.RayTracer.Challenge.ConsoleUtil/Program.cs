@@ -44,6 +44,32 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
 
     class Program
     {
+        static (ICamera camera, BaseScene scene) SceneWeb()
+        {
+            // Camera
+            var origin = P(10,5,0);
+            var fov = Math.PI/3;
+            var camera = new FovCamera(origin, fov, 320, 240);
+
+            // Scene
+            var materials = new IMaterial[]{
+                new SolidColorMaterial(P(250, 75, 75), 100),
+                new SolidColorMaterial(P(75, 250, 75), 100),
+                new SolidColorMaterial(P(75, 75, 250), 100),
+                new SolidColorMaterial(P(250, 250, 75), 1000)
+            };
+            var scene = new BaseScene().WithFigures(
+                               S(10  ,5  , 16, 5  , materials[3]),
+                               S(5  , 5  , 16, 3  , materials[1]),
+                               S(15 , 5  , 16, 3  , materials[2]),
+                               S(10 ,10  , 16, 3  , materials[0])
+                            ).WithLights(
+                               L(10, 3, 0, 75)
+                            );
+
+           return (camera, scene);
+        }
+
         static (ICamera camera, BaseScene scene) ScenePetro()
         {
             // Camera
