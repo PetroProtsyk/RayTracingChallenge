@@ -1,15 +1,15 @@
 using System;
-using System.Numerics;
+using Protsyk.RayTracer.Challenge.Core.Geometry;
 
 namespace Protsyk.RayTracer.Challenge.Core.Canvas
 {
-    public class VectorColorConverter : IColorConverter<Vector3>
+    public class VectorColorConverter : IColorConverter<Tuple4>
     {
-        public Color From(Vector3 color)
+        public Color From(Tuple4 color)
         {
-            return new Color((byte)color.X,
-                             (byte)color.Y,
-                             (byte)color.Z);
+            return new Color((byte)Math.Min(255, (int)Math.Max(0, color.X)),
+                             (byte)Math.Min(255, (int)Math.Max(0, color.Y)),
+                             (byte)Math.Min(255, (int)Math.Max(0, color.Z)));
         }
     }
 }

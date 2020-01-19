@@ -1,32 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Numerics;
+using Protsyk.RayTracer.Challenge.Core.Geometry;
 using System.Text;
 
 namespace Protsyk.RayTracer.Challenge.Core.Scene.Lights
 {
     public class AmbientLight : ILight
     {
-        private readonly float intensity;
+        private readonly double intensity;
 
-        public AmbientLight(float intensity)
+        public AmbientLight(double intensity)
         {
-            this.intensity = intensity;
+            this.intensity = intensity / 100.0;
         }
 
-        public Vector3 GetLightDirection(Vector3 from)
+        public Tuple4 GetLightDirection(Tuple4 from)
         {
-            return Vector3.Zero;
+            return Tuple4.Zero;
         }
 
-        public float GetLightDistance(Vector3 from)
+        public double GetLightDistance(Tuple4 from)
         {
-            return 0;
+            return 0.0;
         }
 
-        public float GetIntensity(Vector3 dir, int shine, Vector3 pointOnSurface, Vector3 surfaceNormal)
+        public double GetIntensity(Tuple4 dir, int shine, Tuple4 pointOnSurface, Tuple4 surfaceNormal)
         {
-            return intensity / 100f;
+            return intensity;
         }
 
     }

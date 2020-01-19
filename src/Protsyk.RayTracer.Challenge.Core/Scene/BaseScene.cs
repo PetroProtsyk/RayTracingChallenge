@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Numerics;
+using Protsyk.RayTracer.Challenge.Core.Geometry;
 using System.Text;
 
 namespace Protsyk.RayTracer.Challenge.Core.Scene
@@ -33,29 +33,29 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene
             figures.Add(figure);
         }
 
-        public Vector3 CastRay(Vector3 origin, Vector3 dir)
+        public Tuple4 CastRay(Tuple4 origin, Tuple4 dir)
         {
             var hit = CalculateIntersection(origin, dir);
             var color = CalculateColorAt(hit, dir);
             return color;
         }
 
-        private Vector3 CalculateColorAt(HitResult hit, Vector3 dir)
+        private Tuple4 CalculateColorAt(HitResult hit, Tuple4 dir)
         {
             if (hit.IsHit)
             {
                 var c = hit.Figure.ColorAt(hit);
                 var shine = hit.Figure.GetMaterial().GetShine();
-                var intens = 0.0f; // Light intensity
+                var intens = 0.0; // Light intensity
                 foreach (var light in lights)
                 {
                     // Shadow
                     {
                         var lightDir = light.GetLightDirection(hit.PointOnSurface);
                         var distance = light.GetLightDistance(hit.PointOnSurface);
-                        if (lightDir != Vector3.Zero)
+                        if (!lightDir.Equals(Tuple4.Zero))
                         {
-                            var lh = CalculateIntersection(Vector3.Add(hit.PointOnSurface, Vector3.Multiply(0.01f, lightDir)), lightDir);
+                            var lh = CalculateIntersection(Tuple4.Add(hit.PointOnSurface, Tuple4.Scale(lightDir, 0.01f)), lightDir);
                             if (lh.IsHit && lh.Distance < distance)
                             {
                                 continue;
@@ -64,14 +64,17 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene
                     }
                     intens += light.GetIntensity(dir, shine, hit.PointOnSurface, hit.SurfaceNormal);
                 }
-                var a = Vector3.Multiply(intens, c);
-                return new Vector3(Math.Min(255f, a.X), Math.Min(255f, a.Y), Math.Min(255f, a.Z));
+                var a = Tuple4.Scale(c, intens);
+                return new Tuple4(Math.Min(255.0, a.X),
+                                  Math.Min(255.0, a.Y),
+                                  Math.Min(255.0, a.Z),
+                                  TupleFlavour.Point);
             }
 
-            return new Vector3(0, 0, 0);
+            return new Tuple4(0.0, 0.0, 0.0, TupleFlavour.Point);
         }
 
-        private HitResult CalculateIntersection(Vector3 origin, Vector3 dir)
+        private HitResult CalculateIntersection(Tuple4 origin, Tuple4 dir)
         {
             var result = HitResult.NoHit;
             foreach (var figure in figures)

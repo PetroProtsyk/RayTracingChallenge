@@ -1,16 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Numerics;
-using System.Text;
+using Protsyk.RayTracer.Challenge.Core.Geometry;
 
 namespace Protsyk.RayTracer.Challenge.Core.Scene
 {
     public interface ILight
     {
-        Vector3 GetLightDirection(Vector3 from);
+        Tuple4 GetLightDirection(Tuple4 from);
 
-        float GetLightDistance(Vector3 from);
+        double GetLightDistance(Tuple4 from);
 
-        float GetIntensity(Vector3 dir, int shine, Vector3 pointOnSurface, Vector3 surfaceNormal);
+        double GetIntensity(Tuple4 dir, int shine, Tuple4 pointOnSurface, Tuple4 surfaceNormal);
     }
 }

@@ -1,16 +1,16 @@
 ﻿using System;
-using System.Numerics;
 using System.Diagnostics;
 using System.Text;
 using System.IO;
+using Protsyk.RayTracer.Challenge.Core.Canvas;
 using Protsyk.RayTracer.Challenge.Core.Scene;
 using Protsyk.RayTracer.Challenge.Core.Scene.Cameras;
 using Protsyk.RayTracer.Challenge.Core.Scene.Figures;
 using Protsyk.RayTracer.Challenge.Core.Scene.Lights;
 using Protsyk.RayTracer.Challenge.Core.Scene.Materials;
+using Protsyk.RayTracer.Challenge.Core.Geometry;
 using static Protsyk.RayTracer.Challenge.Core.Geometry.Vectors;
 using static Protsyk.RayTracer.Challenge.ConsoleUtil.Figures;
-using Protsyk.RayTracer.Challenge.Core.Canvas;
 
 namespace Protsyk.RayTracer.Challenge.ConsoleUtil
 {
@@ -18,30 +18,25 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
     {
         public static IFigure S(double cx, double cy, double cz, double radius, IMaterial material)
         {
-            return S(V(cx, cy, cz), (float)radius, material);
+            return S(P(cx, cy, cz), radius, material);
         }
 
-        public static IFigure S(float cx, float cy, float cz, float radius, IMaterial material)
-        {
-            return S(V(cx, cy, cz), radius, material);
-        }
-
-        public static IFigure S(Vector3 center, float radius, IMaterial material)
+        public static IFigure S(Tuple4 center, double radius, IMaterial material)
         {
             return new SphereFigure(center, radius, material);
         }
 
-        public static ILight L(float x, float y, float z, float intensity)
+        public static ILight L(double x, double y, double z, double intensity)
         {
-            return new SpotLight(V(x, y, z), intensity);
+            return new SpotLight(P(x, y, z), intensity);
         }
 
-        public static ILight A(float intensity)
+        public static ILight A(double intensity)
         {
             return new AmbientLight(intensity);
         }
 
-        public static ILight D(float dx, float dy, float dz, float intensity)
+        public static ILight D(double dx, double dy, double dz, double intensity)
         {
             return new DirectionLight(V(dx, dy, dz), intensity);
         }
@@ -52,16 +47,16 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
         static (ICamera camera, BaseScene scene) ScenePetro()
         {
             // Camera
-            var origin = V(10,5,0);
+            var origin = P(10, 5,0);
             var fov = Math.PI/3;
             var camera = new FovCamera(origin, fov, 1920, 1080);
 
             // Scene
             var materials = new IMaterial[]{
-                new SolidColorMaterial(V(250, 75, 75), 100),
-                new SolidColorMaterial(V(75, 250, 75), 100),
-                new SolidColorMaterial(V(75, 75, 250), 100),
-                new SolidColorMaterial(V(250, 250, 75), 1000)
+                new SolidColorMaterial(P(250, 75, 75), 100),
+                new SolidColorMaterial(P(75, 250, 75), 100),
+                new SolidColorMaterial(P(75, 75, 250), 100),
+                new SolidColorMaterial(P(250, 250, 75), 1000)
             };
 
             var scene = new BaseScene().WithFigures(
@@ -136,7 +131,7 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
         static (ICamera camera, BaseScene scene) SceneSpheres(bool useFov)
         {
             // Camera
-            var origin = V(0,0,0);
+            var origin = P(0,0,0);
             ICamera camera;
             if (useFov)
             {
@@ -150,10 +145,10 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
 
             // Scene
             var materials = new IMaterial[]{
-                new SolidColorMaterial(V(255, 0, 0), 500),
-                new SolidColorMaterial(V(0, 0, 255), 500),
-                new SolidColorMaterial(V(0, 255, 0), 10),
-                new SolidColorMaterial(V(255, 255, 0), 1000)
+                new SolidColorMaterial(P(255, 0, 0), 500),
+                new SolidColorMaterial(P(0, 0, 255), 500),
+                new SolidColorMaterial(P(0, 255, 0), 10),
+                new SolidColorMaterial(P(255, 255, 0), 1000)
             };
 
             var scene = new BaseScene().WithFigures(
@@ -172,15 +167,15 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
 
         static (ICamera camera, BaseScene scene) ScenePlanets()
         {
-            var origin = V(0,0,-5);
+            var origin = P(0,0,-5);
             var fov = Math.PI/3;
             var camera = new FovCamera(origin, fov, 1920, 1080);
 
             // Scene
             var materials = new IMaterial[]{
-                new SolidColorMaterial(V(155, 200, 155), 500),
-                new SolidColorMaterial(V(155, 155, 155), MaterialConstants.NoShine),
-                new SolidColorMaterial(V(255, 255, 0), MaterialConstants.NoShine)
+                new SolidColorMaterial(P(155, 200, 155), 500),
+                new SolidColorMaterial(P(155, 155, 155), MaterialConstants.NoShine),
+                new SolidColorMaterial(P(255, 255, 0), MaterialConstants.NoShine)
             };
 
             var scene = new BaseScene().WithFigures(
@@ -198,14 +193,14 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
         {
             var canvas = new MemoryCanvas((int)camera.ScreenWidth, (int)camera.ScreenHeight);
             var x = 0; var y =0;
-            for (float j = 0; j < camera.ScreenHeight; ++j)
+            for (double j = 0; j < camera.ScreenHeight; ++j)
             {
                 x = 0;
-                for (float i = 0; i < camera.ScreenWidth; ++i)
+                for (double i = 0; i < camera.ScreenWidth; ++i)
                 {
                     var direction = camera.GetDirection(i, j);
                     var color = scene.CastRay(camera.Origin, direction);
-                    canvas.SetPixel(x, y, ColorConverters.Vector3.From(color));
+                    canvas.SetPixel(x, y, ColorConverters.Tuple255.From(color));
                     ++x;
                 }
                 ++y;

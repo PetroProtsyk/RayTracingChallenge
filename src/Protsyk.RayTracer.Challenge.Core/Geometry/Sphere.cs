@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Numerics;
+using Protsyk.RayTracer.Challenge.Core.Geometry;
 using System.Text;
 
 // Geometric Primitives
@@ -8,24 +8,24 @@ namespace Protsyk.RayTracer.Challenge.Core.Geometry
 {
     internal class Sphere
     {
-        public Vector3 Center { get; private set; }
+        public Tuple4 Center { get; private set; }
 
-        public float Radius { get; private set; }
+        public double Radius { get; private set; }
 
-        private float Radius2;
+        private double Radius2;
 
-        public Sphere(Vector3 center, float radius)
+        public Sphere(Tuple4 center, double radius)
         {
             Center = center;
             Radius = radius;
             Radius2 = radius * radius;
         }
 
-        public float Intersects(Vector3 origin, Vector3 dir)
+        public double Intersects(Tuple4 origin, Tuple4 dir)
         {
-            var l = Vector3.Subtract(Center, origin);
-            var tca = Vector3.Dot(l, dir);
-            var d2 = Vector3.Dot(l, l) - tca * tca;
+            var l = Tuple4.Subtract(Center, origin);
+            var tca = Tuple4.DotProduct(l, dir);
+            var d2 = Tuple4.DotProduct(l, l) - tca * tca;
             if (d2 > Radius2)
             {
                 return -1;
@@ -37,7 +37,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Geometry
             {
                 t0 = t1;
             }
-            return (float)t0;
+            return t0;
         }
     }
 }

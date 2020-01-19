@@ -1,48 +1,46 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Numerics;
-using System.Text;
+using Protsyk.RayTracer.Challenge.Core.Geometry;
 
 namespace Protsyk.RayTracer.Challenge.Core.Scene.Lights
 {
     public class SpotLight : ILight
     {
-        private readonly Vector3 location;
+        private readonly Tuple4 location;
 
-        private readonly float intensity;
+        private readonly double intensity;
 
-        public SpotLight(Vector3 location, float intensity)
+        public SpotLight(Tuple4 location, double intensity)
         {
             this.location = location;
-            this.intensity = intensity / 100f;
+            this.intensity = intensity / 100.0;
         }
 
-        public Vector3 GetLightDirection(Vector3 from)
+        public Tuple4 GetLightDirection(Tuple4 from)
         {
-            return Vector3.Normalize(Vector3.Subtract(location, from));
+            return Tuple4.Normalize(Tuple4.Subtract(location, from));
         }
 
-        public float GetLightDistance(Vector3 from)
+        public double GetLightDistance(Tuple4 from)
         {
-            return Vector3.Subtract(location, from).Length();
+            return Tuple4.Subtract(location, from).Length();
         }
 
-        public float GetIntensity(Vector3 dir, int shine, Vector3 pointOnSurface, Vector3 surfaceNormal)
+        public double GetIntensity(Tuple4 dir, int shine, Tuple4 pointOnSurface, Tuple4 surfaceNormal)
         {
-            var lightDirection = Vector3.Normalize(Vector3.Subtract(location, pointOnSurface));
-            var result = 0.0f;
+            var lightDirection = Tuple4.Normalize(Tuple4.Subtract(location, pointOnSurface));
+            var result = 0.0;
 
             if (shine != MaterialConstants.NoShine) {
-                //var reflected = Vector3.Subtract(Vector3.Multiply(2*Vector3.Dot(surfaceNormal, lightDirection), surfaceNormal), lightDirection);
-                var reflected = Vector3.Reflect(Vector3.Negate(lightDirection), surfaceNormal);
-                var r_dot_v = Vector3.Dot(reflected, Vector3.Negate(dir));
+                //var reflected = Tuple4.Subtract(Tuple4.Multiply(2*Tuple4.Dot(surfaceNormal, lightDirection), surfaceNormal), lightDirection);
+                var reflected = Tuple4.Reflect(Tuple4.Negate(lightDirection), surfaceNormal);
+                var r_dot_v = Tuple4.DotProduct(reflected, Tuple4.Negate(dir));
                 if (r_dot_v > 0)
                 {
-                    result += (float)(intensity*Math.Pow(r_dot_v/(reflected.Length()*dir.Length()), (double)shine));
+                    result += intensity * Math.Pow(r_dot_v/(reflected.Length()*dir.Length()), shine);
                 }
             }
 
-            var cosine = Vector3.Dot(lightDirection, surfaceNormal);
+            var cosine = Tuple4.DotProduct(lightDirection, surfaceNormal);
             if (cosine >= 0)
             {
                 result += cosine * intensity;

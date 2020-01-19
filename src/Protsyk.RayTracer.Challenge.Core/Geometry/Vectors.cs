@@ -1,20 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Numerics;
-using System.Text;
+using Protsyk.RayTracer.Challenge.Core.Geometry;
 
 namespace Protsyk.RayTracer.Challenge.Core.Geometry
 {
     public static class Vectors
     {
-        public static Vector3 V(double x, double y, double z)
+        public static Tuple4 V(double x, double y, double z)
         {
-            return V((float)x, (float)y, (float)z);
+            return new Tuple4(x, y, z, TupleFlavour.Vector);
         }
 
-        public static Vector3 V(float x, float y, float z)
+        public static Tuple4 P(double x, double y, double z)
         {
-            return new Vector3(x, y, z);
+            return new Tuple4(x, y, z, TupleFlavour.Point);
         }
     }
 }

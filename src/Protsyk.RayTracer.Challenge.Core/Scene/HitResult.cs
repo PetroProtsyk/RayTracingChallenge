@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Numerics;
+using Protsyk.RayTracer.Challenge.Core.Geometry;
 using System.Text;
 
 namespace Protsyk.RayTracer.Challenge.Core.Scene
@@ -10,16 +10,16 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene
         public static readonly HitResult NoHit = new HitResult(false,
                                                                null,
                                                                -1,
-                                                               new Vector3(0, 0, 0),
-                                                               new Vector3(0, 0, 0));
+                                                               new Tuple4(0, 0, 0, TupleFlavour.Point),
+                                                               new Tuple4(0, 0, 0, TupleFlavour.Vector));
 
         public readonly bool IsHit;
         public readonly IFigure Figure;
         public readonly double Distance;
-        public readonly Vector3 PointOnSurface;
-        public readonly Vector3 SurfaceNormal;
+        public readonly Tuple4 PointOnSurface;
+        public readonly Tuple4 SurfaceNormal;
 
-        public HitResult(bool isHit, IFigure figure, double distance, Vector3 pointOnSurface, Vector3 surfaceNormal)
+        public HitResult(bool isHit, IFigure figure, double distance, Tuple4 pointOnSurface, Tuple4 surfaceNormal)
         {
             IsHit = isHit;
             Figure = figure;

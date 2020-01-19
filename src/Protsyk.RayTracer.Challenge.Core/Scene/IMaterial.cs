@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Numerics;
+using Protsyk.RayTracer.Challenge.Core.Geometry;
 using System.Text;
 
 namespace Protsyk.RayTracer.Challenge.Core.Scene
 {
     public interface IMaterial
     {
-        Vector3 GetColor();
+        Tuple4 GetColor();
 
         int GetShine();
     }

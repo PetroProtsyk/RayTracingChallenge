@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Numerics;
-using System.Text;
+
 using Protsyk.RayTracer.Challenge.Core.Geometry;
 
 namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
@@ -13,7 +11,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
 
         private readonly IMaterial material;
 
-        public SphereFigure(Vector3 center, float radius, IMaterial material)
+        public SphereFigure(Tuple4 center, double radius, IMaterial material)
         {
             this.sphere = new Sphere(center, radius);
             this.material = material;
@@ -24,7 +22,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
             return material;
         }
 
-        public Vector3 ColorAt(HitResult hit)
+        public Tuple4 ColorAt(HitResult hit)
         {
             if (!hit.IsHit)
             {
@@ -33,7 +31,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
             return material.GetColor();
         }
 
-        public HitResult Hit(Vector3 origin, Vector3 dir)
+        public HitResult Hit(Tuple4 origin, Tuple4 dir)
         {
             var distance = sphere.Intersects(origin, dir);
             if (distance < 0)
@@ -41,8 +39,8 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
                 return HitResult.NoHit;
             }
 
-            var pointOnSurface = Vector3.Add(origin, Vector3.Multiply(distance, dir)); // orig + dir*dist
-            var surfaceNormal = Vector3.Normalize(Vector3.Subtract(pointOnSurface, sphere.Center)); // hit - Center
+            var pointOnSurface = Tuple4.Add(origin, Tuple4.Scale(dir, distance)); // orig + dir*dist
+            var surfaceNormal = Tuple4.Normalize(Tuple4.Subtract(pointOnSurface, sphere.Center)); // hit - Center
 
             return new HitResult(true, this, distance, pointOnSurface, surfaceNormal);
         }
