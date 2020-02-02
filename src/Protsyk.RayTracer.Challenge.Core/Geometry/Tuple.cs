@@ -134,6 +134,14 @@ namespace Protsyk.RayTracer.Challenge.Core.Geometry
         public double Length() {
             return Math.Sqrt(X*X + Y*Y + Z*Z + W*W);
         }
+
+        public bool IsVector() {
+            return Constants.EpsilonCompare(0, W);
+        }
+
+        public bool IsPoint() {
+            return !IsVector();
+        }
     }
 
     public enum TupleFlavour

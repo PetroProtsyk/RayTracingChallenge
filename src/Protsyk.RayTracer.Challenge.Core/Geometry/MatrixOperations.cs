@@ -332,12 +332,12 @@ namespace Protsyk.RayTracer.Challenge.Core.Geometry
             return new Matrix(result, false);
         }
 
-        public static Matrix Invert(Matrix a)
+        public static IMatrix Invert(IMatrix a)
         {
             return Invert(a, MatrixOperation.Cofactor);
         }
 
-        public static Matrix Invert(Matrix a, MatrixOperation operationType)
+        public static IMatrix Invert(IMatrix a, MatrixOperation operationType)
         {
             switch (operationType)
             {
@@ -350,7 +350,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Geometry
             }
         }
 
-        public static Matrix InvertGauss(IMatrix a)
+        public static IMatrix InvertGauss(IMatrix a)
         {
             var tempRows = a.Rows;
             var tempColumns = a.Columns + a.Columns;
@@ -384,7 +384,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Geometry
             return new Matrix(result, false);
         }
 
-        public static Matrix InvertCofactor(Matrix a)
+        public static IMatrix InvertCofactor(IMatrix a)
         {
             var det = Determinant(a, MatrixOperation.Cofactor);
             if (Constants.EpsilonCompare(det, 0.0))
@@ -525,7 +525,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Geometry
                 }, false);
             }
 
-            public static Tuple4 ToTuple(Matrix a)
+            public static Tuple4 ToTuple(IMatrix a)
             {
                 if (a.Rows == 4 && a.Columns == 1)
                 {
@@ -538,6 +538,17 @@ namespace Protsyk.RayTracer.Challenge.Core.Geometry
                 }
 
                 throw new ArgumentException();
+            }
+
+            public static IMatrix FromTuple(Tuple4 tuple)
+            {
+                return new Matrix(new double[,]
+                {
+                    {  tuple.X },
+                    {  tuple.Y },
+                    {  tuple.Z },
+                    {  tuple.W }
+                }, false);
             }
 
             public static Matrix ViewTransform(Tuple4 from, Tuple4 to, Tuple4 up)
