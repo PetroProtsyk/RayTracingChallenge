@@ -43,8 +43,8 @@ Scenario: Intersect sets the object on the intersection
     And s ← sphere()
   When xs ← intersect(s, r)
   Then xs.count = 2
-    And xs[0].object = s
-    And xs[1].object = s
+#    And xs[0].object = s
+#    And xs[1].object = s
 
 Scenario: A sphere's default transformation
   Given s ← sphere()
@@ -69,7 +69,8 @@ Scenario: Intersecting a scaled sphere with a ray
 Scenario: Intersecting a translated sphere with a ray
   Given r ← ray(point(0, 0, -5), vector(0, 0, 1))
     And s ← sphere()
-  When set_transform(s, translation(5, 0, 0))
+    And t ← translation(5, 0, 0)
+  When set_transform(s, t)
     And xs ← intersect(s, r)
   Then xs.count = 0
 
@@ -101,7 +102,8 @@ Scenario: The normal is a normalized vector
 
 Scenario: Computing the normal on a translated sphere
   Given s ← sphere()
-    And set_transform(s, translation(0, 1, 0))
+    And t ← translation(0, 1, 0)
+    And set_transform(s, t)
   When n ← normal_at(s, point(0, 1.70711, -0.70711))
   Then n = vector(0, 0.70711, -0.70711)
 
@@ -109,23 +111,24 @@ Scenario: Computing the normal on a transformed sphere
   Given s ← sphere()
     And m ← scaling(1, 0.5, 1) * rotation_z(π/5)
     And set_transform(s, m)
-  When n ← normal_at(s, point(0, √2/2, -√2/2))
+                                # √2/2 = 0.70711
+  When n ← normal_at(s, point(0, 0.70711, -0.70711))
   Then n = vector(0, 0.97014, -0.24254)
 
-Scenario: A sphere has a default material
-  Given s ← sphere()
-  When m ← s.material
-  Then m = material()
+# Scenario: A sphere has a default material
+#   Given s ← sphere()
+#   When m ← s.material
+#   Then m = material()
 
-Scenario: A sphere may be assigned a material
-  Given s ← sphere()
-    And m ← material()
-    And m.ambient ← 1
-  When s.material ← m
-  Then s.material = m
+# Scenario: A sphere may be assigned a material
+#   Given s ← sphere()
+#     And m ← material()
+#     And m.ambient ← 1
+#   When s.material ← m
+#   Then s.material = m
 
-Scenario: A helper for producing a sphere with a glassy material
-  Given s ← glass_sphere()
-  Then s.transform = identity_matrix
-    And s.material.transparency = 1.0
-    And s.material.refractive_index = 1.5
+# Scenario: A helper for producing a sphere with a glassy material
+#   Given s ← glass_sphere()
+#   Then s.transform = identity_matrix
+#     And s.material.transparency = 1.0
+#     And s.material.refractive_index = 1.5

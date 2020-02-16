@@ -29,12 +29,8 @@ namespace Protsyk.RayTracer.Challenge.Core.Geometry
 
         public Ray Transform(IMatrix m)
         {
-            var newOrigin = MatrixOperations.Geometry3D.ToTuple(
-                MatrixOperations.Multiply(m, MatrixOperations.Geometry3D.FromTuple(origin)));
-
-            var newDir = MatrixOperations.Geometry3D.ToTuple(
-                MatrixOperations.Multiply(m, MatrixOperations.Geometry3D.FromTuple(dir)));
-
+            var newOrigin = MatrixOperations.Geometry3D.Transform(m, origin);
+            var newDir = MatrixOperations.Geometry3D.Transform(m, dir);
             return new Ray(newOrigin, newDir);
         }
     }

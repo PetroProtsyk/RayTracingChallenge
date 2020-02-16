@@ -568,6 +568,12 @@ namespace Protsyk.RayTracer.Challenge.Core.Geometry
 
                 return Multiply(orientation, Translation(-from.X, -from.Y, -from.Z));
             }
+
+            public static Tuple4 Transform(IMatrix matrix, Tuple4 tuple)
+            {
+                return MatrixOperations.Geometry3D.ToTuple(
+                            MatrixOperations.Multiply(matrix, MatrixOperations.Geometry3D.FromTuple(tuple)));
+            }
         }
     }
 }

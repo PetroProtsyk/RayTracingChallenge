@@ -9,21 +9,57 @@ namespace Protsyk.RayTracer.Challenge.Core.Geometry
 
         public double Radius { get; private set; }
 
-        public IMatrix Transformation { get; set; }
+        public IMatrix Transformation 
+        {
+            get
+            {
+                return transformation;
+            }
+            set
+            {
+                transformation = value;
+                inverseTransformation = null;
+                if (value != null)
+                {
+                    inverseTransformation = MatrixOperations.Invert(value);
+                }
+            }
+        }
 
-        private double Radius2;
+        private double radius2;
+
+        private IMatrix transformation;
+
+        private IMatrix inverseTransformation;
 
         public Sphere(Tuple4 center, double radius)
         {
             Center = center;
             Radius = radius;
-            Radius2 = radius * radius;
+            radius2 = radius * radius;
+            Transformation = MatrixOperations.Identity(4);
         }
 
         public Tuple4 GetNormal(Tuple4 point)
         {
-            var normal = Tuple4.Normalize(Tuple4.Subtract(point, Center));
-            return normal;
+            var objectPoint = point;
+            if (Transformation != null)
+            {
+                objectPoint = MatrixOperations.Geometry3D.Transform(inverseTransformation, point);
+            }
+
+            var normal = Tuple4.Subtract(objectPoint, Center);
+
+            if (Transformation != null)
+            {
+               normal = MatrixOperations.Geometry3D.Transform(MatrixOperations.Transpose(inverseTransformation), normal);
+               if (normal.W != 0.0)
+               {
+                    normal = new Tuple4(normal.X, normal.Y, normal.Z, TupleFlavour.Vector);
+               }
+            }
+
+            return Tuple4.Normalize(normal);
         }
 
         public double Intersects(Tuple4 origin, Tuple4 dir)
@@ -44,31 +80,23 @@ namespace Protsyk.RayTracer.Challenge.Core.Geometry
         {
             if (Transformation != null)
             {
-                var inverse   = MatrixOperations.Invert(Transformation);
+                ray = ray.Transform(inverseTransformation);
+            }
 
-                var newOrigin = MatrixOperations.Multiply(inverse, 
-                                    MatrixOperations.Geometry3D.FromTuple(ray.origin));
-                var newDir    = MatrixOperations.Multiply(inverse, 
-                                    MatrixOperations.Geometry3D.FromTuple(ray.dir));
+            var result = GetIntersections(ray.origin, Tuple4.Normalize(ray.dir));
 
-                var newDirTuple = MatrixOperations.Geometry3D.ToTuple(newDir);
-                ray = new Ray(
-                            MatrixOperations.Geometry3D.ToTuple(newOrigin),
-                            Tuple4.Normalize(newDirTuple));
-
-                var result = GetIntersections(ray.origin, ray.dir);
+            if (Transformation != null)
+            {
                 if (result != null)
                 {
                     for (int i=0; i<result.Length; ++i)
                     {
-                        result[i] /= newDirTuple.Length();
+                        result[i] /= ray.dir.Length();
                     }
                 }
-
-                return result;
             }
 
-            return GetIntersections(ray.origin, ray.dir);
+            return result;
         }
 
         public double[] GetIntersections(Tuple4 origin, Tuple4 dir)
@@ -81,11 +109,11 @@ namespace Protsyk.RayTracer.Challenge.Core.Geometry
             var l = Tuple4.Subtract(Center, origin);
             var tca = Tuple4.DotProduct(l, dir);
             var d2 = Tuple4.DotProduct(l, l) - tca * tca;
-            if (d2 > Radius2)
+            if (d2 > radius2)
             {
                 return null;
             }
-            var thc = Math.Sqrt(Radius2 - d2);
+            var thc = Math.Sqrt(radius2 - d2);
             var t0 = tca - thc;
             var t1 = tca + thc;
             // Ray originates inside sphere
