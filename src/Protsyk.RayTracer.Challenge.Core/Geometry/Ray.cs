@@ -21,5 +21,21 @@ namespace Protsyk.RayTracer.Challenge.Core.Geometry
             this.origin = origin;
             this.dir = dir;
         }
+
+        public Tuple4 PositionAt(double t)
+        {
+            return Tuple4.Add(origin, Tuple4.Scale(dir, new Tuple4(t, t, t, TupleFlavour.Point)));
+        }
+
+        public Ray Transform(IMatrix m)
+        {
+            var newOrigin = MatrixOperations.Geometry3D.ToTuple(
+                MatrixOperations.Multiply(m, MatrixOperations.Geometry3D.FromTuple(origin)));
+
+            var newDir = MatrixOperations.Geometry3D.ToTuple(
+                MatrixOperations.Multiply(m, MatrixOperations.Geometry3D.FromTuple(dir)));
+
+            return new Ray(newOrigin, newDir);
+        }
     }
 }

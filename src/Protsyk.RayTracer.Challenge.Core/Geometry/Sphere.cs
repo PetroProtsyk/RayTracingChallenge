@@ -56,7 +56,6 @@ namespace Protsyk.RayTracer.Challenge.Core.Geometry
                             MatrixOperations.Geometry3D.ToTuple(newOrigin),
                             Tuple4.Normalize(newDirTuple));
 
-                
                 var result = GetIntersections(ray.origin, ray.dir);
                 if (result != null)
                 {
