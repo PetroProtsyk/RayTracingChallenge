@@ -40,6 +40,14 @@ namespace Protsyk.RayTracer.Challenge.Core.Geometry
             Transformation = MatrixOperations.Identity(4);
         }
 
+        public Sphere(IMatrix transformation)
+        {
+            Center = new Tuple4(0.0, 0.0, 0.0, TupleFlavour.Point);
+            Radius = 1.0;
+            radius2 = 1.0;
+            Transformation = transformation;
+        }
+
         public Tuple4 GetNormal(Tuple4 point)
         {
             var objectPoint = point;
@@ -48,11 +56,12 @@ namespace Protsyk.RayTracer.Challenge.Core.Geometry
                 objectPoint = MatrixOperations.Geometry3D.Transform(inverseTransformation, point);
             }
 
+            // hit - Center
             var normal = Tuple4.Subtract(objectPoint, Center);
 
             if (Transformation != null)
             {
-               normal = MatrixOperations.Geometry3D.Transform(MatrixOperations.Transpose(inverseTransformation), normal);
+               normal = MatrixOperations.Geometry3D.Transform(MatrixOperations.Transpose(inverseTransformation, false), normal);
                if (normal.W != 0.0)
                {
                     normal = new Tuple4(normal.X, normal.Y, normal.Z, TupleFlavour.Vector);
@@ -64,7 +73,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Geometry
 
         public double Intersects(Tuple4 origin, Tuple4 dir)
         {
-            var result = GetIntersections(origin, dir);
+            var result = GetIntersections(new Ray(origin, dir));
             if (result == null)
             {
                 return -1.0;
@@ -116,6 +125,38 @@ namespace Protsyk.RayTracer.Challenge.Core.Geometry
             var thc = Math.Sqrt(radius2 - d2);
             var t0 = tca - thc;
             var t1 = tca + thc;
+            // Ray originates inside sphere
+            // When t > 0 that is intersection in the direction of the ray
+            // other intersection is in the opposite direction
+            if (t0 < t1)
+            {
+                return new double[] {t0, t1};
+            }
+            else
+            {
+                return new double[] {t1, t0};
+            }
+        }
+
+        public double[] GetIntersectionsFromBook(Tuple4 origin, Tuple4 dir)
+        {
+            if (!Constants.EpsilonCompare(1.0, dir.Length()))
+            {
+                throw new ArgumentException("Direction should be normalized", nameof(dir));
+            }
+
+            var sphereToRay = Tuple4.Subtract(origin, Tuple4.ZeroPoint);
+            var a = Tuple4.DotProduct(dir, dir);
+            var b = 2 * Tuple4.DotProduct(dir, sphereToRay);
+            var c = Tuple4.DotProduct(sphereToRay, sphereToRay) - 1.0;
+            var discriminant = b*b - 4 * a * c;
+            if (discriminant < 0.0)
+            {
+                return null;
+            }
+            var discriminantSqrt = Math.Sqrt(discriminant);
+            var t0 = (-b - discriminantSqrt) / (2 * a);
+            var t1 = (-b + discriminantSqrt) / (2 * a);
             // Ray originates inside sphere
             // When t > 0 that is intersection in the direction of the ray
             // other intersection is in the opposite direction

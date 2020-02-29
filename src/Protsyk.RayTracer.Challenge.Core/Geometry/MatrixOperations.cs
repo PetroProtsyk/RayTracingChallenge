@@ -199,7 +199,17 @@ namespace Protsyk.RayTracer.Challenge.Core.Geometry
             return new Matrix(result, false);
         }
 
-        public static Matrix Transpose(IMatrix a)
+        public static IMatrix Transpose(IMatrix a, bool copy)
+        {
+            return copy ? TransposeCopy(a) : TransposeNoCopy(a);
+        }
+
+        private static IMatrix TransposeNoCopy(IMatrix a)
+        {
+            return new TransposeMatrix(a);
+        }
+
+        private static Matrix TransposeCopy(IMatrix a)
         {
             var result = new double[a.Columns, a.Rows];
             for (int i = 0; i < a.Columns; i++)

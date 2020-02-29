@@ -26,6 +26,11 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
             return new SphereFigure(center, radius, material);
         }
 
+        public static IFigure S(IMatrix transformation, IMaterial material)
+        {
+            return new SphereFigure(transformation, material);
+        }
+
         public static ILight L(double x, double y, double z, double intensity)
         {
             return new SpotLight(P(x, y, z), intensity);
@@ -234,10 +239,50 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
             return canvas;
         }
 
+        static (ICamera camera, BaseScene scene) SceneSpheresTransformed(bool useFov)
+        {
+            // Camera
+            var origin = P(0,0,0);
+            ICamera camera;
+            if (useFov)
+            {
+                var fov = Math.PI/3;
+                camera = new FovCamera(origin, fov, 1920, 1080);
+            }
+            else
+            {
+                camera = new ParCamera(origin, 1.0, 600, 600);
+            }
+
+            // Scene
+            var materials = new IMaterial[]{
+                new SolidColorMaterial(P(255, 0, 0), 500),
+                new SolidColorMaterial(P(0, 0, 255), 500),
+                new SolidColorMaterial(P(0, 255, 0), 10),
+                new SolidColorMaterial(P(255, 255, 0), 1000)
+            };
+
+            var scene = new BaseScene().WithFigures(
+                                 S(MatrixOperations.Multiply(MatrixOperations.Geometry3D.Translation(0, -1.0, 3.0),
+                                   MatrixOperations.Multiply(MatrixOperations.Geometry3D.Shearing(1, 0, 0, 0, 0, 0),
+                                                             MatrixOperations.Geometry3D.Scale(0.5, 1, 1))), materials[0]),
+                                 S(MatrixOperations.Geometry3D.Translation(2, 0.0, 4.0), materials[1]),
+                                 S(MatrixOperations.Multiply(MatrixOperations.Geometry3D.Translation(-1.0, 0.0, 4.0),
+                                                             MatrixOperations.Geometry3D.Scale(1.0, 0.5, 1.2)), materials[2]),
+
+                                 S(0  ,-5001  , 0, 5000  , materials[3])
+                            ).WithLights(
+                               A(20),
+                               L(2, 1, 0, 60),
+                               D(1, 4, 4, 20)
+                            );
+            return (camera, scene);
+        }
+
         static void Main(string[] args)
         {
             // Camera, Scene
-            var (camera, scene) = SceneSpheres(false);
+            var (camera, scene) = SceneSpheresTransformed(true);
 
             var timer = Stopwatch.StartNew();
             var canvas = Render(camera, scene);

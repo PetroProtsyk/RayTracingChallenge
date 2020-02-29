@@ -53,7 +53,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene
                     {
                         var lightDir = light.GetLightDirection(hit.PointOnSurface);
                         var distance = light.GetLightDistance(hit.PointOnSurface);
-                        if (!lightDir.Equals(Tuple4.Zero))
+                        if (!lightDir.Equals(Tuple4.ZeroVector))
                         {
                             var lh = CalculateIntersection(Tuple4.Add(hit.PointOnSurface, Tuple4.Scale(lightDir, 0.01f)), lightDir);
                             if (lh.IsHit && lh.Distance < distance)

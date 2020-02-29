@@ -17,6 +17,12 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
             this.material = material;
         }
 
+        public SphereFigure(IMatrix transformation, IMaterial material)
+        {
+            this.sphere = new Sphere(transformation);
+            this.material = material;
+        }
+
         public IMaterial GetMaterial()
         {
             return material;
@@ -40,7 +46,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
             }
 
             var pointOnSurface = Tuple4.Add(origin, Tuple4.Scale(dir, distance)); // orig + dir*dist
-            var surfaceNormal = Tuple4.Normalize(Tuple4.Subtract(pointOnSurface, sphere.Center)); // hit - Center
+            var surfaceNormal = sphere.GetNormal(pointOnSurface);
 
             return new HitResult(true, this, distance, pointOnSurface, surfaceNormal);
         }

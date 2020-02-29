@@ -9,7 +9,9 @@ namespace Protsyk.RayTracer.Challenge.Core.Geometry
         public readonly double Z;
         public readonly double W;
 
-        public static readonly Tuple4 Zero = new Tuple4(0.0, 0.0, 0.0, 0.0);
+        public static readonly Tuple4 ZeroVector = new Tuple4(0.0, 0.0, 0.0, TupleFlavour.Vector);
+
+        public static readonly Tuple4 ZeroPoint = new Tuple4(0.0, 0.0, 0.0, TupleFlavour.Point);
 
         public Tuple4(double x, double y, double z, TupleFlavour type)
             : this(x, y, z, type == TupleFlavour.Point ? 1.0 : 0.0)
