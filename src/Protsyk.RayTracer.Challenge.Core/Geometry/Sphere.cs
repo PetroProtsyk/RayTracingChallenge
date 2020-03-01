@@ -26,22 +26,26 @@ namespace Protsyk.RayTracer.Challenge.Core.Geometry
             }
         }
 
-        private double radius2;
+        private readonly double radius2;
 
         private IMatrix transformation;
 
         private IMatrix inverseTransformation;
 
+        private readonly bool fromOrigin;
+
         public Sphere(Tuple4 center, double radius)
         {
+            fromOrigin = false;
             Center = center;
             Radius = radius;
             radius2 = radius * radius;
-            Transformation = MatrixOperations.Identity(4);
+            Transformation = null;
         }
 
         public Sphere(IMatrix transformation)
         {
+            fromOrigin = true;
             Center = new Tuple4(0.0, 0.0, 0.0, TupleFlavour.Point);
             Radius = 1.0;
             radius2 = 1.0;
@@ -78,7 +82,9 @@ namespace Protsyk.RayTracer.Challenge.Core.Geometry
                 ray = ray.Transform(inverseTransformation);
             }
 
-            var result = GetIntersections(ray.origin, Tuple4.Normalize(ray.dir));
+            var result = fromOrigin ?
+                            GetIntersectionsFromBook(ray.origin, Tuple4.Normalize(ray.dir)) :
+                            GetIntersections(ray.origin, Tuple4.Normalize(ray.dir));
 
             if (Transformation != null)
             {
