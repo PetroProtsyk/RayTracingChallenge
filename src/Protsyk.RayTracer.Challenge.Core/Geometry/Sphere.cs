@@ -71,20 +71,6 @@ namespace Protsyk.RayTracer.Challenge.Core.Geometry
             return Tuple4.Normalize(normal);
         }
 
-        public double Intersects(Tuple4 origin, Tuple4 dir)
-        {
-            var result = GetIntersections(new Ray(origin, dir));
-            if (result == null)
-            {
-                return -1.0;
-            }
-            if (result[0] < 0)
-            {
-                return result[1];
-            }
-            return result[0];
-        }
-
         public double[] GetIntersections(Ray ray)
         {
             if (Transformation != null)
@@ -108,7 +94,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Geometry
             return result;
         }
 
-        public double[] GetIntersections(Tuple4 origin, Tuple4 dir)
+        private double[] GetIntersections(Tuple4 origin, Tuple4 dir)
         {
             if (!Constants.EpsilonCompare(1.0, dir.Length()))
             {
@@ -138,7 +124,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Geometry
             }
         }
 
-        public double[] GetIntersectionsFromBook(Tuple4 origin, Tuple4 dir)
+        private double[] GetIntersectionsFromBook(Tuple4 origin, Tuple4 dir)
         {
             if (!Constants.EpsilonCompare(1.0, dir.Length()))
             {

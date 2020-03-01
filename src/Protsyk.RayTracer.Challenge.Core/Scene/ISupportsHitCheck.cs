@@ -10,5 +10,8 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene
         // If intersects, returns closest positive distance from a given origin
         // to the surface of the object in a given direction
         HitResult Hit(Tuple4 origin, Tuple4 dir);
+
+        // Returns all intersections with the object
+        HitResult[] AllHits(Tuple4 origin, Tuple4 dir);
     }
 }

@@ -28,6 +28,16 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
             return material;
         }
 
+        public IMatrix GetTransformation()
+        {
+            return sphere.Transformation;
+        }
+
+        public Tuple4 GetNormal(Tuple4 pointOnSurface)
+        {
+            return sphere.GetNormal(pointOnSurface);
+        }
+
         public Tuple4 ColorAt(HitResult hit)
         {
             if (!hit.IsHit)
@@ -39,7 +49,13 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
 
         public HitResult Hit(Tuple4 origin, Tuple4 dir)
         {
-            var distance = sphere.Intersects(origin, dir);
+            var intersections = sphere.GetIntersections(new Ray(origin, dir));
+            if (intersections == null)
+            {
+                return HitResult.NoHit;
+            }
+
+            var distance = (intersections[0] < 0) ? intersections[1] : intersections[0];
             if (distance < 0)
             {
                 return HitResult.NoHit;
@@ -49,6 +65,29 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
             var surfaceNormal = sphere.GetNormal(pointOnSurface);
 
             return new HitResult(true, this, distance, pointOnSurface, surfaceNormal);
+        }
+
+        public HitResult[] AllHits(Tuple4 origin, Tuple4 dir)
+        {
+            var intersections = sphere.GetIntersections(new Ray(origin, dir));
+            if (intersections == null)
+            {
+                return new HitResult[] { HitResult.NoHit };
+            }
+
+            var distance1 = intersections[0];
+            var pointOnSurface1 = Tuple4.Add(origin, Tuple4.Scale(dir, distance1)); // orig + dir*dist
+            var surfaceNormal1 = sphere.GetNormal(pointOnSurface1);
+
+            var distance2 = intersections[1];
+            var pointOnSurface2 = Tuple4.Add(origin, Tuple4.Scale(dir, distance2)); // orig + dir*dist
+            var surfaceNormal2 = sphere.GetNormal(pointOnSurface2);
+
+            return new HitResult[]
+            {
+                new HitResult(true, this, distance1, pointOnSurface1, surfaceNormal1),
+                new HitResult(true, this, distance2, pointOnSurface2, surfaceNormal2)
+            };
         }
     }
 

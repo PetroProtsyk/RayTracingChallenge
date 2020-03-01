@@ -43,8 +43,8 @@ Scenario: Intersect sets the object on the intersection
     And s ← sphere()
   When xs ← intersect(s, r)
   Then xs.count = 2
-#    And xs[0].object = s
-#    And xs[1].object = s
+    And xs[0].object = s
+    And xs[1].object = s
 
 Scenario: A sphere's default transformation
   Given s ← sphere()
@@ -115,10 +115,10 @@ Scenario: Computing the normal on a transformed sphere
   When n ← normal_at(s, point(0, 0.70711, -0.70711))
   Then n = vector(0, 0.97014, -0.24254)
 
-# Scenario: A sphere has a default material
-#   Given s ← sphere()
-#   When m ← s.material
-#   Then m = material()
+Scenario: A sphere has a default material
+   Given s ← sphere()
+   When m ← s.material
+   Then m = material()
 
 # Scenario: A sphere may be assigned a material
 #   Given s ← sphere()
