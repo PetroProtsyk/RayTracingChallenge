@@ -27,6 +27,26 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene
             PointOnSurface = pointOnSurface;
             SurfaceNormal = surfaceNormal;
         }
+
+        public static HitResult ClosestPositiveHit(HitResult[] hits)
+        {
+            var result = HitResult.NoHit;
+            foreach(var hit in hits)
+            {
+                if (hit.Distance > 0.0)
+                {
+                    if (result.Equals(HitResult.NoHit))
+                    {
+                        result = hit;
+                    }
+                    else if (result.Distance > hit.Distance)
+                    {
+                        result = hit;
+                    }
+                }
+            }
+            return result;
+        }
     }
 
 }

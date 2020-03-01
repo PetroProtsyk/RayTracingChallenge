@@ -114,14 +114,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Geometry
             // Ray originates inside sphere
             // When t > 0 that is intersection in the direction of the ray
             // other intersection is in the opposite direction
-            if (t0 < t1)
-            {
-                return new double[] {t0, t1};
-            }
-            else
-            {
-                return new double[] {t1, t0};
-            }
+            return new double[] {t0, t1};
         }
 
         private double[] GetIntersectionsFromBook(Tuple4 origin, Tuple4 dir)
@@ -146,14 +139,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Geometry
             // Ray originates inside sphere
             // When t > 0 that is intersection in the direction of the ray
             // other intersection is in the opposite direction
-            if (t0 < t1)
-            {
-                return new double[] {t0, t1};
-            }
-            else
-            {
-                return new double[] {t1, t0};
-            }
+            return new double[] {t0, t1};
         }
     }
 }
