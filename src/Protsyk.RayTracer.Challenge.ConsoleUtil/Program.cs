@@ -273,8 +273,7 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
                                  S(0  ,-5001  , 0, 5000  , materials[3])
                             ).WithLights(
                                A(20),
-                               L(2, 1, 0, 60),
-                               D(1, 4, 4, 20)
+                               L(2, 1, 0, 60)
                             );
             return (camera, scene);
         }
@@ -282,7 +281,7 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
         static void Main(string[] args)
         {
             // Camera, Scene
-            var (camera, scene) = SceneSpheresTransformed(true);
+            var (camera, scene) = SceneSpheresTransformed(false);
 
             var timer = Stopwatch.StartNew();
             var canvas = Render(camera, scene);
