@@ -189,8 +189,12 @@ namespace Protsyk.RayTracer.Challenge.Core.Geometry
             return new Matrix(rank);
         }
 
-        public static Matrix Identity(int rank)
+        public static IMatrix Identity(int rank)
         {
+            if (rank == 4)
+            {
+                return Matrix4x4.Identity;
+            }
             var result = new double[rank, rank];
             for (int i = 0; i < rank; ++i)
             {
@@ -266,7 +270,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Geometry
             return new Matrix(result, false);
         }
 
-        public static Matrix Power(IMatrix m, uint pow)
+        public static IMatrix Power(IMatrix m, uint pow)
         {
             if (m.Rows != m.Columns)
             {

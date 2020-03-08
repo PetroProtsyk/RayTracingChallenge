@@ -11,6 +11,6 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene
         double ScreenHeight {get;}
         Tuple4 Origin {get;}
 
-        Tuple4 GetDirection(double screenX, double screenY);
+        Ray GetRay(double screenX, double screenY);
     }
 }

@@ -24,7 +24,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Cameras
             tangx = Math.Tan(fieldOfView/2.0)*(ScreenWidth/ScreenHeight);
         }
 
-        public Tuple4 GetDirection(double screenX, double screenY)
+        public Ray GetRay(double screenX, double screenY)
         {
             // When j changes from  [0, height - 1],
             // y should change from [-tan(fov/2), tan(fov/2)]
@@ -34,7 +34,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Cameras
             var x = -tangx + 2*screenX*(tangx/(ScreenWidth-1));
 
             var direction = Tuple4.Normalize(new Tuple4(x, y, 1.0, TupleFlavour.Vector));
-            return direction;
+            return new Ray(Origin, direction);
         }
     }
 }

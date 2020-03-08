@@ -3,14 +3,16 @@ using Protsyk.RayTracer.Challenge.Core.Geometry;
 
 namespace Protsyk.RayTracer.Challenge.Core.Scene.Cameras
 {
-    //                    ^
-    //       | ---->      |
-    //       | ---->      |
-    // -- originZ ------- 0 ------------>
-    //       | ---->      |             z
-    //       | ---->      |
-    //
-    public class ParCamera : ICamera
+    //           /|
+    //          / |
+    //         /  |
+    // -- origin  ----------->
+    //         \  |          z
+    //          \ |
+    //           \|
+    //            ^
+    //         view port (origin.z + 1)
+    public class SimpleCamera : ICamera
     {
         public double ScreenWidth {get; private set;}
         public double ScreenHeight {get; private set;}
@@ -20,11 +22,9 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Cameras
         private readonly double conversionY;
         private readonly double conversionX;
 
-        private static readonly Tuple4 oz = new Tuple4(0.0, 0.0, 1.0, TupleFlavour.Vector);
-
-        public ParCamera(double originZ, double viewPortSize, double screenWidth, double screenHeight)
+        public SimpleCamera(Tuple4 origin, double viewPortSize, double screenWidth, double screenHeight)
         {
-            this.Origin = new Tuple4(0.0, 0.0, originZ, TupleFlavour.Point);
+            this.Origin = origin;
             this.ViewPortSize = viewPortSize;
             this.ScreenWidth = screenWidth;
             this.ScreenHeight = screenHeight;
@@ -35,11 +35,13 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Cameras
 
         public Ray GetRay(double screenX, double screenY)
         {
-            var x = (screenX - ScreenWidth/2)*conversionX;
-            var y = (ScreenHeight/2 - screenY)*conversionY;
-
-            var rayOrigin = new Tuple4(x, y, Origin.Z, TupleFlavour.Point);
-            return new Ray(rayOrigin, oz);
+            var direction = Tuple4.Normalize(
+                new Tuple4((screenX - ScreenWidth/2)*conversionX,
+                            (ScreenHeight/2 - screenY)*conversionY,
+                            1.0,
+                            TupleFlavour.Vector)
+            );
+            return new Ray(Origin, direction);
         }
     }
 }

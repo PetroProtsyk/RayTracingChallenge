@@ -6,6 +6,16 @@ namespace Protsyk.RayTracer.Challenge.Core.Geometry
 {
     public class Matrix4x4 : IMatrix
     {
+        #region Constants
+        public static readonly Matrix4x4 Identity = new Matrix4x4(new double[]
+        {
+            1.0, 0.0, 0.0, 0.0,
+            0.0, 1.0, 0.0, 0.0,
+            0.0, 0.0, 1.0, 0.0,
+            0.0, 0.0, 0.0, 1.0
+        });
+        #endregion
+
         #region Fields
         private readonly double a11;
         private readonly double a12;

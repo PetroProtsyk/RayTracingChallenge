@@ -171,7 +171,7 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
             }
             else
             {
-                camera = new ParCamera(origin, 1.0, 600, 600);
+                camera = new SimpleCamera(origin, 1.0, 600, 600);
             }
 
             // Scene
@@ -220,25 +220,6 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
             return (camera, scene);
         }
 
-        static ICanvas Render(ICamera camera, BaseScene scene)
-        {
-            var canvas = new MemoryCanvas((int)camera.ScreenWidth, (int)camera.ScreenHeight);
-            var x = 0; var y =0;
-            for (double j = 0; j < camera.ScreenHeight; ++j)
-            {
-                x = 0;
-                for (double i = 0; i < camera.ScreenWidth; ++i)
-                {
-                    var direction = camera.GetDirection(i, j);
-                    var color = scene.CastRay(camera.Origin, direction);
-                    canvas.SetPixel(x, y, ColorConverters.Tuple255.From(color));
-                    ++x;
-                }
-                ++y;
-            }
-            return canvas;
-        }
-
         static (ICamera camera, BaseScene scene) SceneSpheresTransformed(bool useFov)
         {
             // Camera
@@ -251,7 +232,7 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
             }
             else
             {
-                camera = new ParCamera(origin, 1.0, 600, 600);
+                camera = new SimpleCamera(origin, 1.0, 600, 600);
             }
 
             // Scene
@@ -278,10 +259,63 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
             return (camera, scene);
         }
 
+        static (ICamera camera, BaseScene scene) SceneChapter5(bool isSimple)
+        {
+            // Camera
+            ICamera camera;
+            if (isSimple)
+            {
+                var origin = P(0, 0, -Math.Sqrt(2.0));
+                camera = new SimpleCamera(origin, 2.0, 600, 600);
+            }
+            else
+            {
+                camera = new ParCamera(-5.0, 2.0, 600, 600);
+            }
+
+            // Scene
+            var materials = new IMaterial[]{
+                new SolidColorMaterial(P(255, 0, 0), 1000),
+            };
+
+            var transformation = 
+                    MatrixOperations.Multiply(MatrixOperations.Geometry3D.Shearing(0.3, 0, 0, 0, 0, 0),
+                                              MatrixOperations.Geometry3D.Scale(0.5, 1, 1));
+                    //MatrixOperations.Identity(4);
+
+            var scene = new BaseScene().WithFigures(
+                                 S(transformation, materials[0])
+                            ).WithLights(
+                               A(200)
+                            );
+
+            return (camera, scene);
+        }
+
+       static ICanvas Render(ICamera camera, BaseScene scene)
+        {
+            var canvas = new MemoryCanvas((int)camera.ScreenWidth, (int)camera.ScreenHeight);
+            var x = 0; var y =0;
+            for (double j = 0; j < camera.ScreenHeight; ++j)
+            {
+                x = 0;
+                for (double i = 0; i < camera.ScreenWidth; ++i)
+                {
+                    var ray = camera.GetRay(i, j);
+                    var color = scene.CastRay(ray.origin, ray.dir);
+                    canvas.SetPixel(x, y, ColorConverters.Tuple255.From(color));
+                    ++x;
+                }
+                ++y;
+            }
+            return canvas;
+        }
+
+
         static void Main(string[] args)
         {
             // Camera, Scene
-            var (camera, scene) = SceneSpheresTransformed(false);
+            var (camera, scene) = SceneChapter5(true);
 
             var timer = Stopwatch.StartNew();
             var canvas = Render(camera, scene);
