@@ -9,6 +9,7 @@ using Protsyk.RayTracer.Challenge.Core.Scene.Figures;
 using Protsyk.RayTracer.Challenge.Core.Scene.Lights;
 using Protsyk.RayTracer.Challenge.Core.Scene.Materials;
 using Protsyk.RayTracer.Challenge.Core.Geometry;
+using Protsyk.RayTracer.Challenge.Core.Geometry.SignedDistanceFields;
 using static Protsyk.RayTracer.Challenge.Core.Geometry.Vectors;
 using static Protsyk.RayTracer.Challenge.ConsoleUtil.Figures;
 
@@ -292,7 +293,72 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
             return (camera, scene);
         }
 
-       static ICanvas Render(ICamera camera, BaseScene scene)
+        static (ICamera camera, BaseScene scene) SceneSDE(bool isSimple)
+        {
+            // Camera
+            ICamera camera;
+            if (isSimple)
+            {
+                var origin = P(0, 0, -Math.Sqrt(2.0));
+                camera = new SimpleCamera(origin, 2.0, 600, 600);
+            }
+            else
+            {
+                camera = new ParCamera(-5.0, 2.0, 600, 600);
+            }
+
+            // Scene
+            var materials = new IMaterial[]{
+                new SolidColorMaterial(P(255, 0, 0), 100),
+            };
+
+            var transformationBox = 
+                     MatrixOperations.Multiply(
+                         MatrixOperations.Geometry3D.Scale(0.7, 0.7, 0.7),
+                         MatrixOperations.Multiply(
+                             MatrixOperations.Geometry3D.RotateX(Math.PI / 6),
+                             MatrixOperations.Multiply(
+                                                    MatrixOperations.Geometry3D.RotateY(Math.PI / 6),
+                                                    MatrixOperations.Geometry3D.RotateZ(Math.PI / 2)))
+                      );
+
+            var transformationSphere = MatrixOperations.Geometry3D.Scale(0.75, 0.75, 0.75);
+
+            var transformationSphereA = MatrixOperations.Multiply(
+                            MatrixOperations.Geometry3D.Scale(0.5, 0.5, 0.5),
+                            MatrixOperations.Geometry3D.Translation(-0.5, 0.0, 0.0));
+            var transformationSphereB = MatrixOperations.Multiply(
+                            MatrixOperations.Geometry3D.Scale(0.5, 0.5, 0.5),
+                            MatrixOperations.Geometry3D.Translation(0.5, 0.0, 0.0));
+
+            var scene = new BaseScene().WithFigures(
+                                // S(transformationSphere, materials[0])
+                                new SDFFigure(
+                                    new IntersectSDF(
+                                        new SphereSDF(transformationSphereA),
+                                        new SphereSDF(transformationSphereB)
+                                    ),
+                                    materials[0]
+                                )
+                                // new SDFFigure(new BoxSDF(transformationBox), materials[0]),
+                                // new SDFFigure(new SphereSDF(transformationSphere), materials[0]),
+                                // new SDFFigure(
+                                //     new IntersectSDF(
+                                //         new BoxSDF(transformationBox),
+                                //         new SphereSDF(transformationSphere)
+                                //     ),
+                                //     materials[0]
+                                // )
+
+                            ).WithLights(
+                               A(20),
+                               L(2, 1, -5, 60)
+                            );
+
+            return (camera, scene);
+        }
+
+        static ICanvas Render(ICamera camera, BaseScene scene)
         {
             var canvas = new MemoryCanvas((int)camera.ScreenWidth, (int)camera.ScreenHeight);
             var x = 0; var y =0;
@@ -311,11 +377,10 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
             return canvas;
         }
 
-
         static void Main(string[] args)
         {
             // Camera, Scene
-            var (camera, scene) = SceneChapter5(true);
+            var (camera, scene) = SceneSDE(true);
 
             var timer = Stopwatch.StartNew();
             var canvas = Render(camera, scene);

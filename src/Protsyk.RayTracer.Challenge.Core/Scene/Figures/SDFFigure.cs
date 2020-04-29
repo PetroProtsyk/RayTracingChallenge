@@ -5,21 +5,15 @@ using Protsyk.RayTracer.Challenge.Core.Geometry;
 namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
 {
 
-    public class SphereFigure : IFigure
+    public class SDFFigure : IFigure
     {
-        private readonly Geometry.Sphere sphere;
+        private readonly Geometry.SignedDistanceField sdf;
 
         private readonly IMaterial material;
 
-        public SphereFigure(Tuple4 center, double radius, IMaterial material)
+        public SDFFigure(SignedDistanceField sdf, IMaterial material)
         {
-            this.sphere = new Sphere(center, radius);
-            this.material = material;
-        }
-
-        public SphereFigure(IMatrix transformation, IMaterial material)
-        {
-            this.sphere = new Sphere(transformation);
+            this.sdf = sdf;
             this.material = material;
         }
 
@@ -30,12 +24,12 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
 
         public IMatrix GetTransformation()
         {
-            return sphere.Transformation;
+            return sdf.Transformation;
         }
 
         public Tuple4 GetNormal(Tuple4 pointOnSurface)
         {
-            return sphere.GetNormal(pointOnSurface);
+            return sdf.GetNormal(pointOnSurface);
         }
 
         public Tuple4 ColorAt(HitResult hit)
@@ -54,7 +48,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
 
         public HitResult[] AllHits(Tuple4 origin, Tuple4 dir)
         {
-            var intersections = sphere.GetIntersections(new Ray(origin, dir));
+            var intersections = sdf.GetIntersections(new Ray(origin, dir));
             if (intersections == null)
             {
                 return new HitResult[] { HitResult.NoHit };
@@ -65,7 +59,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
             {
                 var distance = intersections[i];
                 var pointOnSurface = Tuple4.Geometry3D.MovePoint(origin, dir, distance); // orig + dir*dist
-                var surfaceNormal = sphere.GetNormal(pointOnSurface);
+                var surfaceNormal = sdf.GetNormal(pointOnSurface);
 
                 result[i] = new HitResult(true, this, distance, pointOnSurface, surfaceNormal);
             }

@@ -134,6 +134,9 @@ namespace Protsyk.RayTracer.Challenge.Core.Geometry
         }
 
         public double Length() {
+            if (!IsVector()) {
+                throw new NotSupportedException();
+            }
             return Math.Sqrt(X*X + Y*Y + Z*Z + W*W);
         }
 
@@ -144,6 +147,25 @@ namespace Protsyk.RayTracer.Challenge.Core.Geometry
         public bool IsPoint() {
             return !IsVector();
         }
+
+        public static class Geometry3D
+        {
+            public static Tuple4 MovePoint(Tuple4 origin, Tuple4 dir, double t)
+            {
+                if (!dir.IsVector())
+                {
+                    throw new ArgumentException("Not a vector");
+                }
+                return new Tuple4(
+                        origin.X + t * dir.X,
+                        origin.Y + t * dir.Y,
+                        origin.Z + t * dir.Z,
+                        TupleFlavour.Point
+                );
+            }
+
+        }
+
     }
 
     public enum TupleFlavour

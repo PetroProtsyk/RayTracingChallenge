@@ -90,9 +90,10 @@ namespace Protsyk.RayTracer.Challenge.Core.Geometry
             {
                 if (result != null)
                 {
+                    var len = ray.dir.Length();
                     for (int i=0; i<result.Length; ++i)
                     {
-                        result[i] /= ray.dir.Length();
+                        result[i] /= len;
                     }
                 }
             }
