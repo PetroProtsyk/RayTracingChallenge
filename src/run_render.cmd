@@ -1,1 +1,1 @@
-dotnet run --project Protsyk.RayTracer.Challenge.ConsoleUtil
+dotnet run --configuration=Release --build --project Protsyk.RayTracer.Challenge.ConsoleUtil
