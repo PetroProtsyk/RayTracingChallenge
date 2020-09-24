@@ -9,6 +9,6 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene
 
         double GetLightDistance(Tuple4 from);
 
-        double GetIntensity(Tuple4 dir, int shine, Tuple4 pointOnSurface, Tuple4 surfaceNormal);
+        double GetIntensity(Tuple4 dir, double shine, Tuple4 pointOnSurface, Tuple4 surfaceNormal);
     }
 }

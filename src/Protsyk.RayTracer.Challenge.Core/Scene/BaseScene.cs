@@ -45,7 +45,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene
             if (hit.IsHit)
             {
                 var c = hit.Figure.ColorAt(hit);
-                var shine = hit.Figure.GetMaterial().GetShine();
+                var shine = hit.Figure.GetMaterial().Shininess;
                 var intens = 0.0; // Light intensity
                 foreach (var light in lights)
                 {

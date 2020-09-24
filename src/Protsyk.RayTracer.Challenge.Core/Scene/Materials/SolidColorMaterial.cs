@@ -7,24 +7,15 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Materials
 {
     public class SolidColorMaterial : IMaterial
     {
-        private readonly Tuple4 color;
+        public Tuple4 Color { get; private set; }
 
-        private readonly int shine;
+        public double Shininess { get; private set; }
 
-        public SolidColorMaterial(Tuple4 color, int shine)
+        public SolidColorMaterial(Tuple4 color, double shininess)
         {
-            this.color = color;
-            this.shine = shine;
+            this.Color = color;
+            this.Shininess = shininess;
         }
 
-        public Tuple4 GetColor()
-        {
-            return color;
-        }
-
-        public int GetShine()
-        {
-            return shine;
-        }
     }
 }

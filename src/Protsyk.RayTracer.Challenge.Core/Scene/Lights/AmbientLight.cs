@@ -24,7 +24,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Lights
             return 0.0;
         }
 
-        public double GetIntensity(Tuple4 dir, int shine, Tuple4 pointOnSurface, Tuple4 surfaceNormal)
+        public double GetIntensity(Tuple4 dir, double shine, Tuple4 pointOnSurface, Tuple4 surfaceNormal)
         {
             return intensity;
         }

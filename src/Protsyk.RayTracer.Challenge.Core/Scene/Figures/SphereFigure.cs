@@ -44,7 +44,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
             {
                 throw new InvalidOperationException();
             }
-            return material.GetColor();
+            return material.Color;
         }
 
         public HitResult Hit(Tuple4 origin, Tuple4 dir)
