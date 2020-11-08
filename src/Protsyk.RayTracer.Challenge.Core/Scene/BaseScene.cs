@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Protsyk.RayTracer.Challenge.Core.Geometry;
 using System.Text;
+using Protsyk.RayTracer.Challenge.Core.Scene.Lights;
 
 namespace Protsyk.RayTracer.Challenge.Core.Scene
 {
@@ -10,6 +11,8 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene
         private readonly List<IFigure> figures = new List<IFigure>();
 
         private readonly List<ILight> lights = new List<ILight>();
+
+        private ColorModel colors = ColorModel.WhiteRGB;
 
         public BaseScene WithFigures(params IFigure[] figures)
         {
@@ -20,6 +23,12 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene
         public BaseScene WithLights(params ILight[] lights)
         {
             this.lights.AddRange(lights);
+            return this;
+        }
+
+        public BaseScene WithColorModel(ColorModel colors)
+        {
+            this.colors = colors;
             return this;
         }
 
@@ -44,9 +53,8 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene
         {
             if (hit.IsHit)
             {
-                var c = hit.Figure.ColorAt(hit);
-                var shine = hit.Figure.GetMaterial().Shininess;
-                var intens = 0.0; // Light intensity
+                var material = hit.Figure.GetMaterial();
+                var color = Tuple4.ZeroVector;
                 foreach (var light in lights)
                 {
                     // Shadow
@@ -62,16 +70,16 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene
                             }
                         }
                     }
-                    intens += light.GetIntensity(dir, shine, hit.PointOnSurface, hit.SurfaceNormal);
+                    color = Tuple4.Add(color, light.GetShadedColor(material, dir, hit.PointOnSurface, hit.SurfaceNormal));
                 }
-                var a = Tuple4.Scale(c, intens);
-                return new Tuple4(Math.Min(255.0, a.X),
-                                  Math.Min(255.0, a.Y),
-                                  Math.Min(255.0, a.Z),
+
+                return new Tuple4(Math.Min(colors.White.X, color.X),
+                                  Math.Min(colors.White.X, color.Y),
+                                  Math.Min(colors.White.X, color.Z),
                                   TupleFlavour.Point);
             }
 
-            return new Tuple4(0.0, 0.0, 0.0, TupleFlavour.Point);
+            return colors.Black;
         }
 
         private HitResult CalculateIntersection(Tuple4 origin, Tuple4 dir)

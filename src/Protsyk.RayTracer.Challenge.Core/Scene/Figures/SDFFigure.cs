@@ -32,15 +32,6 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
             return sdf.GetNormal(pointOnSurface);
         }
 
-        public Tuple4 ColorAt(HitResult hit)
-        {
-            if (!hit.IsHit)
-            {
-                throw new InvalidOperationException();
-            }
-            return material.Color;
-        }
-
         public HitResult Hit(Tuple4 origin, Tuple4 dir)
         {
             return HitResult.ClosestPositiveHit(AllHits(origin, dir));

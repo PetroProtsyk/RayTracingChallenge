@@ -34,7 +34,7 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
 
         public static ILight L(double x, double y, double z, double intensity)
         {
-            return new SpotLight(P(x, y, z), intensity);
+            return new SpotLight(ColorModel.WhiteRGB, P(x, y, z), intensity);
         }
 
         public static ILight A(double intensity)
@@ -44,7 +44,7 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
 
         public static ILight D(double dx, double dy, double dz, double intensity)
         {
-            return new DirectionLight(V(dx, dy, dz), intensity);
+            return new DirectionLight(ColorModel.WhiteRGB, V(dx, dy, dz), intensity);
         }
     }
 
@@ -59,10 +59,10 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
 
             // Scene
             var materials = new IMaterial[]{
-                new SolidColorMaterial(P(250, 75, 75), 100),
-                new SolidColorMaterial(P(75, 250, 75), 100),
-                new SolidColorMaterial(P(75, 75, 250), 100),
-                new SolidColorMaterial(P(250, 250, 75), 1000)
+                SolidColorMaterial.fromColorAndShininess(P(250, 75, 75), 100),
+                SolidColorMaterial.fromColorAndShininess(P(75, 250, 75), 100),
+                SolidColorMaterial.fromColorAndShininess(P(75, 75, 250), 100),
+                SolidColorMaterial.fromColorAndShininess(P(250, 250, 75), 1000)
             };
             var scene = new BaseScene().WithFigures(
                                S(10  ,5  , 16, 5  , materials[3]),
@@ -70,7 +70,7 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
                                S(15 , 5  , 16, 3  , materials[2]),
                                S(10 ,10  , 16, 3  , materials[0])
                             ).WithLights(
-                               L(10, 3, 0, 75)
+                               L(10, 3, 0, 0.75)
                             );
 
            return (camera, scene);
@@ -85,10 +85,10 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
 
             // Scene
             var materials = new IMaterial[]{
-                new SolidColorMaterial(P(250, 75, 75), 100),
-                new SolidColorMaterial(P(75, 250, 75), 100),
-                new SolidColorMaterial(P(75, 75, 250), 100),
-                new SolidColorMaterial(P(250, 250, 75), 1000)
+                SolidColorMaterial.fromColorAndShininess(P(250, 75, 75), 100),
+                SolidColorMaterial.fromColorAndShininess(P(75, 250, 75), 100),
+                SolidColorMaterial.fromColorAndShininess(P(75, 75, 250), 100),
+                SolidColorMaterial.fromColorAndShininess(P(250, 250, 75), 1000)
             };
 
             var scene = new BaseScene().WithFigures(
@@ -152,8 +152,8 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
                                S(20 , 4  , 16, 0.5 ,  materials[2])
 
                             ).WithLights(
-                               L(20, 20, 10, 50),
-                               L(0, 0, 10, 75)
+                               L(20, 20, 10, 0.50),
+                               L(0, 0, 10, 0.75)
                             );
 
            return (camera, scene);
@@ -177,10 +177,10 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
 
             // Scene
             var materials = new IMaterial[]{
-                new SolidColorMaterial(P(255, 0, 0), 500),
-                new SolidColorMaterial(P(0, 0, 255), 500),
-                new SolidColorMaterial(P(0, 255, 0), 10),
-                new SolidColorMaterial(P(255, 255, 0), 1000)
+                SolidColorMaterial.fromColorShininessReflective(P(255, 0, 0), 500, 0.2),
+                SolidColorMaterial.fromColorShininessReflective(P(0, 0, 255), 500, 0.3),
+                SolidColorMaterial.fromColorShininessReflective(P(0, 255, 0), 10, 0.4),
+                SolidColorMaterial.fromColorShininessReflective(P(255, 255, 0), 1000, 0.5)
             };
 
             var scene = new BaseScene().WithFigures(
@@ -190,9 +190,9 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
 
                                S(0  ,-5001  , 0, 5000  , materials[3])
                             ).WithLights(
-                               A(20),
-                               L(2, 1, 0, 60),
-                               D(1, 4, 4, 20)
+                               A(0.2),
+                               L(2, 1, 0, 0.6),
+                               D(1, 4, 4, 0.2)
                             );
             return (camera, scene);
         }
@@ -205,9 +205,9 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
 
             // Scene
             var materials = new IMaterial[]{
-                new SolidColorMaterial(P(155, 200, 155), 500),
-                new SolidColorMaterial(P(155, 155, 155), MaterialConstants.NoShine),
-                new SolidColorMaterial(P(255, 255, 0), MaterialConstants.NoShine)
+                SolidColorMaterial.fromColorAndShininess(P(155, 200, 155), 500),
+                SolidColorMaterial.fromColorAndShininess(P(155, 155, 155), MaterialConstants.NoShine),
+                SolidColorMaterial.fromColorAndShininess(P(255, 255, 0), MaterialConstants.NoShine)
             };
 
             var scene = new BaseScene().WithFigures(
@@ -215,8 +215,8 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
                                S(-3  , 3  ,  1, 1  , materials[1]),
                                S(-4 ,  -1  , 1, 0.5  , materials[2])
                             ).WithLights(
-                               A(30),
-                               L(0, 0, -25, 70)
+                               A(0.30),
+                               L(0, 0, -25, 0.70)
                             );
             return (camera, scene);
         }
@@ -238,10 +238,10 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
 
             // Scene
             var materials = new IMaterial[]{
-                new SolidColorMaterial(P(255, 0, 0), 500),
-                new SolidColorMaterial(P(0, 0, 255), 500),
-                new SolidColorMaterial(P(0, 255, 0), 10),
-                new SolidColorMaterial(P(255, 255, 0), 1000)
+                SolidColorMaterial.fromColorAndShininess(P(255, 0, 0), 500),
+                SolidColorMaterial.fromColorAndShininess(P(0, 0, 255), 500),
+                SolidColorMaterial.fromColorAndShininess(P(0, 255, 0), 10),
+                SolidColorMaterial.fromColorAndShininess(P(255, 255, 0), 1000)
             };
 
             var scene = new BaseScene().WithFigures(
@@ -254,8 +254,8 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
 
                                  S(0  ,-5001  , 0, 5000  , materials[3])
                             ).WithLights(
-                               A(20),
-                               L(2, 1, 0, 60)
+                               A(0.20),
+                               L(2, 1, 0, 0.60)
                             );
             return (camera, scene);
         }
@@ -276,7 +276,7 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
 
             // Scene
             var materials = new IMaterial[]{
-                new SolidColorMaterial(P(255, 0, 0), 1000),
+                SolidColorMaterial.fromColorAndShininess(P(255, 0, 0), 1000),
             };
 
             var transformation = 
@@ -287,7 +287,7 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
             var scene = new BaseScene().WithFigures(
                                  S(transformation, materials[0])
                             ).WithLights(
-                               A(200)
+                               A(1)
                             );
 
             return (camera, scene);
@@ -309,7 +309,7 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
 
             // Scene
             var materials = new IMaterial[]{
-                new SolidColorMaterial(P(255, 0, 0), 100),
+                SolidColorMaterial.fromColorAndShininess(P(255, 0, 0), 100),
             };
 
             var transformationBox = 
@@ -351,8 +351,8 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
                                 // )
 
                             ).WithLights(
-                               A(20),
-                               L(2, 1, -5, 60)
+                               A(0.2),
+                               L(2, 1, -5, 0.6)
                             );
 
             return (camera, scene);
@@ -380,7 +380,7 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
         static void Main(string[] args)
         {
             // Camera, Scene
-            var (camera, scene) = SceneSDE(true);
+            var (camera, scene) = SceneSpheres(true);
 
             var timer = Stopwatch.StartNew();
             var canvas = Render(camera, scene);

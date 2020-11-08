@@ -9,8 +9,6 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene
     {
         Tuple4 GetNormal(Tuple4 pointOnSurface);
 
-        Tuple4 ColorAt(HitResult hit);
-
         IMaterial GetMaterial();
 
         IMatrix GetTransformation();

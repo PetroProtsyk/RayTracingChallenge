@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Protsyk.RayTracer.Challenge.Core.Geometry;
 using System.Text;
+using Protsyk.RayTracer.Challenge.Core.Scene.Materials;
 
 namespace Protsyk.RayTracer.Challenge.Core.Scene.Lights
 {
@@ -11,7 +12,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Lights
 
         public AmbientLight(double intensity)
         {
-            this.intensity = intensity / 100.0;
+            this.intensity = intensity;
         }
 
         public Tuple4 GetLightDirection(Tuple4 from)
@@ -24,11 +25,10 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Lights
             return 0.0;
         }
 
-        public double GetIntensity(Tuple4 dir, double shine, Tuple4 pointOnSurface, Tuple4 surfaceNormal)
+        public Tuple4 GetShadedColor(IMaterial material, Tuple4 dir, Tuple4 pointOnSurface, Tuple4 surfaceNormal)
         {
-            return intensity;
+            return Tuple4.Scale(material.Color, material.Ambient * intensity);
         }
-
     }
 
 }

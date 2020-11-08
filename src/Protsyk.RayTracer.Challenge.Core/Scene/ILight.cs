@@ -1,5 +1,5 @@
-﻿using System;
-using Protsyk.RayTracer.Challenge.Core.Geometry;
+﻿using Protsyk.RayTracer.Challenge.Core.Geometry;
+using Protsyk.RayTracer.Challenge.Core.Scene.Materials;
 
 namespace Protsyk.RayTracer.Challenge.Core.Scene
 {
@@ -9,6 +9,6 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene
 
         double GetLightDistance(Tuple4 from);
 
-        double GetIntensity(Tuple4 dir, double shine, Tuple4 pointOnSurface, Tuple4 surfaceNormal);
+        Tuple4 GetShadedColor(IMaterial material, Tuple4 dir, Tuple4 pointOnSurface, Tuple4 surfaceNormal);
     }
 }

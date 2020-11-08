@@ -1,5 +1,6 @@
 ﻿using System;
 using Protsyk.RayTracer.Challenge.Core.Geometry;
+using Protsyk.RayTracer.Challenge.Core.Scene.Materials;
 
 namespace Protsyk.RayTracer.Challenge.Core.Scene.Lights
 {
@@ -9,10 +10,13 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Lights
 
         private readonly double intensity;
 
-        public SpotLight(Tuple4 location, double intensity)
+        private readonly ColorModel colors;
+
+        public SpotLight(ColorModel colors, Tuple4 location, double intensity)
         {
             this.location = location;
-            this.intensity = intensity / 100.0;
+            this.intensity = intensity;
+            this.colors = colors;
         }
 
         public Tuple4 GetLightDirection(Tuple4 from)
@@ -25,28 +29,10 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Lights
             return Tuple4.Subtract(location, from).Length();
         }
 
-        public double GetIntensity(Tuple4 dir, double shine, Tuple4 pointOnSurface, Tuple4 surfaceNormal)
+        public Tuple4 GetShadedColor(IMaterial material, Tuple4 dir, Tuple4 pointOnSurface, Tuple4 surfaceNormal)
         {
             var lightDirection = Tuple4.Normalize(Tuple4.Subtract(location, pointOnSurface));
-            var result = 0.0;
-
-            if (shine != MaterialConstants.NoShine) {
-                //var reflected = Tuple4.Subtract(Tuple4.Multiply(2*Tuple4.Dot(surfaceNormal, lightDirection), surfaceNormal), lightDirection);
-                var reflected = Tuple4.Reflect(Tuple4.Negate(lightDirection), surfaceNormal);
-                var r_dot_v = Tuple4.DotProduct(reflected, Tuple4.Negate(dir));
-                if (r_dot_v > 0)
-                {
-                    result += intensity * Math.Pow(r_dot_v/(reflected.Length()*dir.Length()), shine);
-                }
-            }
-
-            var cosine = Tuple4.DotProduct(lightDirection, surfaceNormal);
-            if (cosine >= 0)
-            {
-                result += cosine * intensity;
-            }
-
-            return result;
+            return DirectionLightCommon.GetShadedColor(material, colors.White, lightDirection, intensity, dir, pointOnSurface, surfaceNormal);
         }
 
     }
