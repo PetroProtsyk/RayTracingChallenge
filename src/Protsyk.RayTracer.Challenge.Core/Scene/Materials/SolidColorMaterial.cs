@@ -48,10 +48,10 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Materials
         }
 
         public static SolidColorMaterial fromColorAndShininess(Tuple4 color, double shininess) 
-            => new SolidColorMaterial(color, 1.0, 1.0, 1.0, shininess, 1.0, 1.0, 0.0);
+            => new SolidColorMaterial(color, 0.1, 0.9, 0.5, shininess, 1.0, 1.0, 0.0);
 
         public static SolidColorMaterial fromColorShininessReflective(Tuple4 color, double shininess, double reflective) 
-            => new SolidColorMaterial(color, 1.0, 1.0, 1.0, shininess, reflective, 1.0, 0.0);
+            => new SolidColorMaterial(color, 0.1, 0.9, 0.5, shininess, reflective, 1.0, 0.0);
 
         public bool IsShining()
         {
