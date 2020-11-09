@@ -47,6 +47,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Lights
             var shadedColor = Tuple4.Add(
                 Tuple4.Scale(color, lighting.intensity * (lighting.ambient + lighting.diffuse)),
                 Tuple4.Scale(white, lighting.specular)
+                // TODO (Original shading): Tuple4.Scale(color, lighting.intensity * lighting.specular)
             );
             return shadedColor;
         }

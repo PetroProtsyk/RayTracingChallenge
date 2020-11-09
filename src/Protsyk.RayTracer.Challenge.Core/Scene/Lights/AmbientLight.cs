@@ -27,6 +27,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Lights
 
         public Tuple4 GetShadedColor(IMaterial material, Tuple4 dir, Tuple4 pointOnSurface, Tuple4 surfaceNormal)
         {
+            // TODO (Original shading): Tuple4.Scale(material.Color, intensity)
             return Tuple4.Scale(material.Color, material.Ambient * intensity);
         }
     }
