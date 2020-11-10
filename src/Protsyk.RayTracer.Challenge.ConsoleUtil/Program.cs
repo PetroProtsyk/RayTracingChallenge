@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Text;
 using System.IO;
+using System.Collections.Generic;
 using Protsyk.RayTracer.Challenge.Core.Canvas;
 using Protsyk.RayTracer.Challenge.Core.Scene;
 using Protsyk.RayTracer.Challenge.Core.Scene.Cameras;
@@ -276,7 +277,7 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
 
             // Scene
             var materials = new IMaterial[]{
-                SolidColorMaterial.fromColorAndShininess(P(255, 0, 0), 1000),
+                new SolidColorMaterial(P(255, 0, 0), 1.0, 1.0, 1.0, 1000, 1.0, 1.0, 0.0)
             };
 
             var transformation = 
@@ -287,7 +288,7 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
             var scene = new BaseScene().WithFigures(
                                  S(transformation, materials[0])
                             ).WithLights(
-                               A(1)
+                               A(1.0)
                             );
 
             return (camera, scene);
@@ -379,15 +380,29 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
 
         static void Main(string[] args)
         {
+            var scenes = new Dictionary<string, Func<bool, (ICamera, BaseScene)>>(){
+                { "Web", _ => SceneWeb() },
+                { "Petro", _ => ScenePetro() },
+                { "Spheres", fov => SceneSpheres(fov) },
+                { "Planets", _ => ScenePlanets() },
+                { "SpheresTransformed", fov => SceneSpheresTransformed(fov) },
+                { "SDE", isSimple => SceneSDE(isSimple) },
+
+                { "Chapter5", isSimple => SceneChapter5(isSimple) }
+            };
+
+            var outputFileName = args.Length > 1 ? args[1] : "out.ppm";
+            var sceneName = args.Length > 0 ? args[0] : "Spheres";
+
             // Camera, Scene
-            var (camera, scene) = SceneSpheres(true);
+            var (camera, scene) = scenes[sceneName](true);
 
             var timer = Stopwatch.StartNew();
             var canvas = Render(camera, scene);
             Console.WriteLine($"Time to render: {timer.Elapsed}");
 
             timer.Restart();
-            using (var file = File.OpenWrite("out.ppm"))
+            using (var file = File.OpenWrite(outputFileName))
             {
                CanvasConverters.PPM_P6.Convert(canvas, file);
             }
