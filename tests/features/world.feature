@@ -5,6 +5,7 @@ Scenario: Creating a world
   Then w contains no objects
     And w has no light source
 
+@ignore
 Scenario: The default world
   Given light ← point_light(point(-10, 10, -10), color(1, 1, 1))
     And s1 ← sphere() with:
@@ -18,6 +19,7 @@ Scenario: The default world
     And w contains s1
     And w contains s2
 
+@ignore
 Scenario: Intersect a world with a ray
   Given w ← default_world()
     And r ← ray(point(0, 0, -5), vector(0, 0, 1))
@@ -28,6 +30,7 @@ Scenario: Intersect a world with a ray
     And xs[2].t = 5.5
     And xs[3].t = 6
 
+@ignore
 Scenario: Shading an intersection
   Given w ← default_world()
     And r ← ray(point(0, 0, -5), vector(0, 0, 1))
@@ -37,6 +40,7 @@ Scenario: Shading an intersection
     And c ← shade_hit(w, comps)
   Then c = color(0.38066, 0.47583, 0.2855)
 
+@ignore
 Scenario: Shading an intersection from the inside
   Given w ← default_world()
     And w.light ← point_light(point(0, 0.25, 0), color(1, 1, 1))
@@ -47,18 +51,21 @@ Scenario: Shading an intersection from the inside
     And c ← shade_hit(w, comps)
   Then c = color(0.90498, 0.90498, 0.90498)
 
+@ignore
 Scenario: The color when a ray misses
   Given w ← default_world()
     And r ← ray(point(0, 0, -5), vector(0, 1, 0))
   When c ← color_at(w, r)
   Then c = color(0, 0, 0)
 
+@ignore
 Scenario: The color when a ray hits
   Given w ← default_world()
     And r ← ray(point(0, 0, -5), vector(0, 0, 1))
   When c ← color_at(w, r)
   Then c = color(0.38066, 0.47583, 0.2855)
 
+@ignore
 Scenario: The color with an intersection behind the ray
   Given w ← default_world()
     And outer ← the first object in w
@@ -69,26 +76,31 @@ Scenario: The color with an intersection behind the ray
   When c ← color_at(w, r)
   Then c = inner.material.color
 
+@ignore
 Scenario: There is no shadow when nothing is collinear with point and light
   Given w ← default_world()
     And p ← point(0, 10, 0)
    Then is_shadowed(w, p) is false
 
+@ignore
 Scenario: The shadow when an object is between the point and the light
   Given w ← default_world()
     And p ← point(10, -10, 10)
    Then is_shadowed(w, p) is true
 
+@ignore
 Scenario: There is no shadow when an object is behind the light
   Given w ← default_world()
     And p ← point(-20, 20, -20)
    Then is_shadowed(w, p) is false
 
+@ignore
 Scenario: There is no shadow when an object is behind the point
   Given w ← default_world()
     And p ← point(-2, 2, -2)
    Then is_shadowed(w, p) is false
 
+@ignore
 Scenario: shade_hit() is given an intersection in shadow
   Given w ← world()
     And w.light ← point_light(point(0, 0, -10), color(1, 1, 1))
@@ -103,6 +115,7 @@ Scenario: shade_hit() is given an intersection in shadow
     And c ← shade_hit(w, comps)
   Then c = color(0.1, 0.1, 0.1)
 
+@ignore
 Scenario: The reflected color for a nonreflective material
   Given w ← default_world()
     And r ← ray(point(0, 0, 0), vector(0, 0, 1))
@@ -113,6 +126,7 @@ Scenario: The reflected color for a nonreflective material
     And color ← reflected_color(w, comps)
   Then color = color(0, 0, 0)
 
+@ignore
 Scenario: The reflected color for a reflective material
   Given w ← default_world()
     And shape ← plane() with:                 
@@ -125,6 +139,7 @@ Scenario: The reflected color for a reflective material
     And color ← reflected_color(w, comps)
   Then color = color(0.19032, 0.2379, 0.14274)
 
+@ignore
 Scenario: shade_hit() with a reflective material
   Given w ← default_world()
     And shape ← plane() with:
@@ -137,6 +152,7 @@ Scenario: shade_hit() with a reflective material
     And color ← shade_hit(w, comps)
   Then color = color(0.87677, 0.92436, 0.82918)
 
+@ignore
 Scenario: color_at() with mutually reflective surfaces
   Given w ← world()
     And w.light ← point_light(point(0, 0, 0), color(1, 1, 1))
@@ -151,6 +167,7 @@ Scenario: color_at() with mutually reflective surfaces
     And r ← ray(point(0, 0, 0), vector(0, 1, 0))
   Then color_at(w, r) should terminate successfully
 
+@ignore
 Scenario: The reflected color at the maximum recursive depth
   Given w ← default_world()
     And shape ← plane() with:
@@ -160,9 +177,10 @@ Scenario: The reflected color at the maximum recursive depth
     And r ← ray(point(0, 0, -3), vector(0, -√2/2, √2/2))
     And i ← intersection(√2, shape)
   When comps ← prepare_computations(i, r)
-    And color ← reflected_color(w, comps, 0)    
+    And color ← reflected_color(w, comps, 0)
   Then color = color(0, 0, 0)
 
+@ignore
 Scenario: The refracted color with an opaque surface
   Given w ← default_world()
     And shape ← the first object in w
@@ -172,6 +190,7 @@ Scenario: The refracted color with an opaque surface
     And c ← refracted_color(w, comps, 5)
   Then c = color(0, 0, 0)
 
+@ignore
 Scenario: The refracted color at the maximum recursive depth
   Given w ← default_world()
     And shape ← the first object in w
@@ -184,6 +203,7 @@ Scenario: The refracted color at the maximum recursive depth
     And c ← refracted_color(w, comps, 0)
   Then c = color(0, 0, 0)
 
+@ignore
 Scenario: The refracted color under total internal reflection
   Given w ← default_world()
     And shape ← the first object in w
@@ -198,6 +218,7 @@ Scenario: The refracted color under total internal reflection
     And c ← refracted_color(w, comps, 5)
   Then c = color(0, 0, 0)
 
+@ignore
 Scenario: The refracted color with a refracted ray
   Given w ← default_world()
     And A ← the first object in w
@@ -214,6 +235,7 @@ Scenario: The refracted color with a refracted ray
     And c ← refracted_color(w, comps, 5)
   Then c = color(0, 0.99888, 0.04725)
 
+@ignore
 Scenario: shade_hit() with a transparent material
   Given w ← default_world()
     And floor ← plane() with:
@@ -232,6 +254,7 @@ Scenario: shade_hit() with a transparent material
     And color ← shade_hit(w, comps, 5)
   Then color = color(0.93642, 0.68642, 0.68642)
 
+@ignore
 Scenario: shade_hit() with a reflective, transparent material
   Given w ← default_world()
     And r ← ray(point(0, 0, -3), vector(0, -√2/2, √2/2))

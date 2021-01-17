@@ -14,6 +14,10 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene
 
         private ColorModel colors = ColorModel.WhiteRGB;
 
+        public IEnumerable<IFigure> Figures => figures;
+
+        public IEnumerable<ILight> Lights => lights;
+
         public BaseScene WithFigures(params IFigure[] figures)
         {
             this.figures.AddRange(figures);
