@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Protsyk.RayTracer.Challenge.Core.Geometry;
 using Protsyk.RayTracer.Challenge.Core.Scene.Materials;
 
@@ -17,6 +18,19 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Lights
             this.location = location;
             this.intensity = intensity;
             this.colors = colors;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is SpotLight light &&
+                   location.Equals(light.location) &&
+                   intensity == light.intensity &&
+                   colors == light.colors;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(location.GetHashCode(), intensity, colors);
         }
 
         public Tuple4 GetLightDirection(Tuple4 from)

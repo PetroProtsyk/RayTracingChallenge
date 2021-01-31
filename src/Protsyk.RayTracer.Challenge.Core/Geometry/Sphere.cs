@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 // Geometric Primitives
 namespace Protsyk.RayTracer.Challenge.Core.Geometry
@@ -147,6 +148,23 @@ namespace Protsyk.RayTracer.Challenge.Core.Geometry
             // When t > 0 that is intersection in the direction of the ray
             // other intersection is in the opposite direction
             return new double[] {t0, t1};
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is Sphere sphere &&
+                   EqualityComparer<Tuple4>.Default.Equals(Center, sphere.Center) &&
+                   Radius == sphere.Radius &&
+                   EqualityComparer<IMatrix>.Default.Equals(Transformation, sphere.Transformation) &&
+                   radius2 == sphere.radius2 &&
+                   EqualityComparer<IMatrix>.Default.Equals(transformation, sphere.transformation) &&
+                   EqualityComparer<IMatrix>.Default.Equals(inverseTransformation, sphere.inverseTransformation) &&
+                   fromOrigin == sphere.fromOrigin;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Center, Radius, Transformation, radius2, transformation, inverseTransformation, fromOrigin);
         }
     }
 }

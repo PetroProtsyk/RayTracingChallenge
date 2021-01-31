@@ -57,5 +57,23 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Materials
         {
             return Shininess != MaterialConstants.NoShine;
         }
+
+        public override bool Equals(object obj)
+        {
+            return obj is SolidColorMaterial material &&
+                   EqualityComparer<Tuple4>.Default.Equals(Color, material.Color) &&
+                   Ambient == material.Ambient &&
+                   Diffuse == material.Diffuse &&
+                   Specular == material.Specular &&
+                   Shininess == material.Shininess &&
+                   Reflective == material.Reflective &&
+                   RefractiveIndex == material.RefractiveIndex &&
+                   Transparency == material.Transparency;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Color, Ambient, Diffuse, Specular, Shininess, Reflective, RefractiveIndex, Transparency);
+        }
     }
 }

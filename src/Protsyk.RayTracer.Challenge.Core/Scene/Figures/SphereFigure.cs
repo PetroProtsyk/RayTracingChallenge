@@ -1,5 +1,5 @@
 ﻿using System;
-
+using System.Collections.Generic;
 using Protsyk.RayTracer.Challenge.Core.Geometry;
 
 namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
@@ -62,6 +62,18 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
             }
 
             return result;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is SphereFigure figure &&
+                   EqualityComparer<Sphere>.Default.Equals(sphere, figure.sphere) &&
+                   EqualityComparer<IMaterial>.Default.Equals(material, figure.material);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(sphere, material);
         }
     }
 

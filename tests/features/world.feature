@@ -5,7 +5,6 @@ Scenario: Creating a world
   Then w contains no objects
     And w has no light source
 
-@ignore
 Scenario: The default world
   Given light ← point_light(point(-10, 10, -10), color(1, 1, 1))
     And s1 ← sphere() with:
