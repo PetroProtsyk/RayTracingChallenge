@@ -153,13 +153,12 @@ namespace Protsyk.RayTracer.Challenge.Core.Geometry
         public override bool Equals(object obj)
         {
             return obj is Sphere sphere &&
+                   fromOrigin == sphere.fromOrigin &&
+                   Constants.EpsilonCompare(Radius, sphere.Radius) &&
                    EqualityComparer<Tuple4>.Default.Equals(Center, sphere.Center) &&
-                   Radius == sphere.Radius &&
                    EqualityComparer<IMatrix>.Default.Equals(Transformation, sphere.Transformation) &&
-                   radius2 == sphere.radius2 &&
                    EqualityComparer<IMatrix>.Default.Equals(transformation, sphere.transformation) &&
-                   EqualityComparer<IMatrix>.Default.Equals(inverseTransformation, sphere.inverseTransformation) &&
-                   fromOrigin == sphere.fromOrigin;
+                   EqualityComparer<IMatrix>.Default.Equals(inverseTransformation, sphere.inverseTransformation);
         }
 
         public override int GetHashCode()

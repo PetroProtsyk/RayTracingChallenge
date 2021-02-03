@@ -7,7 +7,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
 
     public class SphereFigure : IFigure
     {
-        private readonly Geometry.Sphere sphere;
+        private readonly Sphere sphere;
 
         private readonly IMaterial material;
 

@@ -99,6 +99,19 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene
             }
             return result;
         }
+
+        public IEnumerable<HitResult> CalculateAllIntersection(Tuple4 origin, Tuple4 dir)
+        {
+            foreach (var figure in figures)
+            {
+                var hits = figure.AllHits(origin, dir);
+                foreach (var hit in hits)
+                {
+                    yield return hit;
+                }
+            }
+        }
+
     }
 
 }
