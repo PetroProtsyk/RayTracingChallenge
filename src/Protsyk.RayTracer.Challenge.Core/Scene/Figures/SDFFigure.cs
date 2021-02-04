@@ -52,7 +52,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
                 var pointOnSurface = Tuple4.Geometry3D.MovePoint(origin, dir, distance); // orig + dir*dist
                 var surfaceNormal = sdf.GetNormal(pointOnSurface);
 
-                result[i] = new HitResult(true, this, distance, pointOnSurface, surfaceNormal);
+                result[i] = new HitResult(true, this, distance, pointOnSurface, surfaceNormal, Tuple4.Negate(dir));
             }
 
             return result;

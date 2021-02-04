@@ -11,6 +11,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene
                                                                null,
                                                                -1,
                                                                new Tuple4(0, 0, 0, TupleFlavour.Point),
+                                                               new Tuple4(0, 0, 0, TupleFlavour.Vector),
                                                                new Tuple4(0, 0, 0, TupleFlavour.Vector));
 
         public readonly bool IsHit;
@@ -18,14 +19,16 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene
         public readonly double Distance;
         public readonly Tuple4 PointOnSurface;
         public readonly Tuple4 SurfaceNormal;
+        public readonly Tuple4 EyeVector;
 
-        public HitResult(bool isHit, IFigure figure, double distance, Tuple4 pointOnSurface, Tuple4 surfaceNormal)
+        public HitResult(bool isHit, IFigure figure, double distance, Tuple4 pointOnSurface, Tuple4 surfaceNormal, Tuple4 eyeVector)
         {
             IsHit = isHit;
             Figure = figure;
             Distance = distance;
             PointOnSurface = pointOnSurface;
             SurfaceNormal = surfaceNormal;
+            EyeVector = eyeVector;
         }
 
         public static HitResult ClosestPositiveHit(HitResult[] hits)

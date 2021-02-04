@@ -18,7 +18,6 @@ Scenario: The default world
     And w contains s1
     And w contains s2
 
-@ignore
 Scenario: Intersect a world with a ray
   Given w ← default_world()
     And r ← ray(point(0, 0, -5), vector(0, 0, 1))
