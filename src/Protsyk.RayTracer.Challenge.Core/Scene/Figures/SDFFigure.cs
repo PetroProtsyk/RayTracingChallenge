@@ -4,8 +4,7 @@ using Protsyk.RayTracer.Challenge.Core.Geometry;
 
 namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
 {
-
-    public class SDFFigure : IFigure
+    public class SDFFigure : BaseFigure
     {
         private readonly Geometry.SignedDistanceField sdf;
 
@@ -17,45 +16,24 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
             this.material = material;
         }
 
-        public IMaterial GetMaterial()
+        public override IMaterial GetMaterial()
         {
             return material;
         }
 
-        public IMatrix GetTransformation()
+        public override IMatrix GetTransformation()
         {
             return sdf.Transformation;
         }
 
-        public Tuple4 GetNormal(Tuple4 pointOnSurface)
+        public override Tuple4 GetNormal(Tuple4 pointOnSurface)
         {
             return sdf.GetNormal(pointOnSurface);
         }
 
-        public HitResult Hit(Tuple4 origin, Tuple4 dir)
+        public override double[] GetIntersections(Ray ray)
         {
-            return HitResult.ClosestPositiveHit(AllHits(origin, dir));
-        }
-
-        public HitResult[] AllHits(Tuple4 origin, Tuple4 dir)
-        {
-            var intersections = sdf.GetIntersections(new Ray(origin, dir));
-            if (intersections == null)
-            {
-                return new HitResult[] { HitResult.NoHit };
-            }
-
-            var result = new HitResult[intersections.Length];
-            for(int i=0; i<intersections.Length; ++i)
-            {
-                var distance = intersections[i];
-                var pointOnSurface = Tuple4.Geometry3D.MovePoint(origin, dir, distance); // orig + dir*dist
-                var surfaceNormal = sdf.GetNormal(pointOnSurface);
-
-                result[i] = new HitResult(true, this, distance, pointOnSurface, surfaceNormal, Tuple4.Negate(dir));
-            }
-
-            return result;
+            return sdf.GetIntersections(ray);
         }
     }
 

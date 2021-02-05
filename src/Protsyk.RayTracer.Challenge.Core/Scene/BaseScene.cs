@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using Protsyk.RayTracer.Challenge.Core.Geometry;
-using System.Text;
+﻿using Protsyk.RayTracer.Challenge.Core.Geometry;
 using Protsyk.RayTracer.Challenge.Core.Scene.Lights;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Protsyk.RayTracer.Challenge.Core.Scene
 {
@@ -110,6 +110,11 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene
                     yield return hit;
                 }
             }
+        }
+
+        public IEnumerable<HitResult> CalculateAllIntersectionSorted(Tuple4 origin, Tuple4 dir)
+        {
+            return CalculateAllIntersection(origin, dir).OrderBy(x => x.Distance);
         }
 
     }
