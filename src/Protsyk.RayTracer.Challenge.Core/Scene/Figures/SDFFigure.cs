@@ -8,7 +8,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
     {
         private readonly Geometry.SignedDistanceField sdf;
 
-        private readonly IMaterial material;
+        private IMaterial material;
 
         public SDFFigure(SignedDistanceField sdf, IMaterial material)
         {
@@ -19,6 +19,10 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
         public override IMaterial GetMaterial()
         {
             return material;
+        }
+        public override void SetMaterial(IMaterial material)
+        {
+            this.material = material;
         }
 
         public override IMatrix GetTransformation()

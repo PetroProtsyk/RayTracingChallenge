@@ -11,6 +11,8 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene
 
         IMaterial GetMaterial();
 
+        void SetMaterial(IMaterial material);
+
         IMatrix GetTransformation();
     }
 }

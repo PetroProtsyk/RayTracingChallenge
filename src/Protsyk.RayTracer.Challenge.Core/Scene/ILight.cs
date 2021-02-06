@@ -9,6 +9,6 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene
 
         double GetLightDistance(Tuple4 from);
 
-        Tuple4 GetShadedColor(IMaterial material, Tuple4 dir, Tuple4 pointOnSurface, Tuple4 surfaceNormal);
+        Tuple4 GetShadedColor(IMaterial material, Tuple4 eyeVector, Tuple4 pointOnSurface, Tuple4 surfaceNormal);
     }
 }

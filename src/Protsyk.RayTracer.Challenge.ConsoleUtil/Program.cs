@@ -369,7 +369,7 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
                 for (double i = 0; i < camera.ScreenWidth; ++i)
                 {
                     var ray = camera.GetRay(i, j);
-                    var color = scene.CastRay(ray.origin, ray.dir);
+                    var color = scene.CastRay(ray);
                     canvas.SetPixel(x, y, ColorConverters.Tuple255.From(color));
                     ++x;
                 }

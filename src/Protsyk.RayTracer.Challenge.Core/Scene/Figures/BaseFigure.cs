@@ -10,6 +10,8 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
 
         public abstract IMaterial GetMaterial();
 
+        public abstract void SetMaterial(IMaterial material);
+
         public abstract IMatrix GetTransformation();
 
         public abstract double[] GetIntersections(Ray ray);

@@ -8,7 +8,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Lights
 {
     public static class DirectionLightCommon
     {
-        public static Lighting GetIntensity(IMaterial material, Tuple4 lightDirection, double intensity, Tuple4 dir, Tuple4 pointOnSurface, Tuple4 surfaceNormal)
+        private static Lighting GetIntensity(IMaterial material, Tuple4 lightDirection, double intensity, Tuple4 eyeVector, Tuple4 pointOnSurface, Tuple4 surfaceNormal)
         {
             var ambient = material.Ambient;
             var diffuse = 0.0;
@@ -23,10 +23,10 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Lights
                 {
                     //var reflected = Tuple4.Subtract(Tuple4.Multiply(2*Tuple4.Dot(surfaceNormal, lightDirection), surfaceNormal), lightDirection);
                     var reflected = Tuple4.Reflect(Tuple4.Negate(lightDirection), surfaceNormal);
-                    var reflectedDotDir = Tuple4.DotProduct(reflected, Tuple4.Negate(dir));
+                    var reflectedDotDir = Tuple4.DotProduct(reflected, eyeVector);
                     if (reflectedDotDir > 0)
                     {
-                        specular = material.Specular * Math.Pow(reflectedDotDir / (reflected.Length() * dir.Length()), material.Shininess);
+                        specular = material.Specular * Math.Pow(reflectedDotDir / (reflected.Length() * eyeVector.Length()), material.Shininess);
                     }
                 }
             }
@@ -34,15 +34,10 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Lights
             return (ambient, diffuse, specular, intensity);
         }
 
-        internal static Tuple4 GetShadedColor(IMaterial material, object white, Tuple4 lightDirection, double intensity, Tuple4 dir, Tuple4 pointOnSurface, Tuple4 surfaceNormal)
-        {
-            throw new NotImplementedException();
-        }
-
-        public static Tuple4 GetShadedColor(IMaterial material, Tuple4 white, Tuple4 lightDirection, double intensity, Tuple4 dir, Tuple4 pointOnSurface, Tuple4 surfaceNormal)
+        public static Tuple4 GetShadedColor(IMaterial material, Tuple4 white, Tuple4 lightDirection, double intensity, Tuple4 eyeVector, Tuple4 pointOnSurface, Tuple4 surfaceNormal)
         {
             Tuple4 color = material.Color;
-            Lighting lighting = GetIntensity(material, lightDirection, intensity, dir, pointOnSurface, surfaceNormal);
+            Lighting lighting = GetIntensity(material, lightDirection, intensity, eyeVector, pointOnSurface, surfaceNormal);
 
             var shadedColor = Tuple4.Add(
                 Tuple4.Scale(color, lighting.intensity * (lighting.ambient + lighting.diffuse)),

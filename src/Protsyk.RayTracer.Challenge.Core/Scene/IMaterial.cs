@@ -18,6 +18,10 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene
         double Shininess { get; }
 
         double Reflective { get; }
+        
+        double RefractiveIndex { get; }
+
+        double Transparency { get; }
 
         bool IsShining();
     }

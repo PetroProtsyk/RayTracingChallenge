@@ -14,9 +14,17 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene
 
         private ColorModel colors = ColorModel.WhiteRGB;
 
+        private bool castShadows = true;
+
         public IEnumerable<IFigure> Figures => figures;
 
         public IEnumerable<ILight> Lights => lights;
+
+        public BaseScene WithShadows(bool castShadows)
+        {
+            this.castShadows = castShadows;
+            return this;
+        }
 
         public BaseScene WithFigures(params IFigure[] figures)
         {
@@ -41,19 +49,24 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene
             lights.Add(light);
         }
 
+        public void ClearLights()
+        {
+            lights.Clear();
+        }
+
         public void Add(IFigure figure)
         {
             figures.Add(figure);
         }
 
-        public Tuple4 CastRay(Tuple4 origin, Tuple4 dir)
+        public Tuple4 CastRay(Ray r)
         {
-            var hit = CalculateIntersection(origin, dir);
-            var color = CalculateColorAt(hit, dir);
+            var hit = CalculateIntersection(r.origin, r.dir);
+            var color = CalculateColorAt(hit);
             return color;
         }
 
-        private Tuple4 CalculateColorAt(HitResult hit, Tuple4 dir)
+        public Tuple4 CalculateColorAt(HitResult hit)
         {
             if (hit.IsHit)
             {
@@ -62,6 +75,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene
                 foreach (var light in lights)
                 {
                     // Shadow
+                    if (castShadows)
                     {
                         var lightDir = light.GetLightDirection(hit.PointOnSurface);
                         var distance = light.GetLightDistance(hit.PointOnSurface);
@@ -74,13 +88,13 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene
                             }
                         }
                     }
-                    color = Tuple4.Add(color, light.GetShadedColor(material, dir, hit.PointOnSurface, hit.SurfaceNormal));
+                    color = Tuple4.Add(color, light.GetShadedColor(material, hit.EyeVector, hit.PointOnSurface, hit.SurfaceNormal));
                 }
 
                 return new Tuple4(Math.Min(colors.White.X, color.X),
                                   Math.Min(colors.White.X, color.Y),
                                   Math.Min(colors.White.X, color.Z),
-                                  TupleFlavour.Point);
+                                  TupleFlavour.Vector);
             }
 
             return colors.Black;

@@ -9,7 +9,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
     {
         private readonly Sphere sphere;
 
-        private readonly IMaterial material;
+        private IMaterial material;
 
         public SphereFigure(Tuple4 center, double radius, IMaterial material)
         {
@@ -32,6 +32,11 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
         public override IMaterial GetMaterial()
         {
             return material;
+        }
+
+        public override void SetMaterial(IMaterial material)
+        {
+            this.material = material;
         }
 
         public override IMatrix GetTransformation()

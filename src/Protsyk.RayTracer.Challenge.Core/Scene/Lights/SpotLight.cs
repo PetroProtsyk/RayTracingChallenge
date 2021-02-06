@@ -43,10 +43,10 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Lights
             return Tuple4.Subtract(location, from).Length();
         }
 
-        public Tuple4 GetShadedColor(IMaterial material, Tuple4 dir, Tuple4 pointOnSurface, Tuple4 surfaceNormal)
+        public Tuple4 GetShadedColor(IMaterial material, Tuple4 eyeVector, Tuple4 pointOnSurface, Tuple4 surfaceNormal)
         {
             var lightDirection = Tuple4.Normalize(Tuple4.Subtract(location, pointOnSurface));
-            return DirectionLightCommon.GetShadedColor(material, colors.White, lightDirection, intensity, dir, pointOnSurface, surfaceNormal);
+            return DirectionLightCommon.GetShadedColor(material, colors.White, lightDirection, intensity, eyeVector, pointOnSurface, surfaceNormal);
         }
 
     }
