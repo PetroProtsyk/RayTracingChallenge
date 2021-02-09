@@ -1,5 +1,6 @@
 ﻿
 using Protsyk.RayTracer.Challenge.Core.Geometry;
+using System;
 
 namespace Protsyk.RayTracer.Challenge.Core.Scene.Cameras
 {
@@ -17,6 +18,9 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Cameras
         public double ScreenWidth {get; private set;}
         public double ScreenHeight {get; private set;}
         public Tuple4 Origin {get; private set;}
+        public double FieldOfView => throw new NotSupportedException();
+        public double PixleSize => throw new NotSupportedException();
+        public IMatrix Transformation => throw new NotSupportedException();
         public double ViewPortSize {get; private set;}
 
         private readonly double conversionY;

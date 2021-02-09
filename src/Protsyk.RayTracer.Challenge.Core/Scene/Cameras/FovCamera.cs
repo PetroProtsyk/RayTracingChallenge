@@ -9,9 +9,12 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Cameras
         public double ScreenHeight {get; private set;}
         public Tuple4 Origin {get; private set;}
         public double FieldOfView {get; private set;}
+        public double PixleSize { get; private set; }
+        public IMatrix Transformation { get; private set; }
 
         private readonly double tangy;
         private readonly double tangx;
+        private readonly double aspect;
 
         public FovCamera(Tuple4 origin, double fieldOfView, double screenWidth, double screenHeight)
         {
@@ -19,9 +22,23 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Cameras
             this.FieldOfView = fieldOfView;
             this.ScreenWidth = screenWidth;
             this.ScreenHeight = screenHeight;
+            this.Transformation = Matrix4x4.Identity;
 
-            tangy = Math.Tan(fieldOfView/2.0);
-            tangx = Math.Tan(fieldOfView/2.0)*(ScreenWidth/ScreenHeight);
+            aspect = screenWidth / screenHeight;
+            var halfView = Math.Tan(fieldOfView / 2.0);
+
+            if (Constants.EpsilonCompare(aspect, 1.0) || aspect > 1.0)
+            {
+                tangy = halfView / aspect;
+                tangx = halfView;
+            }
+            else
+            {
+                tangy = halfView;
+                tangx = halfView * aspect;
+            }
+
+            PixleSize = tangx * 2 / screenWidth;
         }
 
         public Ray GetRay(double screenX, double screenY)
