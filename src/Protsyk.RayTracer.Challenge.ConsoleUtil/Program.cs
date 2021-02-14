@@ -51,7 +51,7 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
 
     class Program
     {
-        static (ICamera camera, BaseScene scene) SceneWeb()
+        static (ICamera camera, BaseScene scene, IColorConverter<Tuple4> colorConverter) SceneWeb()
         {
             // Camera
             var origin = P(10,5,0);
@@ -74,13 +74,13 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
                                L(10, 3, 0, 0.75)
                             );
 
-           return (camera, scene);
+           return (camera, scene, ColorConverters.Tuple255);
         }
 
-        static (ICamera camera, BaseScene scene) ScenePetro()
+        static (ICamera camera, BaseScene scene, IColorConverter<Tuple4> colorConverter) ScenePetro()
         {
             // Camera
-            var origin = P(10, 5,0);
+            var origin = P(10, 5, -5);
             var fov = Math.PI/3;
             var camera = new FovCamera(origin, fov, 1920, 1080);
 
@@ -157,19 +157,28 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
                                L(0, 0, 10, 0.75)
                             );
 
-           return (camera, scene);
+           return (camera, scene, ColorConverters.Tuple255);
         }
 
         // https://m.habr.com/ru/post/342510/
-        static (ICamera camera, BaseScene scene) SceneSpheres(bool useFov)
+        // https://github.com/ggambetta/computer-graphics-from-scratch
+        static (ICamera camera, BaseScene scene, IColorConverter<Tuple4> colorConverter) SceneSpheres(bool useFov, bool useRotation)
         {
             // Camera
-            var origin = P(0,0,0);
+            var origin = useRotation ? P(3,0,1) : P(0,0,0);
             ICamera camera;
             if (useFov)
             {
                 var fov = Math.PI/3;
-                camera = new FovCamera(origin, fov, 1920, 1080);
+                var rotation = useRotation ? new Matrix4x4(new double[]
+                {
+                    0.7071, 0, -0.7071, 0,
+                    0,      1,       0, 0,
+                    0.7071, 0,  0.7071, 0,
+                    0,      0,       0, 0
+                }) : Matrix4x4.Identity;
+                camera = useRotation ? (ICamera)new FovCamera(origin, rotation, fov, 1920, 1080) :
+                                       (ICamera)new FovCamera2(MatrixOperations.Geometry3D.RotateY(Math.PI), fov, 1920, 1080);
             }
             else
             {
@@ -195,10 +204,11 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
                                L(2, 1, 0, 0.6),
                                D(1, 4, 4, 0.2)
                             );
-            return (camera, scene);
+
+            return (camera, scene, ColorConverters.Tuple255);
         }
 
-        static (ICamera camera, BaseScene scene) ScenePlanets()
+        static (ICamera camera, BaseScene scene, IColorConverter<Tuple4> colorConverter) ScenePlanets()
         {
             var origin = P(0,0,-5);
             var fov = Math.PI/3;
@@ -219,10 +229,11 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
                                A(0.30),
                                L(0, 0, -25, 0.70)
                             );
-            return (camera, scene);
+
+            return (camera, scene, ColorConverters.Tuple255);
         }
 
-        static (ICamera camera, BaseScene scene) SceneSpheresTransformed(bool useFov)
+        static (ICamera camera, BaseScene scene, IColorConverter<Tuple4> colorConverter) SceneSpheresTransformed(bool useFov)
         {
             // Camera
             var origin = P(0,0,0);
@@ -258,10 +269,11 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
                                A(0.20),
                                L(2, 1, 0, 0.60)
                             );
-            return (camera, scene);
+
+            return (camera, scene, ColorConverters.Tuple255);
         }
 
-        static (ICamera camera, BaseScene scene) SceneChapter5(bool isSimple)
+        static (ICamera camera, BaseScene scene, IColorConverter<Tuple4> colorConverter) SceneChapter5(bool isSimple)
         {
             // Camera
             ICamera camera;
@@ -291,10 +303,91 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
                                A(1.0)
                             );
 
-            return (camera, scene);
+            return (camera, scene, ColorConverters.Tuple255);
         }
 
-        static (ICamera camera, BaseScene scene) SceneSDE(bool isSimple)
+        static (ICamera camera, BaseScene scene, IColorConverter<Tuple4> colorConverter) SceneChapter7()
+        {
+            // Camera
+            var camera = new FovCamera2(MatrixOperations.Geometry3D.ViewTransform(
+                                            P(0, 1.5, -5),
+                                            P(0, 1, 0),
+                                            V(0, 1, 0)), Math.PI / 3, 800, 600);
+
+            // Materials
+            var defaultMaterial = new SolidColorMaterial();
+            var floorMaterial = new SolidColorMaterial(
+                                        new Tuple4(1, 0.9, 0.9, TupleFlavour.Vector),
+                                        defaultMaterial.Ambient,
+                                        defaultMaterial.Diffuse,
+                                        0,
+                                        defaultMaterial.Shininess,
+                                        defaultMaterial.Reflective,
+                                        defaultMaterial.RefractiveIndex,
+                                        defaultMaterial.Transparency);
+
+            var middleMaterial = new SolidColorMaterial(
+                                        new Tuple4(0.1, 1, 0.5, TupleFlavour.Vector),
+                                        defaultMaterial.Ambient,
+                                        0.7,
+                                        0.3,
+                                        defaultMaterial.Shininess,
+                                        defaultMaterial.Reflective,
+                                        defaultMaterial.RefractiveIndex,
+                                        defaultMaterial.Transparency);
+
+            var rightMaterial = new SolidColorMaterial(
+                                        new Tuple4(0.5, 1, 0.1, TupleFlavour.Vector),
+                                        defaultMaterial.Ambient,
+                                        0.7,
+                                        0.3,
+                                        defaultMaterial.Shininess,
+                                        defaultMaterial.Reflective,
+                                        defaultMaterial.RefractiveIndex,
+                                        defaultMaterial.Transparency);
+
+            var leftMaterial = new SolidColorMaterial(
+                                        new Tuple4(1, 0.8, 0.1, TupleFlavour.Vector),
+                                        defaultMaterial.Ambient,
+                                        0.7,
+                                        0.3,
+                                        defaultMaterial.Shininess,
+                                        defaultMaterial.Reflective,
+                                        defaultMaterial.RefractiveIndex,
+                                        defaultMaterial.Transparency);
+
+            // World
+            var scene = new BaseScene().WithFigures(
+                                 S(MatrixOperations.Geometry3D.Scale(10, 0.01, 10), floorMaterial), // floor
+                                 S(MatrixOperations.Multiply(
+                                     MatrixOperations.Geometry3D.Translation(0, 0, 5),
+                                     MatrixOperations.Multiply(
+                                         MatrixOperations.Multiply(
+                                             MatrixOperations.Geometry3D.RotateY(-Math.PI/4),
+                                             MatrixOperations.Geometry3D.RotateX(Math.PI / 2)),
+                                         MatrixOperations.Geometry3D.Scale(10, 0.01, 10))), floorMaterial), // left wall
+                                 S(MatrixOperations.Multiply(
+                                     MatrixOperations.Geometry3D.Translation(0, 0, 5),
+                                     MatrixOperations.Multiply(
+                                         MatrixOperations.Multiply(
+                                             MatrixOperations.Geometry3D.RotateY(Math.PI / 4),
+                                             MatrixOperations.Geometry3D.RotateX(Math.PI / 2)),
+                                         MatrixOperations.Geometry3D.Scale(10, 0.01, 10))), floorMaterial), // right wall
+                                 S(MatrixOperations.Geometry3D.Translation(-0.5, 1, 0.5), middleMaterial), // middle sphere
+                                 S(MatrixOperations.Multiply(
+                                     MatrixOperations.Geometry3D.Translation(1.5, 0.5, -0.5),
+                                     MatrixOperations.Geometry3D.Scale(0.5, 0.5, 0.5)), rightMaterial), // right sphere
+                                 S(MatrixOperations.Multiply(
+                                     MatrixOperations.Geometry3D.Translation(-1.5, 0.33, -0.75),
+                                     MatrixOperations.Geometry3D.Scale(0.33, 0.33, 0.33)), leftMaterial) // left sphere
+                            ).WithLights(
+                               L(-10, 10, -10, 1)
+                            );
+
+            return (camera, scene, ColorConverters.Tuple1);
+        }
+
+        static (ICamera camera, BaseScene scene, IColorConverter<Tuple4> colorConverter) SceneSDE(bool isSimple)
         {
             // Camera
             ICamera camera;
@@ -356,10 +449,10 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
                                L(2, 1, -5, 0.6)
                             );
 
-            return (camera, scene);
+            return (camera, scene, ColorConverters.Tuple255);
         }
 
-        static ICanvas Render(ICamera camera, BaseScene scene)
+        static ICanvas Render(ICamera camera, BaseScene scene, IColorConverter<Tuple4> colorConverter)
         {
             var canvas = new MemoryCanvas((int)camera.ScreenWidth, (int)camera.ScreenHeight);
             var x = 0; var y =0;
@@ -370,7 +463,7 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
                 {
                     var ray = camera.GetRay(i, j);
                     var color = scene.CastRay(ray);
-                    canvas.SetPixel(x, y, ColorConverters.Tuple255.From(color));
+                    canvas.SetPixel(x, y, colorConverter.From(color));
                     ++x;
                 }
                 ++y;
@@ -380,25 +473,27 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
 
         static void Main(string[] args)
         {
-            var scenes = new Dictionary<string, Func<bool, (ICamera, BaseScene)>>(){
+            var scenes = new Dictionary<string, Func<bool, (ICamera, BaseScene, IColorConverter<Tuple4>)>>(){
                 { "Web", _ => SceneWeb() },
                 { "Petro", _ => ScenePetro() },
-                { "Spheres", fov => SceneSpheres(fov) },
+                { "Spheres", fov => SceneSpheres(fov, false) },
+                { "SpheresRotated", fov => SceneSpheres(fov, true) },
                 { "Planets", _ => ScenePlanets() },
                 { "SpheresTransformed", fov => SceneSpheresTransformed(fov) },
                 { "SDE", isSimple => SceneSDE(isSimple) },
 
-                { "Chapter5", isSimple => SceneChapter5(isSimple) }
+                { "Chapter5", isSimple => SceneChapter5(isSimple) },
+                { "Chapter7", _=> SceneChapter7() }
             };
 
             var outputFileName = args.Length > 1 ? args[1] : "out.ppm";
             var sceneName = args.Length > 0 ? args[0] : "Spheres";
 
             // Camera, Scene
-            var (camera, scene) = scenes[sceneName](true);
+            var (camera, scene, colorConverter) = scenes[sceneName](true);
 
             var timer = Stopwatch.StartNew();
-            var canvas = Render(camera, scene);
+            var canvas = Render(camera, scene, colorConverter);
             Console.WriteLine($"Time to render: {timer.Elapsed}");
 
             timer.Restart();

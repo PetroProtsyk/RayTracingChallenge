@@ -18,7 +18,11 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Cameras
         public Tuple4 Origin {get; private set;}
         public double FieldOfView => throw new NotSupportedException();
         public double PixleSize => throw new NotSupportedException();
-        public IMatrix Transformation => throw new NotSupportedException();
+        public IMatrix Transformation
+        {
+            get => throw new NotSupportedException();
+            set => throw new NotSupportedException();
+        }
 
         public double ViewPortSize {get; private set;}
 

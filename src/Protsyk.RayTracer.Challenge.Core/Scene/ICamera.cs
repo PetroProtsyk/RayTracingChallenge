@@ -11,7 +11,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene
         double ScreenHeight {get;}
         double FieldOfView { get; }
         double PixleSize { get; }
-        IMatrix Transformation { get; }
+        IMatrix Transformation { get; set; }
         Tuple4 Origin {get;}
 
         Ray GetRay(double screenX, double screenY);

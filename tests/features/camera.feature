@@ -22,21 +22,18 @@ Scenario: The pixel size for a vertical canvas
   Given c ← camera(125, 200, 1.570796)
   Then c.pixel_size = 0.01
 
-@ignore
 Scenario: Constructing a ray through the center of the canvas
   Given c ← camera(201, 101, 1.570796)
   When r ← ray_for_pixel(c, 100, 50)
   Then r.origin = point(0, 0, 0)
     And r.direction = vector(0, 0, -1)
 
-@ignore
 Scenario: Constructing a ray through a corner of the canvas
   Given c ← camera(201, 101, 1.570796)
   When r ← ray_for_pixel(c, 0, 0)
   Then r.origin = point(0, 0, 0)
     And r.direction = vector(0.66519, 0.33259, -0.66851)
 
-@ignore
 Scenario: Constructing a ray when the camera is transformed
   Given c ← camera(201, 101, 1.570796)
   When c.transform ← rotation_y(0.785398) * translation(0, -2, 5)
@@ -44,7 +41,6 @@ Scenario: Constructing a ray when the camera is transformed
   Then r.origin = point(0, 2, -5)
     And r.direction = vector(0.70711, 0, -0.70711)
 
-@ignore
 Scenario: Rendering a world with a camera
   Given w ← default_world()
     And c ← camera(11, 11, 1.570796)
