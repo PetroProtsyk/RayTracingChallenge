@@ -66,6 +66,33 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene
             return color;
         }
 
+        public bool IsShadowed(ILight light, Tuple4 pointOnSurface)
+        {
+            var lightDir = light.GetLightDirection(pointOnSurface);
+            var distance = light.GetLightDistance(pointOnSurface);
+            if (!lightDir.Equals(Tuple4.ZeroVector))
+            {
+                var lh = CalculateIntersection(Tuple4.Add(pointOnSurface, Tuple4.Scale(lightDir, 0.01f)), lightDir);
+                if (lh.IsHit && lh.Distance < distance)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public bool IsShadowed(Tuple4 pointOnSurface)
+        {
+            foreach (var light in lights)
+            {
+                if (IsShadowed(light, pointOnSurface))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         public Tuple4 CalculateColorAt(HitResult hit)
         {
             if (hit.IsHit)
@@ -75,18 +102,9 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene
                 foreach (var light in lights)
                 {
                     // Shadow
-                    if (castShadows)
+                    if (castShadows && IsShadowed(light, hit.PointOnSurface))
                     {
-                        var lightDir = light.GetLightDirection(hit.PointOnSurface);
-                        var distance = light.GetLightDistance(hit.PointOnSurface);
-                        if (!lightDir.Equals(Tuple4.ZeroVector))
-                        {
-                            var lh = CalculateIntersection(Tuple4.Add(hit.PointOnSurface, Tuple4.Scale(lightDir, 0.01f)), lightDir);
-                            if (lh.IsHit && lh.Distance < distance)
-                            {
-                                continue;
-                            }
-                        }
+                        continue;
                     }
                     color = Tuple4.Add(color, light.GetShadedColor(material, hit.EyeVector, hit.PointOnSurface, hit.SurfaceNormal));
                 }
@@ -130,7 +148,6 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene
         {
             return CalculateAllIntersection(origin, dir).OrderBy(x => x.Distance);
         }
-
     }
 
 }

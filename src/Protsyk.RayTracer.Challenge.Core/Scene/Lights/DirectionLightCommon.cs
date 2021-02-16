@@ -46,6 +46,12 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Lights
             );
             return shadedColor;
         }
+
+        public static Tuple4 GetAmbientColor(IMaterial material)
+        {
+            return Tuple4.Scale(material.Color, material.Ambient);
+        }
+
     }
 
 }

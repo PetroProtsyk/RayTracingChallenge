@@ -57,7 +57,6 @@ Scenario: Lighting with the light behind the surface
   When result ← lighting(m, light, position, eyev, normalv)
   Then result = color(0.1, 0.1, 0.1)
 
-@ignore
 Scenario: Lighting with the surface in shadow
   Given eyev ← vector(0, 0, -1)
     And normalv ← vector(0, 0, -1)

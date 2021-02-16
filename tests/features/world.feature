@@ -69,7 +69,6 @@ Scenario: The color with an intersection behind the ray
   When c ← color_at(w, r)
   Then c = inner.material.color
 
-@ignore
 Scenario: There is no shadow when nothing is collinear with point and light
   Given w ← default_world()
     And p ← point(0, 10, 0)
