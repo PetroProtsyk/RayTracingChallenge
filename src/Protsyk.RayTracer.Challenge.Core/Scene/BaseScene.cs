@@ -69,13 +69,16 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene
         public bool IsShadowed(ILight light, Tuple4 pointOnSurface)
         {
             var lightDir = light.GetLightDirection(pointOnSurface);
-            var distance = light.GetLightDistance(pointOnSurface);
             if (!lightDir.Equals(Tuple4.ZeroVector))
             {
                 var lh = CalculateIntersection(Tuple4.Add(pointOnSurface, Tuple4.Scale(lightDir, 0.01f)), lightDir);
-                if (lh.IsHit && lh.Distance < distance)
+                if (lh.IsHit)
                 {
-                    return true;
+                    var distance = light.GetLightDistance(pointOnSurface);
+                    if (lh.Distance < distance)
+                    {
+                        return true;
+                    }
                 }
             }
             return false;

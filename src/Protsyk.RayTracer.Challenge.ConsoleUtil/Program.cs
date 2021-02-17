@@ -306,7 +306,7 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
             return (camera, scene, ColorConverters.Tuple255);
         }
 
-        static (ICamera camera, BaseScene scene, IColorConverter<Tuple4> colorConverter) SceneChapter7()
+        static (ICamera camera, BaseScene scene, IColorConverter<Tuple4> colorConverter) SceneChapter7(bool castShadows)
         {
             // Camera
             var camera = new FovCamera2(MatrixOperations.Geometry3D.ViewTransform(
@@ -363,7 +363,7 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
                                      MatrixOperations.Geometry3D.Translation(0, 0, 5),
                                      MatrixOperations.Multiply(
                                          MatrixOperations.Multiply(
-                                             MatrixOperations.Geometry3D.RotateY(-Math.PI/4),
+                                             MatrixOperations.Geometry3D.RotateY(-Math.PI / 4),
                                              MatrixOperations.Geometry3D.RotateX(Math.PI / 2)),
                                          MatrixOperations.Geometry3D.Scale(10, 0.01, 10))), floorMaterial), // left wall
                                  S(MatrixOperations.Multiply(
@@ -381,8 +381,9 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
                                      MatrixOperations.Geometry3D.Translation(-1.5, 0.33, -0.75),
                                      MatrixOperations.Geometry3D.Scale(0.33, 0.33, 0.33)), leftMaterial) // left sphere
                             ).WithLights(
-                               L(-10, 10, -10, 1)
-                            );
+                               L(-10, 10, -10, 1),
+                               A(1.0)
+                            ).WithShadows(castShadows);
 
             return (camera, scene, ColorConverters.Tuple1);
         }
@@ -483,7 +484,8 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
                 { "SDE", isSimple => SceneSDE(isSimple) },
 
                 { "Chapter5", isSimple => SceneChapter5(isSimple) },
-                { "Chapter7", _=> SceneChapter7() }
+                { "Chapter7", _=> SceneChapter7(false) },
+                { "Chapter8", _=> SceneChapter7(true) }
             };
 
             var outputFileName = args.Length > 1 ? args[1] : "out.ppm";
