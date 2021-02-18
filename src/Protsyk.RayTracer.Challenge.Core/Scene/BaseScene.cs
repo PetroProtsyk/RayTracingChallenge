@@ -34,6 +34,10 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene
 
         public BaseScene WithLights(params ILight[] lights)
         {
+            if ((this.lights.Count(l => l is AmbientLight) + lights.Count(l => l is AmbientLight) > 1))
+            {
+                throw new InvalidOperationException("Only one AmbientLight is allowed");
+            }
             this.lights.AddRange(lights);
             return this;
         }
@@ -46,6 +50,10 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene
 
         public void AddLight(ILight light)
         {
+            if ((light is AmbientLight) && lights.Any(l => l is AmbientLight))
+            {
+                throw new InvalidOperationException("Only one AmbientLight is allowed");
+            }
             lights.Add(light);
         }
 
@@ -66,15 +74,15 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene
             return color;
         }
 
-        public bool IsShadowed(ILight light, Tuple4 pointOnSurface)
+        public bool IsShadowed(ILight light, Tuple4 pointOverSurface)
         {
-            var lightDir = light.GetLightDirection(pointOnSurface);
+            var lightDir = light.GetLightDirection(pointOverSurface);
             if (!lightDir.Equals(Tuple4.ZeroVector))
             {
-                var lh = CalculateIntersection(Tuple4.Add(pointOnSurface, Tuple4.Scale(lightDir, 0.01f)), lightDir);
+                var lh = CalculateIntersection(Tuple4.Add(pointOverSurface, Tuple4.Scale(lightDir, Constants.Epsilon)), lightDir);
                 if (lh.IsHit)
                 {
-                    var distance = light.GetLightDistance(pointOnSurface);
+                    var distance = light.GetLightDistance(pointOverSurface);
                     if (lh.Distance < distance)
                     {
                         return true;
@@ -105,7 +113,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene
                 foreach (var light in lights)
                 {
                     // Shadow
-                    if (castShadows && IsShadowed(light, hit.PointOnSurface))
+                    if (castShadows && IsShadowed(light, hit.PointOverSurface))
                     {
                         continue;
                     }

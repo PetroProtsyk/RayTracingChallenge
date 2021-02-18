@@ -315,7 +315,7 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
                                             V(0, 1, 0)), Math.PI / 3, 800, 600);
 
             // Materials
-            var defaultMaterial = new SolidColorMaterial();
+            var defaultMaterial = MaterialConstants.Default;
             var floorMaterial = new SolidColorMaterial(
                                         new Tuple4(1, 0.9, 0.9, TupleFlavour.Vector),
                                         defaultMaterial.Ambient,

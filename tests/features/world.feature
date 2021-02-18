@@ -74,25 +74,21 @@ Scenario: There is no shadow when nothing is collinear with point and light
     And p ← point(0, 10, 0)
    Then is_shadowed(w, p) is false
 
-@ignore
 Scenario: The shadow when an object is between the point and the light
   Given w ← default_world()
     And p ← point(10, -10, 10)
    Then is_shadowed(w, p) is true
 
-@ignore
 Scenario: There is no shadow when an object is behind the light
   Given w ← default_world()
     And p ← point(-20, 20, -20)
    Then is_shadowed(w, p) is false
 
-@ignore
 Scenario: There is no shadow when an object is behind the point
   Given w ← default_world()
     And p ← point(-2, 2, -2)
    Then is_shadowed(w, p) is false
 
-@ignore
 Scenario: shade_hit() is given an intersection in shadow
   Given w ← world()
     And w.light ← point_light(point(0, 0, -10), color(1, 1, 1))

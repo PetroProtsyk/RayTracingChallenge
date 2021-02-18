@@ -11,6 +11,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene
                                                                null,
                                                                -1,
                                                                new Tuple4(0, 0, 0, TupleFlavour.Point),
+                                                               new Tuple4(0, 0, 0, TupleFlavour.Point),
                                                                new Tuple4(0, 0, 0, TupleFlavour.Vector),
                                                                new Tuple4(0, 0, 0, TupleFlavour.Vector),
                                                                false);
@@ -19,6 +20,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene
         public readonly IFigure Figure;
         public readonly double Distance;
         public readonly Tuple4 PointOnSurface;
+        public readonly Tuple4 PointOverSurface;
         public readonly Tuple4 SurfaceNormal;
         public readonly Tuple4 EyeVector;
         public readonly bool IsInside;
@@ -27,6 +29,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene
                         IFigure figure,
                         double distance,
                         Tuple4 pointOnSurface,
+                        Tuple4 pointOverSurface,
                         Tuple4 surfaceNormal,
                         Tuple4 eyeVector,
                         bool isInside)
@@ -35,6 +38,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene
             Figure = figure;
             Distance = distance;
             PointOnSurface = pointOnSurface;
+            PointOverSurface = pointOverSurface;
             SurfaceNormal = surfaceNormal;
             EyeVector = eyeVector;
             IsInside = isInside;
