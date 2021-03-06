@@ -27,7 +27,7 @@ namespace Protsyk.RayTracer.Challenge.Core.UnitTests
         [Fact]
         public void SphereSDFIntersection()
         {
-            var s = new SphereSDF(MatrixOperations.Identity(4));
+            var s = new SphereSDF();
             var r = new Ray(new Tuple4(0, 0, -2, TupleFlavour.Point),
                             new Tuple4(0, 0, 1, TupleFlavour.Vector));
 

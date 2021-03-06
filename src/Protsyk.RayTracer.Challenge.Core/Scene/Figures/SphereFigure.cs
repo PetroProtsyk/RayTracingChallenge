@@ -9,47 +9,31 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
     {
         private readonly Sphere sphere;
 
-        private IMaterial material;
-
         public SphereFigure(Tuple4 center, double radius, IMaterial material)
         {
             this.sphere = new Sphere(center, radius);
-            this.material = material;
+            this.Material = material;
         }
 
         public SphereFigure(IMatrix transformation, IMaterial material)
         {
-            this.sphere = new Sphere(transformation);
-            this.material = material;
+            this.sphere = new Sphere();
+            this.Material = material;
+            this.Transformation = transformation;
         }
 
         public SphereFigure(Sphere sphere, IMaterial material)
         {
             this.sphere = sphere;
-            this.material = material;
+            this.Material = material;
         }
 
-        public override IMaterial GetMaterial()
-        {
-            return material;
-        }
-
-        public override void SetMaterial(IMaterial material)
-        {
-            this.material = material;
-        }
-
-        public override IMatrix GetTransformation()
-        {
-            return sphere.Transformation;
-        }
-
-        public override Tuple4 GetNormal(Tuple4 pointOnSurface)
+        protected override Tuple4 GetBaseNormal(Tuple4 pointOnSurface)
         {
             return sphere.GetNormal(pointOnSurface);
         }
 
-        public override double[] GetIntersections(Ray ray)
+        protected override double[] GetBaseIntersections(Ray ray)
         {
             return sphere.GetIntersections(ray);
         }
@@ -58,12 +42,13 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
         {
             return obj is SphereFigure figure &&
                    EqualityComparer<Sphere>.Default.Equals(sphere, figure.sphere) &&
-                   EqualityComparer<IMaterial>.Default.Equals(material, figure.material);
+                   EqualityComparer<IMaterial>.Default.Equals(Material, figure.Material) &&
+                   EqualityComparer<IMatrix>.Default.Equals(Transformation, figure.Transformation);
         }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(sphere, material);
+            return HashCode.Combine(sphere, Material.GetHashCode(), Transformation.GetHashCode());
         }
     }
 

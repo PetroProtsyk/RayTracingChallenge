@@ -31,8 +31,8 @@ namespace Protsyk.RayTracer.Challenge.Core.Geometry.SignedDistanceFields
 
         public override Tuple4 GetNormal(Tuple4 point)
         {
-            var d1 = a.DistanceFrom(a.GetObjectPoint(point));
-            var d2 = b.DistanceFrom(b.GetObjectPoint(point));
+            var d1 = a.DistanceFrom(point);
+            var d2 = b.DistanceFrom(point);
             if (Math.Abs(d1) < epsilon) {
                  return a.GetNormal(point);
             }

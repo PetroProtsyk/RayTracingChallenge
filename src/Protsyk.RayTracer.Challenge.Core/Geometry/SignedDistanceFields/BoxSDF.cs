@@ -5,9 +5,8 @@ namespace Protsyk.RayTracer.Challenge.Core.Geometry.SignedDistanceFields
 {
     public class BoxSDF : SignedDistanceField
     {
-        public BoxSDF(IMatrix transformation)
+        public BoxSDF()
         {
-            Transformation = transformation;
         }
 
         protected internal override double DistanceFrom(Tuple4 point) {

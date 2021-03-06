@@ -120,7 +120,6 @@ Scenario: A sphere has a default material
    When m ← s.material
    Then m = material()
 
-@ignore
 Scenario: A sphere may be assigned a material
    Given s ← sphere()
      And m ← material()

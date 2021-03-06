@@ -1,5 +1,8 @@
 Feature: Abstract Shapes
 
+# π/5  = 0.628319
+# √2/2 = 0.70711
+
 Scenario: The default transformation
   Given s ← test_shape()
   Then s.transform = identity_matrix
@@ -47,13 +50,15 @@ Scenario: Computing the normal on a transformed shape
   Given s ← test_shape()
     And m ← scaling(1, 0.5, 1) * rotation_z(π/5)
   When set_transform(s, m)
-    And n ← normal_at(s, point(0, √2/2, -√2/2))
+    And n ← normal_at(s, point(0, 0.70711, -0.70711))
   Then n = vector(0, 0.97014, -0.24254)
 
+@ignore
 Scenario: A shape has a parent attribute
   Given s ← test_shape()
   Then s.parent is nothing
 
+@ignore
 Scenario: Converting a point from world to object space
   Given g1 ← group()
     And set_transform(g1, rotation_y(π/2))
@@ -66,6 +71,7 @@ Scenario: Converting a point from world to object space
   When p ← world_to_object(s, point(-2, 0, -10))
   Then p = point(0, 0, -1)
 
+@ignore
 Scenario: Converting a normal from object to world space
   Given g1 ← group()
     And set_transform(g1, rotation_y(π/2))
@@ -78,6 +84,7 @@ Scenario: Converting a normal from object to world space
   When n ← normal_to_world(s, vector(√3/3, √3/3, √3/3))
   Then n = vector(0.2857, 0.4286, -0.8571)
 
+@ignore
 Scenario: Finding the normal on a child object
   Given g1 ← group()
     And set_transform(g1, rotation_y(π/2))

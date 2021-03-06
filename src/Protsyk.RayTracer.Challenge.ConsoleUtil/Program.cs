@@ -430,8 +430,8 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
                                 // S(transformationSphere, materials[0])
                                 new SDFFigure(
                                     new IntersectSDF(
-                                        new SphereSDF(transformationSphereA),
-                                        new SphereSDF(transformationSphereB)
+                                        new SphereSDF(/*transformationSphereA*/),
+                                        new SphereSDF(/*transformationSphereB*/)
                                     ),
                                     materials[0]
                                 )

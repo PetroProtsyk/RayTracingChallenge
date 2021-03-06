@@ -6,15 +6,85 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
 {
     public abstract class BaseFigure : IFigure
     {
-        public abstract Tuple4 GetNormal(Tuple4 pointOnSurface);
+        private IMatrix transformation;
 
-        public abstract IMaterial GetMaterial();
+        private IMatrix inverseTransformation;
 
-        public abstract void SetMaterial(IMaterial material);
+        public IMaterial Material
+        {
+            get;
+            set;
+        }
 
-        public abstract IMatrix GetTransformation();
+        public IMatrix Transformation
+        {
+            get
+            {
+                return transformation;
+            }
+            set
+            {
+                transformation = value;
+                inverseTransformation = null;
+                if (value != null)
+                {
+                    inverseTransformation = MatrixOperations.Invert(value);
+                }
+            }
+        }
 
-        public abstract double[] GetIntersections(Ray ray);
+        // This method should return shape's normal at a given point on the surface
+        // The returned normal does not have to be normalized
+        protected abstract Tuple4 GetBaseNormal(Tuple4 pointOnSurface);
+
+        public Tuple4 GetNormal(Tuple4 point)
+        {
+            var objectPoint = point;
+            if (Transformation != null)
+            {
+                objectPoint = MatrixOperations.Geometry3D.Transform(inverseTransformation, point);
+            }
+
+            var normal = GetBaseNormal(objectPoint);
+
+            if (Transformation != null)
+            {
+                normal = MatrixOperations.Geometry3D.Transform(MatrixOperations.Transpose(inverseTransformation, false), normal);
+                if (normal.W != 0.0)
+                {
+                    normal = new Tuple4(normal.X, normal.Y, normal.Z, TupleFlavour.Vector);
+                }
+            }
+
+            return Tuple4.Normalize(normal);
+        }
+
+
+        protected abstract double[] GetBaseIntersections(Ray ray);
+
+        public double[] GetIntersections(Ray ray)
+        {
+            if (Transformation != null)
+            {
+                ray = ray.Transform(inverseTransformation);
+            }
+
+            var result = GetBaseIntersections(ray); // GetBaseIntersections(new Ray(ray.origin, Tuple4.Normalize(ray.dir)));
+
+            if (Transformation != null)
+            {
+                if (result != null)
+                {
+                    var len = ray.dir.Length();
+                    for (int i = 0; i < result.Length; ++i)
+                    {
+                        result[i] /= len;
+                    }
+                }
+            }
+
+            return result;
+        }
 
         public virtual HitResult Hit(Tuple4 origin, Tuple4 dir)
         {

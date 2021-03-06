@@ -9,10 +9,9 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene
     {
         Tuple4 GetNormal(Tuple4 pointOnSurface);
 
-        IMaterial GetMaterial();
+        IMatrix Transformation { get; set; }
 
-        void SetMaterial(IMaterial material);
+        IMaterial Material { get; set; }
 
-        IMatrix GetTransformation();
     }
 }

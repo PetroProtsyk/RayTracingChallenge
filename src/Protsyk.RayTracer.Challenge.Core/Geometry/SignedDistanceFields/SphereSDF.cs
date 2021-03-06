@@ -5,17 +5,18 @@ namespace Protsyk.RayTracer.Challenge.Core.Geometry.SignedDistanceFields
 {
     public class SphereSDF : SignedDistanceField
     {
-        public SphereSDF(IMatrix transformation)
+        public SphereSDF()
         {
-            Transformation = transformation;
         }
 
-        protected internal override double DistanceFrom(Tuple4 point) {
-            if (point.IsVector()) {
+        protected internal override double DistanceFrom(Tuple4 point)
+        {
+            if (point.IsVector())
+            {
                 throw new ArgumentException("Argument is not a point");
             }
 
-            return Math.Sqrt(point.X*point.X + point.Y*point.Y + point.Z*point.Z) - 1.0;
+            return Math.Sqrt(point.X * point.X + point.Y * point.Y + point.Z * point.Z) - 1.0;
         }
-   }
+    }
 }

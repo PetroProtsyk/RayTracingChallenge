@@ -108,7 +108,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene
         {
             if (hit.IsHit)
             {
-                var material = hit.Figure.GetMaterial();
+                var material = hit.Figure.Material;
                 var color = Tuple4.ZeroVector;
                 foreach (var light in lights)
                 {
