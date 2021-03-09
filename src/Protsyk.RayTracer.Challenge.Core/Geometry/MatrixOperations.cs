@@ -259,12 +259,40 @@ namespace Protsyk.RayTracer.Challenge.Core.Geometry
             }
 
             var result = new double[a.Rows, b.Columns];
-            for (int i = 0; i < a.Rows; i++)
+            if ((a.Rows == 4 && a.Columns == 4) && (b.Rows == 4))
             {
-                for (int j = 0; j < b.Columns; j++)
+                result[0, 0] = a[0, 0] * b[0, 0] + a[0, 1] * b[1, 0] + a[0, 2] * b[2, 0] + a[0, 3] * b[3, 0];
+                result[1, 0] = a[1, 0] * b[0, 0] + a[1, 1] * b[1, 0] + a[1, 2] * b[2, 0] + a[1, 3] * b[3, 0];
+                result[2, 0] = a[2, 0] * b[0, 0] + a[2, 1] * b[1, 0] + a[2, 2] * b[2, 0] + a[2, 3] * b[3, 0];
+                result[3, 0] = a[3, 0] * b[0, 0] + a[3, 1] * b[1, 0] + a[3, 2] * b[2, 0] + a[3, 3] * b[3, 0];
+
+                if (b.Columns == 4)
                 {
-                    double cij = MultiplyRowAndColumn(i, j, a, b);
-                    result[i, j] = cij;
+                    result[0, 1] = a[0, 0] * b[0, 1] + a[0, 1] * b[1, 1] + a[0, 2] * b[2, 1] + a[0, 3] * b[3, 1];
+                    result[1, 1] = a[1, 0] * b[0, 1] + a[1, 1] * b[1, 1] + a[1, 2] * b[2, 1] + a[1, 3] * b[3, 1];
+                    result[2, 1] = a[2, 0] * b[0, 1] + a[2, 1] * b[1, 1] + a[2, 2] * b[2, 1] + a[2, 3] * b[3, 1];
+                    result[3, 1] = a[3, 0] * b[0, 1] + a[3, 1] * b[1, 1] + a[3, 2] * b[2, 1] + a[3, 3] * b[3, 1];
+
+                    result[0, 2] = a[0, 0] * b[0, 2] + a[0, 1] * b[1, 2] + a[0, 2] * b[2, 2] + a[0, 3] * b[3, 2];
+                    result[1, 2] = a[1, 0] * b[0, 2] + a[1, 1] * b[1, 2] + a[1, 2] * b[2, 2] + a[1, 3] * b[3, 2];
+                    result[2, 2] = a[2, 0] * b[0, 2] + a[2, 1] * b[1, 2] + a[2, 2] * b[2, 2] + a[2, 3] * b[3, 2];
+                    result[3, 2] = a[3, 0] * b[0, 2] + a[3, 1] * b[1, 2] + a[3, 2] * b[2, 2] + a[3, 3] * b[3, 2];
+
+                    result[0, 3] = a[0, 0] * b[0, 3] + a[0, 1] * b[1, 3] + a[0, 2] * b[2, 3] + a[0, 3] * b[3, 3];
+                    result[1, 3] = a[1, 0] * b[0, 3] + a[1, 1] * b[1, 3] + a[1, 2] * b[2, 3] + a[1, 3] * b[3, 3];
+                    result[2, 3] = a[2, 0] * b[0, 3] + a[2, 1] * b[1, 3] + a[2, 2] * b[2, 3] + a[2, 3] * b[3, 3];
+                    result[3, 3] = a[3, 0] * b[0, 3] + a[3, 1] * b[1, 3] + a[3, 2] * b[2, 3] + a[3, 3] * b[3, 3];
+                }
+            }
+            else
+            {
+                for (int i = 0; i < a.Rows; i++)
+                {
+                    for (int j = 0; j < b.Columns; j++)
+                    {
+                        double cij = MultiplyRowAndColumn(i, j, a, b);
+                        result[i, j] = cij;
+                    }
                 }
             }
             return new Matrix(result, false);
@@ -565,7 +593,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Geometry
                 }, false);
             }
 
-            public static Matrix ViewTransform(Tuple4 from, Tuple4 to, Tuple4 up)
+            public static IMatrix ViewTransform(Tuple4 from, Tuple4 to, Tuple4 up)
             {
                 var forward = Tuple4.Normalize(Tuple4.Subtract(to, from));
                 var upNormalized = Tuple4.Normalize(up);
