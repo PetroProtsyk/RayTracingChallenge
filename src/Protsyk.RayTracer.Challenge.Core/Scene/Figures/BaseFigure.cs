@@ -69,7 +69,9 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
                 ray = ray.Transform(inverseTransformation);
             }
 
-            var result = GetBaseIntersections(ray); // GetBaseIntersections(new Ray(ray.origin, Tuple4.Normalize(ray.dir)));
+            // This used to be called with normalized ray direction, but not anymore.
+            // var result = GetBaseIntersections(new Ray(ray.origin, Tuple4.Normalize(ray.dir)));
+            var result = GetBaseIntersections(ray);
 
             if (Transformation != null)
             {
