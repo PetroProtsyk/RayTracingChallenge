@@ -27,7 +27,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Lights
 
         public Tuple4 GetShadedColor(IMaterial material, Tuple4 eyeVector, Tuple4 pointOnSurface, Tuple4 surfaceNormal)
         {
-            return DirectionLightCommon.GetAmbientColor(material);
+            return DirectionLightCommon.GetAmbientColor(material, pointOnSurface);
         }
     }
 

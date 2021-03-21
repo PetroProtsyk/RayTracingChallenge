@@ -35,7 +35,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Lights
 
         public static Tuple4 GetShadedColor(IMaterial material, Tuple4 white, Tuple4 lightDirection, double intensity, Tuple4 eyeVector, Tuple4 pointOnSurface, Tuple4 surfaceNormal)
         {
-            Tuple4 color = material.Color;
+            Tuple4 color = material.GetColor(pointOnSurface);
             Lighting lighting = GetIntensity(material, lightDirection, intensity, eyeVector, pointOnSurface, surfaceNormal);
             var shadedColor = Tuple4.Add(
                 Tuple4.Scale(color, lighting.intensity * lighting.diffuse),
@@ -44,9 +44,9 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Lights
             return shadedColor;
         }
 
-        public static Tuple4 GetAmbientColor(IMaterial material)
+        public static Tuple4 GetAmbientColor(IMaterial material, Tuple4 pointOnSurface)
         {
-            return Tuple4.Scale(material.Color, material.Ambient);
+            return Tuple4.Scale(material.GetColor(pointOnSurface), material.Ambient);
         }
 
     }

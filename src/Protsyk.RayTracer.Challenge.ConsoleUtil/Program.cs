@@ -13,6 +13,7 @@ using Protsyk.RayTracer.Challenge.Core.Geometry;
 using Protsyk.RayTracer.Challenge.Core.Geometry.SignedDistanceFields;
 using static Protsyk.RayTracer.Challenge.Core.Geometry.Vectors;
 using static Protsyk.RayTracer.Challenge.ConsoleUtil.Figures;
+using Protsyk.RayTracer.Challenge.Core.Scene.Materials.Patterns;
 
 namespace Protsyk.RayTracer.Challenge.ConsoleUtil
 {
@@ -456,6 +457,77 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
             return (camera, scene, ColorConverters.Tuple1);
         }
 
+        static (ICamera camera, BaseScene scene, IColorConverter<Tuple4> colorConverter) SceneChapter10()
+        {
+            // Camera
+            var camera = new FovCamera2(MatrixOperations.Geometry3D.ViewTransform(
+                                            P(0, 1.5, -5),
+                                            P(0, 1, 0),
+                                            V(0, 1, 0)), Math.PI / 3, 800, 600);
+
+            // Materials
+            var defaultMaterial = MaterialConstants.Default;
+            var floorMaterial = new PatternMaterial(
+                                        new StripePattern(new Tuple4(0.2, 0.3, 0.8, TupleFlavour.Vector), new Tuple4(1, 0.9, 0.9, TupleFlavour.Vector)),
+                                        defaultMaterial.Ambient,
+                                        defaultMaterial.Diffuse,
+                                        0,
+                                        defaultMaterial.Shininess,
+                                        defaultMaterial.Reflective,
+                                        defaultMaterial.RefractiveIndex,
+                                        defaultMaterial.Transparency);
+
+            var middleMaterial = new SolidColorMaterial(
+                                        new Tuple4(0.1, 1, 0.5, TupleFlavour.Vector),
+                                        defaultMaterial.Ambient,
+                                        0.7,
+                                        0.3,
+                                        defaultMaterial.Shininess,
+                                        defaultMaterial.Reflective,
+                                        defaultMaterial.RefractiveIndex,
+                                        defaultMaterial.Transparency);
+
+            var rightMaterial = new SolidColorMaterial(
+                                        new Tuple4(0.5, 1, 0.1, TupleFlavour.Vector),
+                                        defaultMaterial.Ambient,
+                                        0.7,
+                                        0.3,
+                                        defaultMaterial.Shininess,
+                                        defaultMaterial.Reflective,
+                                        defaultMaterial.RefractiveIndex,
+                                        defaultMaterial.Transparency);
+
+            var leftMaterial = new SolidColorMaterial(
+                                        new Tuple4(1, 0.8, 0.1, TupleFlavour.Vector),
+                                        defaultMaterial.Ambient,
+                                        0.7,
+                                        0.3,
+                                        defaultMaterial.Shininess,
+                                        defaultMaterial.Reflective,
+                                        defaultMaterial.RefractiveIndex,
+                                        defaultMaterial.Transparency);
+
+            // World
+            var scene = new BaseScene().WithFigures(
+                                 new PlaneFigure(MatrixOperations.Identity(4), floorMaterial), // floor
+                                 new PlaneFigure(MatrixOperations.Multiply(
+                                     MatrixOperations.Geometry3D.Translation(0.0, 0.0, 4.0),
+                                     MatrixOperations.Geometry3D.RotateX(Math.PI/2)), floorMaterial), // floor
+                                 S(MatrixOperations.Geometry3D.Translation(-0.5, 1, 0.5), middleMaterial), // middle sphere
+                                 S(MatrixOperations.Multiply(
+                                     MatrixOperations.Geometry3D.Translation(1.5, 0.5, -0.5),
+                                     MatrixOperations.Geometry3D.Scale(0.5, 0.5, 0.5)), rightMaterial), // right sphere
+                                 S(MatrixOperations.Multiply(
+                                     MatrixOperations.Geometry3D.Translation(-1.5, 0.33, -0.75),
+                                     MatrixOperations.Geometry3D.Scale(0.33, 0.33, 0.33)), leftMaterial) // left sphere
+                            ).WithLights(
+                               L(-10, 10, -10, 1),
+                               A(1.0)
+                            ).WithShadows(true);
+
+            return (camera, scene, ColorConverters.Tuple1);
+        }
+
         static (ICamera camera, BaseScene scene, IColorConverter<Tuple4> colorConverter) SceneSDE(bool isSimple)
         {
             // Camera
@@ -554,7 +626,8 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
                 { "Chapter5", isSimple => SceneChapter5(isSimple) },
                 { "Chapter7", _=> SceneChapter7(false) },
                 { "Chapter8", _=> SceneChapter7(true) },
-                { "Chapter9", _=> SceneChapter9() }
+                { "Chapter9", _=> SceneChapter9() },
+                { "Chapter10", _=> SceneChapter10() }
             };
 
             var outputFileName = args.Length > 1 ? args[1] : "out.ppm";

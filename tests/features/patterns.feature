@@ -9,18 +9,21 @@ Scenario: Creating a stripe pattern
   Then pattern.a = white
     And pattern.b = black
 
+@ignore
 Scenario: A stripe pattern is constant in y
   Given pattern ← stripe_pattern(white, black)
   Then stripe_at(pattern, point(0, 0, 0)) = white
     And stripe_at(pattern, point(0, 1, 0)) = white
     And stripe_at(pattern, point(0, 2, 0)) = white
 
+@ignore
 Scenario: A stripe pattern is constant in z
   Given pattern ← stripe_pattern(white, black)
   Then stripe_at(pattern, point(0, 0, 0)) = white
     And stripe_at(pattern, point(0, 0, 1)) = white
     And stripe_at(pattern, point(0, 0, 2)) = white
 
+@ignore
 Scenario: A stripe pattern alternates in x
   Given pattern ← stripe_pattern(white, black)
   Then stripe_at(pattern, point(0, 0, 0)) = white
@@ -30,6 +33,7 @@ Scenario: A stripe pattern alternates in x
     And stripe_at(pattern, point(-1, 0, 0)) = black
     And stripe_at(pattern, point(-1.1, 0, 0)) = white
 
+@ignore
 Scenario: Stripes with an object transformation
   Given object ← sphere()
     And set_transform(object, scaling(2, 2, 2))
@@ -37,6 +41,7 @@ Scenario: Stripes with an object transformation
   When c ← stripe_at_object(pattern, object, point(1.5, 0, 0))
   Then c = white
 
+@ignore
 Scenario: Stripes with a pattern transformation
   Given object ← sphere()
     And pattern ← stripe_pattern(white, black)
@@ -44,6 +49,7 @@ Scenario: Stripes with a pattern transformation
   When c ← stripe_at_object(pattern, object, point(1.5, 0, 0))
   Then c = white
 
+@ignore
 Scenario: Stripes with both an object and a pattern transformation
   Given object ← sphere()
     And set_transform(object, scaling(2, 2, 2))
@@ -52,15 +58,18 @@ Scenario: Stripes with both an object and a pattern transformation
   When c ← stripe_at_object(pattern, object, point(2.5, 0, 0))
   Then c = white
 
+@ignore
 Scenario: The default pattern transformation
   Given pattern ← test_pattern()
   Then pattern.transform = identity_matrix
 
+@ignore
 Scenario: Assigning a transformation
   Given pattern ← test_pattern()
   When set_pattern_transform(pattern, translation(1, 2, 3))
   Then pattern.transform = translation(1, 2, 3)
 
+@ignore
 Scenario: A pattern with an object transformation
   Given shape ← sphere()
     And set_transform(shape, scaling(2, 2, 2))
@@ -68,6 +77,7 @@ Scenario: A pattern with an object transformation
   When c ← pattern_at_shape(pattern, shape, point(2, 3, 4))
   Then c = color(1, 1.5, 2)
 
+@ignore
 Scenario: A pattern with a pattern transformation
   Given shape ← sphere()
     And pattern ← test_pattern()
@@ -75,6 +85,7 @@ Scenario: A pattern with a pattern transformation
   When c ← pattern_at_shape(pattern, shape, point(2, 3, 4))
   Then c = color(1, 1.5, 2)
 
+@ignore
 Scenario: A pattern with both an object and a pattern transformation
   Given shape ← sphere()
     And set_transform(shape, scaling(2, 2, 2))
@@ -83,6 +94,7 @@ Scenario: A pattern with both an object and a pattern transformation
   When c ← pattern_at_shape(pattern, shape, point(2.5, 3, 3.5))
   Then c = color(0.75, 0.5, 0.25)
 
+@ignore
 Scenario: A gradient linearly interpolates between colors
   Given pattern ← gradient_pattern(white, black)
   Then pattern_at(pattern, point(0, 0, 0)) = white
@@ -90,6 +102,7 @@ Scenario: A gradient linearly interpolates between colors
     And pattern_at(pattern, point(0.5, 0, 0)) = color(0.5, 0.5, 0.5)
     And pattern_at(pattern, point(0.75, 0, 0)) = color(0.25, 0.25, 0.25)
 
+@ignore
 Scenario: A ring should extend in both x and z
   Given pattern ← ring_pattern(white, black)
   Then pattern_at(pattern, point(0, 0, 0)) = white
@@ -98,18 +111,21 @@ Scenario: A ring should extend in both x and z
     # 0.708 = just slightly more than √2/2
     And pattern_at(pattern, point(0.708, 0, 0.708)) = black
 
+@ignore
 Scenario: Checkers should repeat in x
   Given pattern ← checkers_pattern(white, black)
   Then pattern_at(pattern, point(0, 0, 0)) = white
     And pattern_at(pattern, point(0.99, 0, 0)) = white
     And pattern_at(pattern, point(1.01, 0, 0)) = black
 
+@ignore
 Scenario: Checkers should repeat in y
   Given pattern ← checkers_pattern(white, black)
   Then pattern_at(pattern, point(0, 0, 0)) = white
     And pattern_at(pattern, point(0, 0.99, 0)) = white
     And pattern_at(pattern, point(0, 1.01, 0)) = black
 
+@ignore
 Scenario: Checkers should repeat in z
   Given pattern ← checkers_pattern(white, black)
   Then pattern_at(pattern, point(0, 0, 0)) = white

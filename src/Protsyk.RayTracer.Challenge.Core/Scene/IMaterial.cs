@@ -7,8 +7,6 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene
 {
     public interface IMaterial
     {
-        Tuple4 Color { get; }
-
         double Ambient { get; }
 
         double Diffuse { get; }
@@ -24,6 +22,8 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene
         double Transparency { get; }
 
         bool IsShining();
+
+        Tuple4 GetColor(Tuple4 point);
     }
 
     public static class MaterialConstants
