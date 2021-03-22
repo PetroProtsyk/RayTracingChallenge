@@ -65,7 +65,6 @@ Scenario: Lighting with the surface in shadow
   When result ← lighting(m, light, position, eyev, normalv, in_shadow)
   Then result = color(0.1, 0.1, 0.1)
 
-@ignore
 Scenario: Lighting with a pattern applied
   Given m.pattern ← stripe_pattern(color(1, 1, 1), color(0, 0, 0))
     And m.ambient ← 1

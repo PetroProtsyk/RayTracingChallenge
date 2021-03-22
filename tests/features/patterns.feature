@@ -9,21 +9,18 @@ Scenario: Creating a stripe pattern
   Then pattern.a = white
     And pattern.b = black
 
-@ignore
 Scenario: A stripe pattern is constant in y
   Given pattern ← stripe_pattern(white, black)
   Then stripe_at(pattern, point(0, 0, 0)) = white
     And stripe_at(pattern, point(0, 1, 0)) = white
     And stripe_at(pattern, point(0, 2, 0)) = white
 
-@ignore
 Scenario: A stripe pattern is constant in z
   Given pattern ← stripe_pattern(white, black)
   Then stripe_at(pattern, point(0, 0, 0)) = white
     And stripe_at(pattern, point(0, 0, 1)) = white
     And stripe_at(pattern, point(0, 0, 2)) = white
 
-@ignore
 Scenario: A stripe pattern alternates in x
   Given pattern ← stripe_pattern(white, black)
   Then stripe_at(pattern, point(0, 0, 0)) = white
