@@ -117,7 +117,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene
                     {
                         continue;
                     }
-                    color = Tuple4.Add(color, light.GetShadedColor(material, hit.EyeVector, hit.PointOnSurface, hit.SurfaceNormal));
+                    color = Tuple4.Add(color, light.GetShadedColor(hit.ObjectPoint, material, hit.EyeVector, hit.PointOnSurface, hit.SurfaceNormal));
                 }
 
                 return new Tuple4(Math.Min(colors.White.X, color.X),

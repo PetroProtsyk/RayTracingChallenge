@@ -5,6 +5,7 @@ using Protsyk.RayTracer.Challenge.Core.Scene.Materials;
 
 namespace Protsyk.RayTracer.Challenge.Core.Scene.Lights
 {
+    // TODO: Rename to PointLight
     public class SpotLight : ILight
     {
         private readonly Tuple4 location;
@@ -43,10 +44,10 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Lights
             return Tuple4.Subtract(location, from).Length();
         }
 
-        public Tuple4 GetShadedColor(IMaterial material, Tuple4 eyeVector, Tuple4 pointOnSurface, Tuple4 surfaceNormal)
+        public Tuple4 GetShadedColor(Tuple4 objectPoint, IMaterial material, Tuple4 eyeVector, Tuple4 pointOnSurface, Tuple4 surfaceNormal)
         {
             var lightDirection = Tuple4.Normalize(Tuple4.Subtract(location, pointOnSurface));
-            return DirectionLightCommon.GetShadedColor(material, colors.White, lightDirection, intensity, eyeVector, pointOnSurface, surfaceNormal);
+            return DirectionLightCommon.GetShadedColor(objectPoint, material, colors.White, lightDirection, intensity, eyeVector, pointOnSurface, surfaceNormal);
         }
 
     }

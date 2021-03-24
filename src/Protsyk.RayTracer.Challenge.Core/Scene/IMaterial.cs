@@ -23,7 +23,12 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene
 
         bool IsShining();
 
-        Tuple4 GetColor(Tuple4 point);
+        /// <summary>
+        /// Returns material color given the point in the object space
+        /// </summary>
+        /// <param name="objectPoint">point in the object space</param>
+        /// <returns></returns>
+        Tuple4 GetColor(Tuple4 objectPoint);
     }
 
     public static class MaterialConstants

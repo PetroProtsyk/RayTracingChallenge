@@ -10,6 +10,8 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
 
         private IMatrix inverseTransformation;
 
+        private IMatrix inverseTransposeTransformation;
+
         public IMaterial Material
         {
             get;
@@ -26,9 +28,11 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
             {
                 transformation = value;
                 inverseTransformation = null;
+                inverseTransposeTransformation = null;
                 if (value != null)
                 {
                     inverseTransformation = MatrixOperations.Invert(value);
+                    inverseTransposeTransformation = MatrixOperations.Transpose(inverseTransformation, false);
                 }
             }
         }
@@ -38,6 +42,11 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
         protected abstract Tuple4 GetBaseNormal(Tuple4 pointOnSurface);
 
         public Tuple4 GetNormal(Tuple4 point)
+        {
+            return GetTransformedNormal(point).normal;
+        }
+
+        protected (Tuple4 normal, Tuple4 objectPoint) GetTransformedNormal(Tuple4 point)
         {
             var objectPoint = point;
             if (Transformation != null)
@@ -49,16 +58,15 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
 
             if (Transformation != null)
             {
-                normal = MatrixOperations.Geometry3D.Transform(MatrixOperations.Transpose(inverseTransformation, false), normal);
+                normal = MatrixOperations.Geometry3D.Transform(inverseTransposeTransformation, normal);
                 if (normal.W != 0.0)
                 {
                     normal = new Tuple4(normal.X, normal.Y, normal.Z, TupleFlavour.Vector);
                 }
             }
 
-            return Tuple4.Normalize(normal);
+            return (Tuple4.Normalize(normal), objectPoint);
         }
-
 
         protected abstract double[] GetBaseIntersections(Ray ray);
 
@@ -106,7 +114,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
             {
                 var distance = intersections[i];
                 var pointOnSurface = Tuple4.Geometry3D.MovePoint(origin, dir, distance); // orig + dir*dist
-                var surfaceNormal = GetNormal(pointOnSurface);
+                (var surfaceNormal, var objectPoint) = GetTransformedNormal(pointOnSurface);
                 var eyeVector = Tuple4.Negate(dir);
                 var isInside = false;
                 if (Tuple4.DotProduct(surfaceNormal, eyeVector) < 0)
@@ -115,7 +123,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
                     surfaceNormal = Tuple4.Negate(surfaceNormal);
                 }
                 var pointOverSurface = Tuple4.Add(pointOnSurface, Tuple4.Scale(surfaceNormal, Constants.Epsilon));
-                result[i] = new HitResult(true, this, distance, pointOnSurface, pointOverSurface, surfaceNormal, eyeVector, isInside);
+                result[i] = new HitResult(true, this, distance, objectPoint, pointOnSurface, pointOverSurface, surfaceNormal, eyeVector, isInside);
             }
 
             return result;

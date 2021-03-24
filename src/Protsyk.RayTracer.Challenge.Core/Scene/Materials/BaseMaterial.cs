@@ -21,7 +21,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Materials
 
         public double Transparency { get; private set; }
 
-        public abstract Tuple4 GetColor(Tuple4 point);
+        public abstract Tuple4 GetColor(Tuple4 objectPoint);
 
         public BaseMaterial()
         {

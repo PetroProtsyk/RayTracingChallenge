@@ -31,9 +31,9 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Lights
             return double.MaxValue;
         }
 
-        public Tuple4 GetShadedColor(IMaterial material, Tuple4 eyeVector, Tuple4 pointOnSurface, Tuple4 surfaceNormal)
+        public Tuple4 GetShadedColor(Tuple4 objectPoint, IMaterial material, Tuple4 eyeVector, Tuple4 pointOnSurface, Tuple4 surfaceNormal)
         {
-            return DirectionLightCommon.GetShadedColor(material, colors.White, lightDirection, intensity, eyeVector, pointOnSurface, surfaceNormal);
+            return DirectionLightCommon.GetShadedColor(objectPoint, material, colors.White, lightDirection, intensity, eyeVector, pointOnSurface, surfaceNormal);
         }
     }
 

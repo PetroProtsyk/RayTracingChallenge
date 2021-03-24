@@ -487,8 +487,12 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
                                         defaultMaterial.RefractiveIndex,
                                         defaultMaterial.Transparency);
 
-            var rightMaterial = new SolidColorMaterial(
-                                        new Tuple4(0.5, 1, 0.1, TupleFlavour.Vector),
+            var rightMaterial = new PatternMaterial(
+                                        new StripePattern(MatrixOperations.Multiply(
+                                                            MatrixOperations.Geometry3D.RotateZ(Math.PI / 3),
+                                                            MatrixOperations.Geometry3D.Scale(0.25, 2, 2)),
+                                                            new Tuple4(1, 0.5, 0.1, TupleFlavour.Vector),
+                                                            new Tuple4(1, 0.9, 0.9, TupleFlavour.Vector)),
                                         defaultMaterial.Ambient,
                                         0.7,
                                         0.3,
