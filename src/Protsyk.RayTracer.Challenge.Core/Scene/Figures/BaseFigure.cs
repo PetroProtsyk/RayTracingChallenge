@@ -51,7 +51,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
             var objectPoint = point;
             if (Transformation != null)
             {
-                objectPoint = MatrixOperations.Geometry3D.Transform(inverseTransformation, point);
+                objectPoint = TransformWorldPointToObjectPoint(point);
             }
 
             var normal = GetBaseNormal(objectPoint);
@@ -66,6 +66,11 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
             }
 
             return (Tuple4.Normalize(normal), objectPoint);
+        }
+
+        protected Tuple4 TransformWorldPointToObjectPoint(Tuple4 worldPoint)
+        {
+            return MatrixOperations.Geometry3D.Transform(inverseTransformation, worldPoint);
         }
 
         protected abstract double[] GetBaseIntersections(Ray ray);
