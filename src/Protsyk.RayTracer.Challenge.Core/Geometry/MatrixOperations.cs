@@ -613,8 +613,12 @@ namespace Protsyk.RayTracer.Challenge.Core.Geometry
 
             public static Tuple4 Transform(IMatrix matrix, Tuple4 tuple)
             {
-                return MatrixOperations.Geometry3D.ToTuple(
-                            MatrixOperations.Multiply(matrix, MatrixOperations.Geometry3D.FromTuple(tuple)));
+                return new Tuple4(
+                        matrix[0, 0] * tuple.X + matrix[0, 1] * tuple.Y + matrix[0, 2] * tuple.Z + matrix[0, 3] * tuple.W,
+                        matrix[1, 0] * tuple.X + matrix[1, 1] * tuple.Y + matrix[1, 2] * tuple.Z + matrix[1, 3] * tuple.W,
+                        matrix[2, 0] * tuple.X + matrix[2, 1] * tuple.Y + matrix[2, 2] * tuple.Z + matrix[2, 3] * tuple.W,
+                        matrix[3, 0] * tuple.X + matrix[3, 1] * tuple.Y + matrix[3, 2] * tuple.Z + matrix[3, 3] * tuple.W
+                    );
             }
         }
     }
