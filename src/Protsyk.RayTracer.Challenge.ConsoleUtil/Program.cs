@@ -310,7 +310,7 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
         static (ICamera camera, BaseScene scene, IColorConverter<Tuple4> colorConverter) SceneChapter7(bool castShadows)
         {
             // Camera
-            var camera = new FovCamera2(MatrixOperations.Geometry3D.ViewTransform(
+            var camera = new FovCamera2(MatrixOperations.Geometry3D.LookAtTransform(
                                             P(0, 1.5, -5),
                                             P(0, 1, 0),
                                             V(0, 1, 0)), Math.PI / 3, 800, 600);
@@ -392,7 +392,7 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
         static (ICamera camera, BaseScene scene, IColorConverter<Tuple4> colorConverter) SceneChapter9()
         {
             // Camera
-            var camera = new FovCamera2(MatrixOperations.Geometry3D.ViewTransform(
+            var camera = new FovCamera2(MatrixOperations.Geometry3D.LookAtTransform(
                                             P(0, 1.5, -5),
                                             P(0, 1, 0),
                                             V(0, 1, 0)), Math.PI / 3, 800, 600);
@@ -460,7 +460,7 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
         static (ICamera camera, BaseScene scene, IColorConverter<Tuple4> colorConverter) SceneChapter10()
         {
             // Camera
-            var camera = new FovCamera2(MatrixOperations.Geometry3D.ViewTransform(
+            var camera = new FovCamera2(MatrixOperations.Geometry3D.LookAtTransform(
                                             P(0, 1.5, -5),
                                             P(0, 1, 0),
                                             V(0, 1, 0)), Math.PI / 3, 800, 600);

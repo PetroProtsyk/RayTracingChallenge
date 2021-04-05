@@ -468,6 +468,9 @@ namespace Protsyk.RayTracer.Challenge.Core.Geometry
             return result;
         }
 
+        /// <summary>
+        /// 3D Geometry in Left-Handed Coordinate System
+        /// </summary>
         public static class Geometry3D
         {
             public static Matrix Translation(double x, double y, double z)
@@ -534,6 +537,26 @@ namespace Protsyk.RayTracer.Challenge.Core.Geometry
                 }, false);
             }
 
+            // Returns a rotation over Z, then X, then Y.
+            // This is useful for free-look/fps cameras.
+            public static Matrix RotateZXY(double x, double y, double z)
+            {
+                double cosX = Math.Cos(x);
+                double cosY = Math.Cos(y);
+                double cosZ = Math.Cos(z);
+                double sinX = Math.Sin(x);
+                double sinY = Math.Sin(y);
+                double sinZ = Math.Sin(z);
+
+                return new Matrix(new double[,]
+                {
+                    { cosZ * cosY + sinX * sinY * sinZ      , -sinZ * cosY + sinY * cosZ * sinX  , sinY * cosX   , 0.0 },
+                    { sinZ * cosX                           , cosZ * cosX                        , -sinX         , 0.0 },
+                    { -sinY * cosZ + cosY * sinZ * sinX     , sinZ * sinY + cosY * cosZ * sinX   , cosX * cosY   , 0.0 },
+                    { 0.0                                   , 0.0                                , 0.0           , 1.0 }
+                }, false);
+            }
+
             public static Matrix Shearing(double xy, double xz, double yx, double yz, double zx, double zy)
             {
                 return new Matrix(new double[,]
@@ -593,22 +616,80 @@ namespace Protsyk.RayTracer.Challenge.Core.Geometry
                 }, false);
             }
 
-            public static IMatrix ViewTransform(Tuple4 from, Tuple4 to, Tuple4 up)
+            public static IMatrix LookAtTransform(Tuple4 from, Tuple4 to, Tuple4 up)
             {
                 var forward = Tuple4.Normalize(Tuple4.Subtract(to, from));
                 var upNormalized = Tuple4.Normalize(up);
                 var left = Tuple4.CrossProduct(forward, upNormalized);
                 var trueUp = Tuple4.CrossProduct(left, forward);
 
-                var orientation = new Matrix(new double[,]
+                var viewMatrix = new Matrix(new double[,]
                 {
-                    {      left.X,     left.Y,     left.Z, 0.0 },
-                    {    trueUp.X,   trueUp.Y,   trueUp.Z, 0.0 },
-                    {  -forward.X, -forward.Y, -forward.Z, 0.0 },
-                    {         0.0,        0.0,        0.0, 1.0 }
-                }, false);
+                    {      left.X,     left.Y,     left.Z, -Tuple4.DotProduct( left, from )     },
+                    {    trueUp.X,   trueUp.Y,   trueUp.Z, -Tuple4.DotProduct( trueUp, from )   },
+                    {  -forward.X, -forward.Y, -forward.Z,  Tuple4.DotProduct( forward, from )  },
+                    {         0.0,        0.0,        0.0, 1.0                                  }
+                });
 
-                return Multiply(orientation, Translation(-from.X, -from.Y, -from.Z));
+                return viewMatrix;
+
+                /*
+                    // Create a 4x4 orientation matrix from the left, up, and forward vectors
+                    // This is transposed which is equivalent to performing an inverse 
+                    // if the matrix is orthonormalized (in this case, it is).
+                    var orientation = new Matrix(new double[,]
+                    {
+                        {      left.X,     left.Y,     left.Z, 0.0 },
+                        {    trueUp.X,   trueUp.Y,   trueUp.Z, 0.0 },
+                        {  -forward.X, -forward.Y, -forward.Z, 0.0 },
+                        {         0.0,        0.0,        0.0, 1.0 }
+                    }, false);
+
+                    // Create a 4x4 translation matrix.
+                    // The eye position is negated which is equivalent
+                    // to the inverse of the translation matrix.
+                    var translation = Translation(-from.X, -from.Y, -from.Z);
+
+                    // Combine the orientation and translation to compute 
+                    // the final view matrix. Note that the order of 
+                    // multiplication is reversed because the matrices
+                    // are already inverted.
+                    return Multiply(orientation, translation);
+                */
+            }
+
+            // https://en.wikipedia.org/wiki/Euler_angles
+            // The basic theory of this camera model is that we want to build a camera matrix that first rotates pitch angle about the X axis,
+            // then rotates yaw angle about the Y axis, then translates to some position in the world.
+            // Since we want the view matrix, we need to compute the inverse of the resulting matrix.
+            //              V=(T(RyRx))^-1
+            public static IMatrix EulerAnglesTransform(Tuple4 from, double pitch, double yaw)
+            {
+                var orientation = MatrixOperations.Geometry3D.RotateZXY(pitch, yaw, 0);
+                var translation = Translation(from.X, from.Y, from.Z);
+                return Invert(Multiply(translation, orientation));
+            }
+
+            public static IMatrix EulerAnglesTransformDirectConstruction(Tuple4 from, double pitch, double yaw)
+            {
+                double cosPitch = Math.Cos(pitch);
+                double sinPitch = Math.Sin(pitch);
+                double cosYaw = Math.Cos(yaw);
+                double sinYaw = Math.Sin(yaw);
+
+                Tuple4 xaxis = new Tuple4( cosYaw, 0, -sinYaw, TupleFlavour.Vector);
+                Tuple4 yaxis = new Tuple4(sinYaw * sinPitch, cosPitch, cosYaw * sinPitch, TupleFlavour.Vector);
+                Tuple4 zaxis = new Tuple4(sinYaw * cosPitch, -sinPitch, cosPitch * cosYaw, TupleFlavour.Vector);
+
+                var viewMatrix = new Matrix(new double[,]
+                {
+                  { xaxis.X , xaxis.Y   , xaxis.Z   , -Tuple4.DotProduct( xaxis, from ) },
+                  { yaxis.X , yaxis.Y   , yaxis.Z   , -Tuple4.DotProduct( yaxis, from ) },
+                  { zaxis.X , zaxis.Y   , zaxis.Z   , -Tuple4.DotProduct( zaxis, from ) },
+                  { 0       , 0         , 0         , 1                                 }
+                });
+
+                return viewMatrix;
             }
 
             public static Tuple4 Transform(IMatrix matrix, Tuple4 tuple)

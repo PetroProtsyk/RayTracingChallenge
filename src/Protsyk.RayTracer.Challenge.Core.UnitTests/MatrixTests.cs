@@ -187,5 +187,28 @@ namespace Protsyk.RayTracer.Challenge.Core.UnitTests
             }
         }
 
+        [Fact]
+        public void MatrixRotationTest()
+        {
+            var rot1 = MatrixOperations.Geometry3D.RotateZXY(Math.PI / 3, Math.PI / 5, Math.PI / 7);
+
+            var rotX = MatrixOperations.Geometry3D.RotateX(Math.PI / 3);
+            var rotY = MatrixOperations.Geometry3D.RotateY(Math.PI / 5);
+            var rotZ = MatrixOperations.Geometry3D.RotateZ(Math.PI / 7);
+
+            // First rotate Z, then X and then Y
+            var rot2 = MatrixOperations.Multiply(rotY, MatrixOperations.Multiply(rotX, rotZ));
+
+            Assert.Equal(rot1, rot2);
+        }
+
+        [Fact]
+        public void MatrixEulerRotationTest()
+        {
+            var rot1 = MatrixOperations.Geometry3D.EulerAnglesTransform(new Tuple4(1.0,2.0,3.0, TupleFlavour.Point), Math.PI / 5.0, 2.0 * Math.PI / 7.0);
+            var rot2 = MatrixOperations.Geometry3D.EulerAnglesTransformDirectConstruction(new Tuple4(1.0, 2.0, 3.0, TupleFlavour.Point), Math.PI / 5.0, 2.0 * Math.PI / 7.0);
+
+            Assert.Equal(rot1, rot2);
+        }
     }
 }
