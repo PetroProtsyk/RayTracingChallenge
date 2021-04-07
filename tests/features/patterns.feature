@@ -30,7 +30,6 @@ Scenario: A stripe pattern alternates in x
     And stripe_at(pattern, point(-1, 0, 0)) = black
     And stripe_at(pattern, point(-1.1, 0, 0)) = white
 
-@ignore
 Scenario: Stripes with an object transformation
   Given object ← sphere()
     And set_transform(object, scaling(2, 2, 2))
@@ -38,7 +37,6 @@ Scenario: Stripes with an object transformation
   When c ← stripe_at_object(pattern, object, point(1.5, 0, 0))
   Then c = white
 
-@ignore
 Scenario: Stripes with a pattern transformation
   Given object ← sphere()
     And pattern ← stripe_pattern(white, black)
@@ -46,7 +44,6 @@ Scenario: Stripes with a pattern transformation
   When c ← stripe_at_object(pattern, object, point(1.5, 0, 0))
   Then c = white
 
-@ignore
 Scenario: Stripes with both an object and a pattern transformation
   Given object ← sphere()
     And set_transform(object, scaling(2, 2, 2))
@@ -55,18 +52,15 @@ Scenario: Stripes with both an object and a pattern transformation
   When c ← stripe_at_object(pattern, object, point(2.5, 0, 0))
   Then c = white
 
-@ignore
 Scenario: The default pattern transformation
   Given pattern ← test_pattern()
   Then pattern.transform = identity_matrix
 
-@ignore
 Scenario: Assigning a transformation
   Given pattern ← test_pattern()
   When set_pattern_transform(pattern, translation(1, 2, 3))
   Then pattern.transform = translation(1, 2, 3)
 
-@ignore
 Scenario: A pattern with an object transformation
   Given shape ← sphere()
     And set_transform(shape, scaling(2, 2, 2))
@@ -74,7 +68,6 @@ Scenario: A pattern with an object transformation
   When c ← pattern_at_shape(pattern, shape, point(2, 3, 4))
   Then c = color(1, 1.5, 2)
 
-@ignore
 Scenario: A pattern with a pattern transformation
   Given shape ← sphere()
     And pattern ← test_pattern()
@@ -82,7 +75,6 @@ Scenario: A pattern with a pattern transformation
   When c ← pattern_at_shape(pattern, shape, point(2, 3, 4))
   Then c = color(1, 1.5, 2)
 
-@ignore
 Scenario: A pattern with both an object and a pattern transformation
   Given shape ← sphere()
     And set_transform(shape, scaling(2, 2, 2))
