@@ -477,8 +477,12 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
                                         defaultMaterial.RefractiveIndex,
                                         defaultMaterial.Transparency);
 
-            var middleMaterial = new SolidColorMaterial(
-                                        new Tuple4(0.1, 1, 0.5, TupleFlavour.Vector),
+            var middleMaterial = new PatternMaterial(
+                                        new CheckerPattern(MatrixOperations.Multiply(
+                                                            MatrixOperations.Geometry3D.RotateX(Math.PI / 2),
+                                                            MatrixOperations.Geometry3D.Scale(0.25, 0.25, 0.25)),
+                                                          Tuple4.Vector(0.1, 1, 0.5),
+                                                          Tuple4.Vector(1, 0.9, 0.9)),
                                         defaultMaterial.Ambient,
                                         0.7,
                                         0.3,
@@ -501,15 +505,17 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
                                         defaultMaterial.RefractiveIndex,
                                         defaultMaterial.Transparency);
 
-            var leftMaterial = new SolidColorMaterial(
-                                        new Tuple4(1, 0.8, 0.1, TupleFlavour.Vector),
-                                        defaultMaterial.Ambient,
-                                        0.7,
-                                        0.3,
-                                        defaultMaterial.Shininess,
-                                        defaultMaterial.Reflective,
-                                        defaultMaterial.RefractiveIndex,
-                                        defaultMaterial.Transparency);
+            var leftMaterial = new PatternMaterial(
+                                                    new GradientPattern(MatrixOperations.Geometry3D.RotateZ(Math.PI / 6),
+                                                                        new Tuple4(1, 0.8, 0.1, TupleFlavour.Vector),
+                                                                        new Tuple4(1, 0.9, 0.9, TupleFlavour.Vector)),
+                                                    defaultMaterial.Ambient,
+                                                    0.7,
+                                                    0.3,
+                                                    defaultMaterial.Shininess,
+                                                    defaultMaterial.Reflective,
+                                                    defaultMaterial.RefractiveIndex,
+                                                    defaultMaterial.Transparency);
 
             // World
             var scene = new BaseScene().WithFigures(

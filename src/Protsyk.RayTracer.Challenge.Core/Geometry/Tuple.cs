@@ -26,6 +26,10 @@ namespace Protsyk.RayTracer.Challenge.Core.Geometry
             this.W = w;
         }
 
+        public static Tuple4 Point(double x, double y, double z) => new Tuple4(x, y, z, TupleFlavour.Point);
+
+        public static Tuple4 Vector(double x, double y, double z) => new Tuple4(x, y, z, TupleFlavour.Vector);
+
         public override string ToString()
         {
             return $"[{X}, {Y}, {Z}, {W}]";
