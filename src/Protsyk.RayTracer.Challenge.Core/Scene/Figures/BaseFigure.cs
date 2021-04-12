@@ -128,7 +128,8 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
                     surfaceNormal = Tuple4.Negate(surfaceNormal);
                 }
                 var pointOverSurface = Tuple4.Add(pointOnSurface, Tuple4.Scale(surfaceNormal, Constants.Epsilon));
-                result[i] = new HitResult(true, this, distance, objectPoint, pointOnSurface, pointOverSurface, surfaceNormal, eyeVector, isInside);
+                var reflectionVector = Tuple4.Reflect(dir, surfaceNormal);
+                result[i] = new HitResult(true, this, distance, objectPoint, pointOnSurface, pointOverSurface, surfaceNormal, eyeVector, reflectionVector, isInside);
             }
 
             return result;

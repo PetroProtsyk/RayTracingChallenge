@@ -482,7 +482,8 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
                                                             MatrixOperations.Geometry3D.RotateX(Math.PI / 2),
                                                             MatrixOperations.Geometry3D.Scale(0.25, 0.25, 0.25)),
                                                           Tuple4.Vector(0.1, 1, 0.5),
-                                                          Tuple4.Vector(1, 0.9, 0.9)),
+                                                          Tuple4.Vector(1, 0.9, 0.9),
+                                                          true),
                                         defaultMaterial.Ambient,
                                         0.7,
                                         0.3,
@@ -532,6 +533,51 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
                                      MatrixOperations.Geometry3D.Scale(0.33, 0.33, 0.33)), leftMaterial) // left sphere
                             ).WithLights(
                                L(-10, 10, -10, 1),
+                               A(1.0)
+                            ).WithShadows(true);
+
+            return (camera, scene, ColorConverters.Tuple1);
+        }
+
+        static (ICamera camera, BaseScene scene, IColorConverter<Tuple4> colorConverter) SceneChapter11()
+        {
+            // Camera
+            var camera = new FovCamera2(MatrixOperations.Geometry3D.LookAtTransform(
+                                            P(0, 1.0, -6),
+                                            P(0, 1, 0),
+                                            V(0, 1, 0)), Math.PI / 3, 800, 600);
+
+            // Materials
+            var defaultMaterial = MaterialConstants.Default;
+            var floorMaterial = new PatternMaterial(
+                                        new CheckerPattern(MatrixOperations.Geometry3D.RotateY(Math.PI / 3),
+                                                           Tuple4.Vector(0, 0, 0),
+                                                           Tuple4.Vector(0.4, 0.4, 0.4),
+                                                           false),
+                                        defaultMaterial.Ambient,
+                                        defaultMaterial.Diffuse,
+                                        0,
+                                        defaultMaterial.Shininess,
+                                        0.7,
+                                        defaultMaterial.RefractiveIndex,
+                                        defaultMaterial.Transparency);
+
+            var middleMaterial = new SolidColorMaterial(
+                                        new Tuple4(0.31, 0.03, 0.027, TupleFlavour.Vector),
+                                        defaultMaterial.Ambient,
+                                        0.9,
+                                        0.001,
+                                        10,
+                                        defaultMaterial.Reflective,
+                                        defaultMaterial.RefractiveIndex,
+                                        defaultMaterial.Transparency);
+
+            // World
+            var scene = new BaseScene().WithFigures(
+                                 new PlaneFigure(MatrixOperations.Identity(4), floorMaterial), // floor
+                                 S(MatrixOperations.Geometry3D.Translation(-0.5, 1, 1.7), middleMaterial) // middle sphere
+                            ).WithLights(
+                               L(-10, 10, -10, 0.9),
                                A(1.0)
                             ).WithShadows(true);
 
@@ -637,7 +683,8 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
                 { "Chapter7", _=> SceneChapter7(false) },
                 { "Chapter8", _=> SceneChapter7(true) },
                 { "Chapter9", _=> SceneChapter9() },
-                { "Chapter10", _=> SceneChapter10() }
+                { "Chapter10", _=> SceneChapter10() },
+                { "Chapter11", _=> SceneChapter11() }
             };
 
             var outputFileName = args.Length > 1 ? args[1] : "out.ppm";

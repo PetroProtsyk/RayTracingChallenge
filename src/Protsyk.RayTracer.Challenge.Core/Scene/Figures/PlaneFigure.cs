@@ -23,7 +23,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
 
         protected override double[] GetBaseIntersections(Ray ray)
         {
-            if (Constants.EpsilonCompare(Math.Abs(ray.dir.Y), 0))
+            if (Constants.EpsilonZero(Math.Abs(ray.dir.Y)))
             {
                 return null;
             }

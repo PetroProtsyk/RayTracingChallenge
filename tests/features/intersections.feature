@@ -60,13 +60,15 @@ Scenario: Precomputing the state of an intersection
     And comps.eyev = vector(0, 0, -1)
     And comps.normalv = vector(0, 0, -1)
 
-@ignore
+# √2/2 = 0.7071068
+# √2 =   1.4142136
+
 Scenario: Precomputing the reflection vector
   Given shape ← plane()
-    And r ← ray(point(0, 1, -1), vector(0, -√2/2, √2/2)) 
-    And i ← intersection(√2, shape)
+    And r ← ray(point(0, 1, -1), vector(0, -0.7071068, 0.7071068))
+    And i ← intersection(1.4142136, shape)
   When comps ← prepare_computations(i, r)
-  Then comps.reflectv = vector(0, √2/2, √2/2)
+  Then comps.reflectv = vector(0, 0.7071068, 0.7071068)
 
 Scenario: The hit, when an intersection occurs on the outside
   Given r ← ray(point(0, 0, -5), vector(0, 0, 1))

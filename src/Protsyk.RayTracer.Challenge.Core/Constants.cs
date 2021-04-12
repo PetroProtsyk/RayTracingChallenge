@@ -15,5 +15,10 @@ namespace Protsyk.RayTracer.Challenge.Core
         {
             return Math.Abs(a - b) < Epsilon;
         }
+
+        public static bool EpsilonZero(double a)
+        {
+            return Math.Abs(a) < Epsilon;
+        }
     }
 }

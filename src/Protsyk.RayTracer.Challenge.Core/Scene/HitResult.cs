@@ -10,11 +10,12 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene
         public static readonly HitResult NoHit = new HitResult(false,
                                                                null,
                                                                -1,
-                                                               new Tuple4(0, 0, 0, TupleFlavour.Point),
-                                                               new Tuple4(0, 0, 0, TupleFlavour.Point),
-                                                               new Tuple4(0, 0, 0, TupleFlavour.Point),
-                                                               new Tuple4(0, 0, 0, TupleFlavour.Vector),
-                                                               new Tuple4(0, 0, 0, TupleFlavour.Vector),
+                                                               Tuple4.Point(0, 0, 0),
+                                                               Tuple4.Point(0, 0, 0),
+                                                               Tuple4.Point(0, 0, 0),
+                                                               Tuple4.Vector(0, 0, 0),
+                                                               Tuple4.Vector(0, 0, 0),
+                                                               Tuple4.Vector(0, 0, 0),
                                                                false);
 
         public readonly bool IsHit;
@@ -25,6 +26,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene
         public readonly Tuple4 PointOverSurface;
         public readonly Tuple4 SurfaceNormal;
         public readonly Tuple4 EyeVector;
+        public readonly Tuple4 ReflectionVector;
         public readonly bool IsInside;
 
         public HitResult(bool isHit,
@@ -35,6 +37,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene
                         Tuple4 pointOverSurface,
                         Tuple4 surfaceNormal,
                         Tuple4 eyeVector,
+                        Tuple4 reflectionVector,
                         bool isInside)
         {
             IsHit = isHit;
@@ -45,6 +48,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene
             PointOverSurface = pointOverSurface;
             SurfaceNormal = surfaceNormal;
             EyeVector = eyeVector;
+            ReflectionVector = reflectionVector;
             IsInside = isInside;
         }
     }

@@ -16,6 +16,8 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene
 
         private bool castShadows = true;
 
+        private int recursionDepth = 4;
+
         public IEnumerable<IFigure> Figures => figures;
 
         public IEnumerable<ILight> Lights => lights;
@@ -48,6 +50,12 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene
             return this;
         }
 
+        public BaseScene WithRecursionDepth(int value)
+        {
+            this.recursionDepth = value;
+            return this;
+        }
+
         public void AddLight(ILight light)
         {
             if ((light is AmbientLight) && lights.Any(l => l is AmbientLight))
@@ -69,8 +77,13 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene
 
         public Tuple4 CastRay(Ray r)
         {
+            return CastRay(r, recursionDepth);
+        }
+
+        private Tuple4 CastRay(Ray r, int remaining)
+        {
             var hit = CalculateIntersection(r.origin, r.dir);
-            var color = CalculateColorAt(hit);
+            var color = CalculateColorAt(hit, remaining);
             return color;
         }
 
@@ -104,29 +117,60 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene
             return false;
         }
 
-        public Tuple4 CalculateColorAt(HitResult hit)
+        public Tuple4 CalculateReflectedColorAt(HitResult hit)
         {
-            if (hit.IsHit)
-            {
-                var material = hit.Figure.Material;
-                var color = Tuple4.ZeroVector;
-                foreach (var light in lights)
-                {
-                    // Shadow
-                    if (castShadows && IsShadowed(light, hit.PointOverSurface))
-                    {
-                        continue;
-                    }
-                    color = Tuple4.Add(color, light.GetShadedColor(hit.ObjectPoint, material, hit.EyeVector, hit.PointOnSurface, hit.SurfaceNormal));
-                }
+            return CalculateReflectedColorAt(hit, recursionDepth);
+        }
 
-                return new Tuple4(Math.Min(colors.White.X, color.X),
-                                  Math.Min(colors.White.X, color.Y),
-                                  Math.Min(colors.White.X, color.Z),
-                                  TupleFlavour.Vector);
+        private Tuple4 CalculateReflectedColorAt(HitResult hit, int remaining)
+        {
+            if (!hit.IsHit || remaining <= 0)
+            {
+                return colors.Black;
             }
 
-            return colors.Black;
+            var material = hit.Figure.Material;
+            if (Constants.EpsilonZero(material.Reflective))
+            {
+                return Tuple4.ZeroVector;
+            }
+
+            var reflectedRay = new Ray(hit.PointOverSurface, hit.ReflectionVector);
+            var reflectedColor = CastRay(reflectedRay, remaining - 1);
+
+            return Tuple4.Scale(reflectedColor, material.Reflective);
+        }
+
+        public Tuple4 CalculateColorAt(HitResult hit)
+        {
+            return CalculateColorAt(hit, recursionDepth);
+        }
+
+        private Tuple4 CalculateColorAt(HitResult hit, int remaining)
+        {
+            if (!hit.IsHit)
+            {
+                return colors.Black;
+            }
+
+            var material = hit.Figure.Material;
+            var color = Tuple4.ZeroVector;
+            foreach (var light in lights)
+            {
+                // Shadow
+                if (castShadows && IsShadowed(light, hit.PointOverSurface))
+                {
+                    continue;
+                }
+                color = Tuple4.Add(color, light.GetShadedColor(hit.ObjectPoint, material, hit.EyeVector, hit.PointOnSurface, hit.SurfaceNormal));
+            }
+
+            color = Tuple4.Add(color, CalculateReflectedColorAt(hit, remaining));
+
+            return new Tuple4(Math.Min(colors.White.X, color.X),
+                              Math.Min(colors.White.X, color.Y),
+                              Math.Min(colors.White.X, color.Z),
+                              TupleFlavour.Vector);
         }
 
         private HitResult CalculateIntersection(Tuple4 origin, Tuple4 dir)

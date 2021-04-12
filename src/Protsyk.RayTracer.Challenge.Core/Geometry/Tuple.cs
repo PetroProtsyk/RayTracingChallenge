@@ -145,7 +145,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Geometry
         }
 
         public bool IsVector() {
-            return Constants.EpsilonCompare(0, W);
+            return Constants.EpsilonZero(W);
         }
 
         public bool IsPoint() {

@@ -103,7 +103,6 @@ Scenario: shade_hit() is given an intersection in shadow
     And c ← shade_hit(w, comps)
   Then c = color(0.1, 0.1, 0.1)
 
-@ignore
 Scenario: The reflected color for a nonreflective material
   Given w ← default_world()
     And r ← ray(point(0, 0, 0), vector(0, 0, 1))
@@ -114,33 +113,33 @@ Scenario: The reflected color for a nonreflective material
     And color ← reflected_color(w, comps)
   Then color = color(0, 0, 0)
 
-@ignore
+# √2/2 = 0.7071068
+# √2 =   1.4142136
+
 Scenario: The reflected color for a reflective material
   Given w ← default_world()
-    And shape ← plane() with:                 
+    And shape ← plane() with:
       | material.reflective | 0.5                   |
-      | transform           | translation(0, -1, 0) |   
+      | transform           | translation(0, -1, 0) |
     And shape is added to w
-    And r ← ray(point(0, 0, -3), vector(0, -√2/2, √2/2))
-    And i ← intersection(√2, shape)
+    And r ← ray(point(0, 0, -3), vector(0, -0.7071068, 0.7071068))
+    And i ← intersection(1.4142136, shape)
   When comps ← prepare_computations(i, r)
     And color ← reflected_color(w, comps)
-  Then color = color(0.19032, 0.2379, 0.14274)
+  Then color = color(0.190332, 0.23791, 0.142749)
 
-@ignore
 Scenario: shade_hit() with a reflective material
   Given w ← default_world()
     And shape ← plane() with:
       | material.reflective | 0.5                   |
       | transform           | translation(0, -1, 0) |
     And shape is added to w
-    And r ← ray(point(0, 0, -3), vector(0, -√2/2, √2/2))
-    And i ← intersection(√2, shape)
+    And r ← ray(point(0, 0, -3), vector(0, -0.7071068, 0.7071068))
+    And i ← intersection(1.4142136, shape)
   When comps ← prepare_computations(i, r)
     And color ← shade_hit(w, comps)
-  Then color = color(0.87677, 0.92436, 0.82918)
+  Then color = color(0.876758, 0.924341, 0.829175)
 
-@ignore
 Scenario: color_at() with mutually reflective surfaces
   Given w ← world()
     And w.light ← point_light(point(0, 0, 0), color(1, 1, 1))
@@ -155,15 +154,14 @@ Scenario: color_at() with mutually reflective surfaces
     And r ← ray(point(0, 0, 0), vector(0, 1, 0))
   Then color_at(w, r) should terminate successfully
 
-@ignore
 Scenario: The reflected color at the maximum recursive depth
   Given w ← default_world()
     And shape ← plane() with:
       | material.reflective | 0.5                   |
       | transform           | translation(0, -1, 0) |
     And shape is added to w
-    And r ← ray(point(0, 0, -3), vector(0, -√2/2, √2/2))
-    And i ← intersection(√2, shape)
+    And r ← ray(point(0, 0, -3), vector(0, -0.7071068, 0.7071068))
+    And i ← intersection(1.4142136, shape)
   When comps ← prepare_computations(i, r)
     And color ← reflected_color(w, comps, 0)
   Then color = color(0, 0, 0)
