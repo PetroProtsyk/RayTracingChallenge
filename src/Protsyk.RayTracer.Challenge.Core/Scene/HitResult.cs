@@ -13,6 +13,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene
                                                                Tuple4.Point(0, 0, 0),
                                                                Tuple4.Point(0, 0, 0),
                                                                Tuple4.Point(0, 0, 0),
+                                                               Tuple4.Point(0, 0, 0),
                                                                Tuple4.Vector(0, 0, 0),
                                                                Tuple4.Vector(0, 0, 0),
                                                                Tuple4.Vector(0, 0, 0),
@@ -24,6 +25,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene
         public readonly Tuple4 ObjectPoint; // Point in the object space
         public readonly Tuple4 PointOnSurface;
         public readonly Tuple4 PointOverSurface;
+        public readonly Tuple4 PointUnderSurface;
         public readonly Tuple4 SurfaceNormal;
         public readonly Tuple4 EyeVector;
         public readonly Tuple4 ReflectionVector;
@@ -35,6 +37,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene
                         Tuple4 objectPoint,
                         Tuple4 pointOnSurface,
                         Tuple4 pointOverSurface,
+                        Tuple4 pointUnderSurface,
                         Tuple4 surfaceNormal,
                         Tuple4 eyeVector,
                         Tuple4 reflectionVector,
@@ -46,6 +49,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene
             ObjectPoint = objectPoint;
             PointOnSurface = pointOnSurface;
             PointOverSurface = pointOverSurface;
+            PointUnderSurface = pointUnderSurface;
             SurfaceNormal = surfaceNormal;
             EyeVector = eyeVector;
             ReflectionVector = reflectionVector;

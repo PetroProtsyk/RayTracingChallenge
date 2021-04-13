@@ -97,7 +97,6 @@ Scenario: The hit should offset the point
   Then comps.over_point.z < -EPSILON/2
     And comps.point.z > comps.over_point.z
 
-@ignore
 Scenario: The under point is offset below the surface
   Given r ← ray(point(0, 0, -5), vector(0, 0, 1))
     And shape ← glass_sphere() with:
@@ -108,7 +107,6 @@ Scenario: The under point is offset below the surface
   Then comps.under_point.z > EPSILON/2
     And comps.point.z < comps.under_point.z
 
-@ignore
 Scenario Outline: Finding n1 and n2 at various intersections
   Given A ← glass_sphere() with:
       | transform                 | scaling(2, 2, 2) |
