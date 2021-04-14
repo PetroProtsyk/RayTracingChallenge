@@ -584,6 +584,54 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
             return (camera, scene, ColorConverters.Tuple1);
         }
 
+        static (ICamera camera, BaseScene scene, IColorConverter<Tuple4> colorConverter) SceneChapter11_1()
+        {
+            // Camera
+            var camera = new FovCamera2(MatrixOperations.Geometry3D.LookAtTransform(
+                                            P(0, 0, -5),
+                                            P(0, 1, 0),
+                                            V(0, 1, 0)), Math.PI / 3, 800, 600);
+
+            // Materials
+            var defaultMaterial = MaterialConstants.Default;
+            var floorMaterial = new PatternMaterial(
+                                        new CheckerPattern(MatrixOperations.Geometry3D.Scale(0.25, 0.25, 0.25),
+                                                           Tuple4.Vector(0, 0, 0),
+                                                           Tuple4.Vector(1, 1, 1),
+                                                           false),
+                                        defaultMaterial.Ambient,
+                                        defaultMaterial.Diffuse,
+                                        defaultMaterial.Specular,
+                                        defaultMaterial.Shininess,
+                                        defaultMaterial.Reflective,
+                                        defaultMaterial.RefractiveIndex,
+                                        defaultMaterial.Transparency);
+
+            var middleMaterial = new SolidColorMaterial(
+                                        Tuple4.Point(1, 0, 0),
+                                        0.5,
+                                        defaultMaterial.Diffuse,
+                                        defaultMaterial.Specular,
+                                        defaultMaterial.Shininess,
+                                        defaultMaterial.Reflective,
+                                        3,
+                                        0.8);
+
+            // World
+            var scene = new BaseScene().WithFigures(
+                                 new PlaneFigure(MatrixOperations.Multiply(MatrixOperations.Geometry3D.Translation(0, 0, 4),
+                                                                           MatrixOperations.Geometry3D.RotateX(Math.PI / 2)),
+                                                 floorMaterial),
+                                 S(Matrix4x4.Identity, middleMaterial)
+                            ).WithLights(
+                              new SpotLight(ColorModel.WhiteNormalized, Tuple4.Point(-10, 10, -10), 1.0),
+                              new AmbientLight(1.0)
+                            ).WithShadows(false);
+
+
+            return (camera, scene, ColorConverters.Tuple1);
+        }
+
         static (ICamera camera, BaseScene scene, IColorConverter<Tuple4> colorConverter) SceneSDE(bool isSimple)
         {
             // Camera
@@ -684,7 +732,8 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
                 { "Chapter8", _=> SceneChapter7(true) },
                 { "Chapter9", _=> SceneChapter9() },
                 { "Chapter10", _=> SceneChapter10() },
-                { "Chapter11", _=> SceneChapter11() }
+                { "Chapter11", _=> SceneChapter11() },
+                { "Chapter11_1" , _=> SceneChapter11_1() }
             };
 
             var outputFileName = args.Length > 1 ? args[1] : "out.ppm";

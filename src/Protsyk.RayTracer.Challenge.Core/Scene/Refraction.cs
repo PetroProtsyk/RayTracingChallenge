@@ -6,7 +6,13 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene
 {
     public static class Refraction
     {
-        public static (double refractiveIndexEntering, double refractiveIndexExiting) computeRefractiveIndexes(double t, HitResult[] hits)
+        public static readonly double Vacuum = 1.0;
+        public static readonly double Air = 1.00029;
+        public static readonly double Water = 1.333;
+        public static readonly double Glass = 1.52;
+        public static readonly double Diamond = 2.417;
+
+        public static (double refractiveIndexEntering, double refractiveIndexExiting) computeRefractiveIndexes(double t, IEnumerable<HitResult> hits)
         {
             var containers = new LinkedList<IFigure>();
             var refractiveIndexEntering = 1.0;

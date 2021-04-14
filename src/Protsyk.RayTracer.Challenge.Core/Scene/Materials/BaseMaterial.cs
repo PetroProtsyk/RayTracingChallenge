@@ -30,7 +30,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Materials
             this.Specular = 0.9;
             this.Shininess = 200.0;
             this.Reflective = 0.0;
-            this.RefractiveIndex = 1.0;
+            this.RefractiveIndex = Refraction.Vacuum;
             this.Transparency = 0.0;
         }
 
