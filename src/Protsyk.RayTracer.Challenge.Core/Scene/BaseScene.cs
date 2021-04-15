@@ -83,7 +83,9 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene
         private Tuple4 CastRay(Ray r, int remaining)
         {
             var hit = CalculateIntersection(r.origin, r.dir);
-            var color = CalculateColorAt(hit, remaining);
+            var allHits = CalculateAllIntersectionsSorted(r.origin, r.dir);
+            var refraction = Refraction.computeRefractiveIndexes(hit.Distance, allHits);
+            var color = CalculateColorAt(hit, refraction.refractiveIndexEntering, refraction.refractiveIndexExiting, remaining);
             return color;
         }
 
@@ -117,6 +119,72 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene
             return false;
         }
 
+        public Tuple4 CalculateRefractedColorAt(HitResult hit, double refractiveIndexEntering, double refractiveIndexExiting)
+        {
+            return CalculateRefractedColorAt(hit, refractiveIndexEntering, refractiveIndexExiting, recursionDepth);
+        }
+
+        private Tuple4 CalculateRefractedColorAt(HitResult hit, double refractiveIndexEntering, double refractiveIndexExiting, int remaining)
+        {
+            if (!hit.IsHit || remaining <= 0)
+            {
+                return colors.Black;
+            }
+
+            var material = hit.Figure.Material;
+            if (Constants.EpsilonZero(material.Transparency))
+            {
+                return colors.Black;
+            }
+
+            // Calculations are based on Snell's law
+
+            var ration = refractiveIndexEntering / refractiveIndexExiting;
+            var cosI = Tuple4.DotProduct(hit.EyeVector, hit.SurfaceNormal);
+
+            // sin(t) * sin(t) = (ration * ration) * (1 - cos(I) * cos(I))
+            var sinTheta2 = ration * ration * (1 - cosI * cosI);
+            if (sinTheta2 > 1.0)
+            {
+                // Total internal reflection
+                return colors.Black;
+            }
+
+            var cosTheta = Math.Sqrt(1 - sinTheta2);
+            var dir = Tuple4.Subtract(Tuple4.Scale(hit.SurfaceNormal, ration * cosI - cosTheta),
+                                      Tuple4.Scale(hit.EyeVector, ration));
+
+            var refractedRay = new Ray(hit.PointUnderSurface, dir);
+            var refractedColor = CastRay(refractedRay, remaining - 1);
+
+            return Tuple4.Scale(refractedColor, material.Transparency);
+        }
+
+        public double Schlick(HitResult hit, double refractiveIndexEntering, double refractiveIndexExiting)
+        {
+            // find the cosine of the angle between the eye and normal vectors
+            double cosI = Tuple4.DotProduct(hit.EyeVector, hit.SurfaceNormal);
+
+            // total internal reflection can only occur if n1 > n2
+            if (refractiveIndexEntering > refractiveIndexExiting)
+            {
+                double ration = refractiveIndexEntering / refractiveIndexExiting;
+                double sinTheta2 = ration * ration * (1.0 - cosI * cosI);
+                if (sinTheta2 > 1.0)
+                {
+                    return 1.0;
+                }
+
+                // compute cosine of theta_t using trig identity 
+                var cosTheta = Math.Sqrt(1.0 - sinTheta2);
+                // when n1 > n2, use cos(theta_t) instead 
+                cosI = cosTheta;
+            }
+
+            var r0 = Math.Pow((refractiveIndexEntering - refractiveIndexExiting) / (refractiveIndexEntering + refractiveIndexExiting), 2);
+            return r0 + (1 - r0) * Math.Pow((1 - cosI), 5);
+        }
+
         public Tuple4 CalculateReflectedColorAt(HitResult hit)
         {
             return CalculateReflectedColorAt(hit, recursionDepth);
@@ -141,12 +209,12 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene
             return Tuple4.Scale(reflectedColor, material.Reflective);
         }
 
-        public Tuple4 CalculateColorAt(HitResult hit)
+        public Tuple4 CalculateColorAt(HitResult hit, double refractiveIndexEntering, double refractiveIndexExiting)
         {
-            return CalculateColorAt(hit, recursionDepth);
+            return CalculateColorAt(hit, refractiveIndexEntering, refractiveIndexExiting, recursionDepth);
         }
 
-        private Tuple4 CalculateColorAt(HitResult hit, int remaining)
+        private Tuple4 CalculateColorAt(HitResult hit, double refractiveIndexEntering, double refractiveIndexExiting, int remaining)
         {
             if (!hit.IsHit)
             {
@@ -154,7 +222,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene
             }
 
             var material = hit.Figure.Material;
-            var color = Tuple4.ZeroVector;
+            var surface = Tuple4.ZeroVector;
             foreach (var light in lights)
             {
                 // Shadow
@@ -162,10 +230,22 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene
                 {
                     continue;
                 }
-                color = Tuple4.Add(color, light.GetShadedColor(hit.ObjectPoint, material, hit.EyeVector, hit.PointOnSurface, hit.SurfaceNormal));
+                surface = Tuple4.Add(surface, light.GetShadedColor(hit.ObjectPoint, material, hit.EyeVector, hit.PointOnSurface, hit.SurfaceNormal));
             }
 
-            color = Tuple4.Add(color, CalculateReflectedColorAt(hit, remaining));
+            var reflected = CalculateReflectedColorAt(hit, remaining);
+            var refracted = CalculateRefractedColorAt(hit, refractiveIndexEntering, refractiveIndexExiting, remaining);
+
+            var color = colors.Black;
+            if (material.Reflective > 0 && material.Transparency > 0)
+            {
+                var reflectance = Schlick(hit, refractiveIndexEntering, refractiveIndexExiting);
+                return Tuple4.Add(surface, Tuple4.Add(Tuple4.Scale(reflected, reflectance), Tuple4.Scale(refracted, 1.0 - reflectance)));
+            }
+            else
+            {
+                color = Tuple4.Add(surface, Tuple4.Add(reflected, refracted));
+            }
 
             return new Tuple4(Math.Min(colors.White.X, color.X),
                               Math.Min(colors.White.X, color.Y),
@@ -187,21 +267,24 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene
             return result;
         }
 
-        public IEnumerable<HitResult> CalculateAllIntersection(Tuple4 origin, Tuple4 dir)
+        public IEnumerable<HitResult> CalculateAllIntersections(Tuple4 origin, Tuple4 dir)
         {
             foreach (var figure in figures)
             {
                 var hits = figure.AllHits(origin, dir);
                 foreach (var hit in hits)
                 {
-                    yield return hit;
+                    if (hit.IsHit)
+                    {
+                        yield return hit;
+                    }
                 }
             }
         }
 
-        public IEnumerable<HitResult> CalculateAllIntersectionSorted(Tuple4 origin, Tuple4 dir)
+        public IEnumerable<HitResult> CalculateAllIntersectionsSorted(Tuple4 origin, Tuple4 dir)
         {
-            return CalculateAllIntersection(origin, dir).OrderBy(x => x.Distance);
+            return CalculateAllIntersections(origin, dir).OrderBy(x => x.Distance);
         }
     }
 

@@ -19,7 +19,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene
             var refractiveIndexExiting = 1.0;
             foreach (var h in hits)
             {
-                bool isHit = Core.Constants.EpsilonCompare(h.Distance, t);
+                bool isHit = Constants.EpsilonCompare(h.Distance, t);
                 if (isHit)
                 {
                     if (containers.Count > 0)
