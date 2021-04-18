@@ -160,7 +160,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene
             return Tuple4.Scale(refractedColor, material.Transparency);
         }
 
-        public double Schlick(HitResult hit, double refractiveIndexEntering, double refractiveIndexExiting)
+        public static double Schlick(HitResult hit, double refractiveIndexEntering, double refractiveIndexExiting)
         {
             // find the cosine of the angle between the eye and normal vectors
             double cosI = Tuple4.DotProduct(hit.EyeVector, hit.SurfaceNormal);
