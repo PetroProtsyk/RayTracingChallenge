@@ -61,7 +61,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
                 normal = MatrixOperations.Geometry3D.Transform(inverseTransposeTransformation, normal);
                 if (normal.W != 0.0)
                 {
-                    normal = new Tuple4(normal.X, normal.Y, normal.Z, TupleFlavour.Vector);
+                    normal = Tuple4.Vector(normal.X, normal.Y, normal.Z);
                 }
             }
 
@@ -82,8 +82,8 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
                 ray = ray.Transform(inverseTransformation);
             }
 
-            // This used to be called with normalized ray direction, but not anymore.
             // var result = GetBaseIntersections(new Ray(ray.origin, Tuple4.Normalize(ray.dir)));
+            // TODO: Why some math is not working if direction is not normalized?
             var result = GetBaseIntersections(ray);
 
             if (Transformation != null)

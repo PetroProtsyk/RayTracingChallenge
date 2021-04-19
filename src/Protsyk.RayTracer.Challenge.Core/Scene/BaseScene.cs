@@ -236,11 +236,11 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene
             var reflected = CalculateReflectedColorAt(hit, remaining);
             var refracted = CalculateRefractedColorAt(hit, refractiveIndexEntering, refractiveIndexExiting, remaining);
 
-            var color = colors.Black;
+            Tuple4 color;
             if (material.Reflective > 0 && material.Transparency > 0)
             {
                 var reflectance = Schlick(hit, refractiveIndexEntering, refractiveIndexExiting);
-                return Tuple4.Add(surface, Tuple4.Add(Tuple4.Scale(reflected, reflectance), Tuple4.Scale(refracted, 1.0 - reflectance)));
+                color = Tuple4.Add(surface, Tuple4.Add(Tuple4.Scale(reflected, reflectance), Tuple4.Scale(refracted, 1.0 - reflectance)));
             }
             else
             {

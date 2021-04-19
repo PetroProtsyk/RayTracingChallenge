@@ -638,6 +638,16 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
                                         1.5,
                                         0.9);
 
+            var glassMaterial = new SolidColorMaterial(
+                                        Tuple4.Point(0, 0, 0.3),
+                                        0.0,
+                                        0.4,
+                                        0.9,
+                                        300,
+                                        0.9,
+                                        1.5,
+                                        0.9);
+
             // World
             var scene = new BaseScene().WithFigures(
                                  new PlaneFigure(Matrix4x4.Identity, floorMaterial),
@@ -647,8 +657,9 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
                                  new SphereFigure(MatrixOperations.Multiply(MatrixOperations.Geometry3D.Translation(0.6, 0.7, -0.6),
                                                                             MatrixOperations.Geometry3D.Scale(0.7, 0.7, 0.7)), blueMaterial),
                                  new SphereFigure(MatrixOperations.Multiply(MatrixOperations.Geometry3D.Translation(-0.7, 0.5, -0.8),
-                                                                            MatrixOperations.Geometry3D.Scale(0.5, 0.5, 0.5)), greenMaterial)
-
+                                                                            MatrixOperations.Geometry3D.Scale(0.5, 0.5, 0.5)), greenMaterial),
+                                 new CubeFigure(MatrixOperations.Multiply(MatrixOperations.Geometry3D.Translation(3, 0.9, 0),
+                                                                            MatrixOperations.Geometry3D.Scale(0.5, 0.7, 0.5)), glassMaterial)
                             ).WithLights(
                               new SpotLight(ColorModel.WhiteNormalized, Tuple4.Point(-4.9, 4.9, -1), 1.0),
                               new AmbientLight(1.0)
