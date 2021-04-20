@@ -12,10 +12,47 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
 
         private IMatrix inverseTransposeTransformation;
 
+        private GroupFigure group;
+
         public IMaterial Material
         {
             get;
             set;
+        }
+
+        public GroupFigure Parent
+        {
+            get
+            {
+                return group;
+            }
+            set
+            {
+                if (group == value)
+                {
+                    return;
+                }
+
+                if (group != null)
+                {
+                    group.RemoveInternal(this);
+                }
+
+                group = value;
+
+                if (group != null)
+                {
+                    try
+                    {
+                        group.AddInternal(this);
+                    }
+                    catch
+                    {
+                        group = null;
+                        throw;
+                    }
+                }
+            }
         }
 
         public IMatrix Transformation

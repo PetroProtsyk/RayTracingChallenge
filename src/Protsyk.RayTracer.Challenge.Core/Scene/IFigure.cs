@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Protsyk.RayTracer.Challenge.Core.Scene
 {
-    public interface IFigure : ISupportsHitCheck
+    public interface IFigure : ISupportsHitCheck, ISupportsGroup
     {
         Tuple4 GetNormal(Tuple4 pointOnSurface);
 

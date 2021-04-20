@@ -34,7 +34,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
 
         public override bool Equals(object obj)
         {
-            return obj is SphereFigure figure &&
+            return obj is PlaneFigure figure &&
                    EqualityComparer<IMaterial>.Default.Equals(Material, figure.Material) &&
                    EqualityComparer<IMatrix>.Default.Equals(Transformation, figure.Transformation);
         }
