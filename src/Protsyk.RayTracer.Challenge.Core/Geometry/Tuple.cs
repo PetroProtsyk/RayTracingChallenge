@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 
 namespace Protsyk.RayTracer.Challenge.Core.Geometry
 {
@@ -13,11 +14,13 @@ namespace Protsyk.RayTracer.Challenge.Core.Geometry
 
         public static readonly Tuple4 ZeroPoint = new Tuple4(0.0, 0.0, 0.0, TupleFlavour.Point);
 
+        [DebuggerStepThrough]
         public Tuple4(double x, double y, double z, TupleFlavour type)
             : this(x, y, z, type == TupleFlavour.Point ? 1.0 : 0.0)
         {
         }
 
+        [DebuggerStepThrough]
         public Tuple4(double x, double y, double z, double w)
         {
             this.X = x;
@@ -26,10 +29,13 @@ namespace Protsyk.RayTracer.Challenge.Core.Geometry
             this.W = w;
         }
 
+        [DebuggerStepThrough]
         public static Tuple4 Point(double x, double y, double z) => new Tuple4(x, y, z, TupleFlavour.Point);
 
+        [DebuggerStepThrough]
         public static Tuple4 Vector(double x, double y, double z) => new Tuple4(x, y, z, TupleFlavour.Vector);
 
+        [DebuggerStepThrough]
         public override string ToString()
         {
             return $"[{X}, {Y}, {Z}, {W}]";

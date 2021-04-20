@@ -39,8 +39,8 @@ namespace Protsyk.RayTracer.Challenge.Core.Geometry
         public double[] GetIntersections(Ray ray)
         {
             var result = fromOrigin ?
-                            GetIntersectionsFromBook(ray.origin, Tuple4.Normalize(ray.dir)) :
-                            GetIntersections(ray.origin, Tuple4.Normalize(ray.dir));
+                            GetIntersectionsFromBook(ray.origin, ray.dir) :
+                            GetIntersections(ray.origin, ray.dir);
             return result;
         }
 

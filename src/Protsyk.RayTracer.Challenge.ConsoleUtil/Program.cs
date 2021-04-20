@@ -658,8 +658,10 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
                                                                             MatrixOperations.Geometry3D.Scale(0.7, 0.7, 0.7)), blueMaterial),
                                  new SphereFigure(MatrixOperations.Multiply(MatrixOperations.Geometry3D.Translation(-0.7, 0.5, -0.8),
                                                                             MatrixOperations.Geometry3D.Scale(0.5, 0.5, 0.5)), greenMaterial),
-                                 new CubeFigure(MatrixOperations.Multiply(MatrixOperations.Geometry3D.Translation(3, 0.9, 0),
-                                                                            MatrixOperations.Geometry3D.Scale(0.5, 0.7, 0.5)), glassMaterial)
+                                 new CubeFigure(MatrixOperations.Multiply(MatrixOperations.Geometry3D.Translation(3, 1.0, 0),
+                                                                            MatrixOperations.Geometry3D.Scale(0.5, 0.7, 0.5)), glassMaterial),
+                                 new CylinderFigure(MatrixOperations.Multiply(MatrixOperations.Geometry3D.Translation(1.5, 0.0, -3),
+                                                                              MatrixOperations.Geometry3D.Scale(0.5, 0.3, 0.5)), glassMaterial, 0.0, 4.0, false)
                             ).WithLights(
                               new SpotLight(ColorModel.WhiteNormalized, Tuple4.Point(-4.9, 4.9, -1), 1.0),
                               new AmbientLight(1.0)

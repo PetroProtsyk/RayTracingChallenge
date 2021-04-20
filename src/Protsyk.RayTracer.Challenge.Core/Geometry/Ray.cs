@@ -24,7 +24,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Geometry
 
         public Tuple4 PositionAt(double t)
         {
-            return Tuple4.Add(origin, Tuple4.Scale(dir, new Tuple4(t, t, t, TupleFlavour.Point)));
+            return Tuple4.Add(origin, Tuple4.Scale(dir, Tuple4.Point(t, t, t)));
         }
 
         public Ray Transform(IMatrix m)

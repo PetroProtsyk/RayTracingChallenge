@@ -73,7 +73,20 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
             return MatrixOperations.Geometry3D.Transform(inverseTransformation, worldPoint);
         }
 
+        /// <summary>
+        /// Get local figure intersections. Ray's direction should be normalized
+        /// </summary>
+        /// <param name="ray"></param>
+        /// <returns></returns>
         protected abstract double[] GetBaseIntersections(Ray ray);
+
+        /// <summary>
+        /// The only purpose of this method is to serve unit testing
+        /// </summary>
+        protected virtual double[] GetBaseIntersectionsWithAnyDirection(Ray ray)
+        {
+            return GetBaseIntersections(new Ray(ray.origin, Tuple4.Normalize(ray.dir)));
+        }
 
         public double[] GetIntersections(Ray ray)
         {
@@ -82,9 +95,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
                 ray = ray.Transform(inverseTransformation);
             }
 
-            // var result = GetBaseIntersections(new Ray(ray.origin, Tuple4.Normalize(ray.dir)));
-            // TODO: Why some math is not working if direction is not normalized?
-            var result = GetBaseIntersections(ray);
+            var result = GetBaseIntersectionsWithAnyDirection(ray);
 
             if (Transformation != null)
             {

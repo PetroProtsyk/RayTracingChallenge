@@ -32,7 +32,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Geometry
 
         public virtual double[] GetIntersections(Ray ray)
         {
-            var result = GetIntersections(ray.origin, Tuple4.Normalize(ray.dir));
+            var result = GetIntersections(ray.origin, ray.dir);
             return result;
         }
 

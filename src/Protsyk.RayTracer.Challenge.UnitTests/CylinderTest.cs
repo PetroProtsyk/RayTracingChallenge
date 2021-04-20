@@ -19,12 +19,12 @@ using Protsyk.RayTracer.Challenge.Core.Scene.Materials;
 
 namespace Protsyk.RayTracer.Challenge.UnitTests
 {
-    [FeatureFile("./features/cubes.feature")]
-    public class CubesTest : Feature
+    [FeatureFile("./features/cylinders.feature")]
+    public class CylinderTest : Feature
     {
         private readonly IDictionary<string, Ray> ray = new Dictionary<string, Ray>();
 
-        private readonly IDictionary<string, CubeFigure> figure = new Dictionary<string, CubeFigure>();
+        private readonly IDictionary<string, CylinderFigure> figure = new Dictionary<string, CylinderFigure>();
 
         private readonly IDictionary<string, HitResult[]> intersection = new Dictionary<string, HitResult[]>();
 
@@ -34,7 +34,7 @@ namespace Protsyk.RayTracer.Challenge.UnitTests
 
         private readonly ITestOutputHelper testOutputHelper;
 
-        public CubesTest(ITestOutputHelper testOutputHelper)
+        public CylinderTest(ITestOutputHelper testOutputHelper)
         {
             this.testOutputHelper = testOutputHelper;
 
@@ -51,14 +51,20 @@ namespace Protsyk.RayTracer.Challenge.UnitTests
                               double p1, double p2, double p3,
                               double v1, double v2, double v3)
         {
-            ray[id] = new Ray(new Tuple4(p1, p2, p3, TupleFlavour.Point),
-                              new Tuple4(v1, v2, v3, TupleFlavour.Vector));
+            ray[id] = new Ray(Tuple4.Point(p1, p2, p3), Tuple4.Vector(v1, v2, v3));
         }
 
-        [Given(@"([a-z][a-z0-9]*) ← cube\(\)")]
+        [Given(@"([a-z][a-z0-9]*) ← ray\(point\(([+-.0-9]+), ([+-.0-9]+), ([+-.0-9]+)\), ([a-z][a-z0-9]*)\)")]
+        [And(@"([a-z][a-z0-9]*) ← ray\(point\(([+-.0-9]+), ([+-.0-9]+), ([+-.0-9]+)\), ([a-z][a-z0-9]*)\)")]
+        public void Given_ray(string id, double p1, double p2, double p3, string dId)
+        {
+            ray[id] = new Ray(Tuple4.Point(p1, p2, p3), tuple[dId]);
+        }
+
+        [Given(@"([a-z][a-z0-9]*) ← cylinder\(\)")]
         public void Given_sphere(string id)
         {
-            figure[id] = new CubeFigure(MatrixOperations.Identity(4), MaterialConstants.Default);
+            figure[id] = new CylinderFigure(MatrixOperations.Identity(4), MaterialConstants.Default);
         }
 
         [Given(@"([a-z][a-z0-9]*) ← point\(([+-.0-9]+), ([+-.0-9]+), ([+-.0-9]+)\)")]
@@ -66,6 +72,13 @@ namespace Protsyk.RayTracer.Challenge.UnitTests
         public void Point_id(string id, double t1, double t2, double t3)
         {
             tuple.Add(id, Tuple4.Point(t1, t2, t3));
+        }
+
+        [Given(@"([a-z][a-z0-9]*) ← normalize\(vector\(([+-.0-9]+), ([+-.0-9]+), ([+-.0-9]+)\)\)")]
+        [And(@"([a-z][a-z0-9]*) ← normalize\(vector\(([+-.0-9]+), ([+-.0-9]+), ([+-.0-9]+)\)\)")]
+        public void Normalize_vector(string id, double t1, double t2, double t3)
+        {
+            tuple.Add(id, Tuple4.Normalize(Tuple4.Vector(t1, t2, t3)));
         }
 
         [When(@"([a-z][a-z0-9]*) ← local_intersect\(([a-z][a-z0-9]*), ([a-z][a-z0-9]*)\)")]
@@ -100,12 +113,11 @@ namespace Protsyk.RayTracer.Challenge.UnitTests
             Assert.Equal(figure[figureId], intersection[id][i].Figure);
         }
 
-        [When(@"([a-z][a-z0-9]*) ← local_normal_at\(([a-z][a-z0-9]*), ([a-z][a-z0-9]*)\)")]
-        [And(@"([a-z][a-z0-9]*) ← local_normal_at\(([a-z][a-z0-9]*), ([a-z][a-z0-9]*)\)")]
-        public void Given_local_normal_at(string id, string fId, string pId)
+        [When(@"([a-z][a-z0-9]*) ← local_normal_at\(([a-z][a-z0-9]*), point\(([+-.0-9]+), ([+-.0-9]+), ([+-.0-9]+)\)\)")]
+        [And(@"([a-z][a-z0-9]*) ← local_normal_at\(([a-z][a-z0-9]*), point\(([+-.0-9]+), ([+-.0-9]+), ([+-.0-9]+)\)\)")]
+        public void Given_local_normal_at(string id, string fId, double p1, double p2, double p3)
         {
-            // Local normal is the same as normal with identity transformation
-            tuple[id] = figure[fId].GetNormal(tuple[pId]);
+            tuple[id] = figure[fId].GetNormal(Tuple4.Point(p1, p2, p3));
         }
 
         [Then(@"([a-z][a-z0-9]*) = vector\(([+-.0-9]+), ([+-.0-9]+), ([+-.0-9]+)\)")]
@@ -115,5 +127,40 @@ namespace Protsyk.RayTracer.Challenge.UnitTests
             Assert.Equal(Tuple4.Vector(t1, t2, t3), tuple[a]);
         }
 
+        [Then(@"([a-z][a-z0-9]*).minimum = -infinity")]
+        public void Then_default_minimum(string id)
+        {
+            Assert.Equal(double.NegativeInfinity, figure[id].Minimum);
+        }
+
+        [And(@"([a-z][a-z0-9]*).maximum = infinity")]
+        public void Then_default_maximum(string id)
+        {
+            Assert.Equal(double.PositiveInfinity, figure[id].Maximum);
+        }
+
+        [Then(@"([a-z][a-z0-9]*).closed = false")]
+        public void Then_default_closed(string id)
+        {
+            Assert.False(figure[id].IsClosed);
+        }
+
+        [And(@"([a-z][a-z0-9]*).minimum ← ([+-.0-9]+)")]
+        public void And_cylinder_minimum(string id, double m)
+        {
+            figure[id].Minimum = m;
+        }
+
+        [And(@"([a-z][a-z0-9]*).maximum ← ([+-.0-9]+)")]
+        public void And_cylinder_maximum(string id, double m)
+        {
+            figure[id].Maximum = m;
+        }
+
+        [And(@"([a-z][a-z0-9]*).closed ← true")]
+        public void And_cylinder_closed(string id)
+        {
+            figure[id].IsClosed = true;
+        }
     }
 }

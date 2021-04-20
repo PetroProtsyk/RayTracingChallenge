@@ -46,10 +46,9 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
 
         protected override double[] GetBaseIntersections(Ray ray)
         {
-            var nDir = Tuple4.Normalize(ray.dir);
-            var (xtmin, xtmax) = CheckAxis(ray.origin.X, nDir.X);
-            var (ytmin, ytmax) = CheckAxis(ray.origin.Y, nDir.Y);
-            var (ztmin, ztmax) = CheckAxis(ray.origin.Z, nDir.Z);
+            var (xtmin, xtmax) = CheckAxis(ray.origin.X, ray.dir.X);
+            var (ytmin, ytmax) = CheckAxis(ray.origin.Y, ray.dir.Y);
+            var (ztmin, ztmax) = CheckAxis(ray.origin.Z, ray.dir.Z);
 
             var tmin = Math.Max(xtmin, Math.Max(ytmin, ztmin));
             var tmax = Math.Min(xtmax, Math.Min(ytmax, ztmax));

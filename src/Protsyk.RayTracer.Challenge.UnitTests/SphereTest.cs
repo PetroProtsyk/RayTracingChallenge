@@ -118,7 +118,7 @@ namespace Protsyk.RayTracer.Challenge.UnitTests
         [And(@"([a-z][a-z0-9]*)\[([0-9]+)\] = ([+-.0-9]+)")]
         public void Then_intersect_value(string id, int i, double v)
         {
-            Assert.Equal(v, intersection[id][i].Distance);
+            Assert.True(Constants.EpsilonCompare(v, intersection[id][i].Distance));
         }
 
         [And(@"([a-z][a-z0-9]*)\[([0-9]+)\].object = ([a-z][a-z0-9]*)")]
