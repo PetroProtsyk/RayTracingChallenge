@@ -5,20 +5,20 @@ using Protsyk.RayTracer.Challenge.Core.Geometry;
 namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
 {
     /// <summary>
-    /// Cylinder (with optional Caps)
+    /// Cone (with optional Caps)
     /// </summary>
-    public class CylinderFigure : BaseFigure
+    public class ConeFigure : BaseFigure
     {
         public double Minimum { get; set;  }
         public double Maximum { get; set; }
         public Boolean IsClosed { get; set; }
 
-        public CylinderFigure(IMatrix transformation, IMaterial material)
+        public ConeFigure(IMatrix transformation, IMaterial material)
             : this(transformation, material, double.NegativeInfinity, double.PositiveInfinity, false)
         {
         }
 
-        public CylinderFigure(IMatrix transformation, IMaterial material, double min, double max, bool isClosed)
+        public ConeFigure(IMatrix transformation, IMaterial material, double min, double max, bool isClosed)
         {
             this.Material = material;
             this.Transformation = transformation;
@@ -40,25 +40,45 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
                 return Tuple4.Vector(0, -1, 0);
             }
 
-            return Tuple4.Vector(pointOnSurface.X, 0.0, pointOnSurface.Z);
+            var y = Math.Sqrt(pointOnSurface.X * pointOnSurface.X + pointOnSurface.Z * pointOnSurface.Z);
+            if (pointOnSurface.Y > 0)
+            {
+                y = -y;
+            }
+
+            return Tuple4.Vector(pointOnSurface.X, y, pointOnSurface.Z);
         }
 
         protected override double[] GetBaseIntersections(Ray ray)
         {
-            var a = ray.dir.X * ray.dir.X + ray.dir.Z * ray.dir.Z;
+            return SharedUtils.JoinArrays(GetConeIntersections(ray), GetCapsIntersections(ray));
+        }
+
+        private double[] GetConeIntersections(Ray ray)
+        { 
+            var a = ray.dir.X * ray.dir.X - ray.dir.Y * ray.dir.Y + ray.dir.Z * ray.dir.Z;
+            var b = 2 * (ray.origin.X * ray.dir.X - ray.origin.Y * ray.dir.Y + ray.origin.Z * ray.dir.Z);
+            var c = ray.origin.X * ray.origin.X - ray.origin.Y * ray.origin.Y + ray.origin.Z * ray.origin.Z;
+
+            if (Constants.EpsilonZero(a) && Constants.EpsilonZero(b))
+            {
+                return null;
+            }
 
             if (Constants.EpsilonZero(a))
             {
-                return GetCapsIntersections(ray);
+                var t = -c / (2 * b);
+                var yt = ray.origin.Y + t * ray.dir.Y;
+                if (Minimum < yt && yt < Maximum)
+                {
+                    return new double[] { t };
+                }
             }
-
-            var b = 2 * (ray.origin.X * ray.dir.X + ray.origin.Z * ray.dir.Z);
-            var c = ray.origin.X * ray.origin.X + ray.origin.Z * ray.origin.Z - 1;
 
             var d = b * b - 4 * a * c;
             if (d < 0.0)
             {
-                return GetCapsIntersections(ray);
+                return null;
             }
 
             var a2 = a * 2;
@@ -87,63 +107,19 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
                 isT1 = true;
             }
 
-            var capsT = GetCapsIntersections(ray);
-
-            var len = capsT == null ? 0 : capsT.Length;
             if (isT0 && isT1)
             {
-                len += 2;
+                return new double[] { t0, t1 };
             }
             else if (isT0)
             {
-                len += 1;
+                return new double[] { t0 };
             }
             else if (isT1)
             {
-                len += 1;
+                return new double[] { t1 };
             }
-
-            if (len == 0)
-            {
-                return null;
-            }
-
-            var r = new double[len];
-            var w = 0;
-            if (capsT != null)
-            {
-                if (capsT.Length == 1)
-                {
-                    r[0] = capsT[0];
-                    w = 1;
-                }
-                else if (capsT.Length == 2)
-                {
-                    r[0] = capsT[0];
-                    r[1] = capsT[1];
-                    w = 2;
-                }
-                else
-                {
-                    throw new InvalidOperationException();
-                }
-            }
-
-            if (isT0 && isT1)
-            {
-                r[w] = t0;
-                r[w + 1] = t1;
-            }
-            else if (isT0)
-            {
-                r[w] = t0;
-            }
-            else if (isT1)
-            {
-                r[w] = t1;
-            }
-
-            return r;
+            return null;
         }
 
         private double[] GetCapsIntersections(Ray ray)
@@ -178,13 +154,14 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
         private bool IsOnCap(Ray r, double t)
         {
             var x = r.origin.X + t * r.dir.X;
+            var y = r.origin.Y + t * r.dir.Y;
             var z = r.origin.Z + t * r.dir.Z;
-            return (x * x + z * z) <= 1.0;
+            return (x * x + z * z) <= y * y;
         }
 
         public override bool Equals(object obj)
         {
-            return obj is CylinderFigure figure &&
+            return obj is ConeFigure figure &&
                    EqualityComparer<double>.Default.Equals(Minimum, figure.Minimum) &&
                    EqualityComparer<double>.Default.Equals(Maximum, figure.Maximum) &&
                    EqualityComparer<bool>.Default.Equals(IsClosed, figure.IsClosed) &&
