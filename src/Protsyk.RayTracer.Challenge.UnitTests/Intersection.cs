@@ -1,4 +1,4 @@
-﻿using Protsyk.RayTracer.Challenge.Core.Scene;
+using Protsyk.RayTracer.Challenge.Core.Scene;
 using System;
 using System.Collections.Generic;
 using System.Text;

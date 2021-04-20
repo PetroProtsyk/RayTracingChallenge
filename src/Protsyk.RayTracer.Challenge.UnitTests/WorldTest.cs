@@ -1,4 +1,4 @@
-﻿using Protsyk.RayTracer.Challenge.Core.Geometry;
+using Protsyk.RayTracer.Challenge.Core.Geometry;
 using Protsyk.RayTracer.Challenge.Core.Scene;
 using Protsyk.RayTracer.Challenge.Core.Scene.Figures;
 using Protsyk.RayTracer.Challenge.Core.Scene.Lights;
