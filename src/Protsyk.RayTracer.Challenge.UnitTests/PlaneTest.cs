@@ -52,7 +52,7 @@ namespace Protsyk.RayTracer.Challenge.UnitTests
         public void Given_local_normal_at(string id, string fId, double p1, double p2, double p3)
         {
             // Local normal is the same as normal with identity transformation
-            tuple[id] = figure[fId].GetNormal(new Tuple4(p1, p2, p3, TupleFlavour.Point));
+            tuple[id] = figure[fId].GetNormal(null, new Tuple4(p1, p2, p3, TupleFlavour.Point));
         }
 
         [When(@"([a-z][a-z0-9]*) ← local_intersect\(([a-z][a-z0-9]*), ([a-z][a-z0-9]*)\)")]

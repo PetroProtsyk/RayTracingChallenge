@@ -24,7 +24,7 @@ namespace Protsyk.RayTracer.Challenge.UnitTests
     {
         private readonly IDictionary<string, Ray> ray = new Dictionary<string, Ray>();
 
-        private readonly IDictionary<string, TestFigure> figure = new Dictionary<string, TestFigure>();
+        private readonly IDictionary<string, IFigure> figure = new Dictionary<string, IFigure>();
 
         private readonly IDictionary<string, HitResult[]> intersection = new Dictionary<string, HitResult[]>();
 
@@ -58,9 +58,15 @@ namespace Protsyk.RayTracer.Challenge.UnitTests
 
         [Given(@"([a-z][a-z0-9]*) ← test_shape\(\)")]
         [And(@"([a-z][a-z0-9]*) ← test_shape\(\)")]
-        public void Given_sphere(string id)
+        public void Given_test_shape(string id)
         {
             figure[id] = new TestFigure(MatrixOperations.Identity(4), MaterialConstants.Default);
+        }
+
+        [And(@"([a-z][a-z0-9]*) ← sphere\(\)")]
+        public void Given_sphere(string id)
+        {
+            figure[id] = new SphereFigure(Matrix4x4.Identity, MaterialConstants.Default);
         }
 
         [When(@"([a-z][a-z0-9]*) ← intersect\(([a-z][a-z0-9]*), ([a-z][a-z0-9]*)\)")]
@@ -121,11 +127,12 @@ namespace Protsyk.RayTracer.Challenge.UnitTests
             Assert.Equal(figure[figureId], intersection[id][i].Figure);
         }
 
+        [When(@"([a-z][a-z0-9]*) ← normal_at\(([a-z][a-z0-9]*), point\(([+-.0-9]+), ([+-.0-9]+), ([+-.0-9]+)\)\)")]
         [And(@"([a-z][a-z0-9]*) ← normal_at\(([a-z][a-z0-9]*), point\(([+-.0-9]+), ([+-.0-9]+), ([+-.0-9]+)\)\)")]
         public void When_normal_at(string id, string figureId,
                                    double p1, double p2, double p3)
         {
-            var result = figure[figureId].GetNormal(new Tuple4(p1, p2, p3, TupleFlavour.Point));
+            var result = figure[figureId].GetNormal(null, new Tuple4(p1, p2, p3, TupleFlavour.Point));
             tuple[id] = result;
         }
 
@@ -165,15 +172,23 @@ namespace Protsyk.RayTracer.Challenge.UnitTests
         }
 
         [When(@"set_transform\(([a-z][a-z0-9]*), translation\(([+-.0-9]+), ([+-.0-9]+), ([+-.0-9]+)\)\)")]
+        [And(@"set_transform\(([a-z][a-z0-9]*), translation\(([+-.0-9]+), ([+-.0-9]+), ([+-.0-9]+)\)\)")]
         public void When_set_translation_transform(string figureId, double t1, double t2, double t3)
         {
             figure[figureId].Transformation = MatrixOperations.Geometry3D.Translation(t1, t2, t3);
         }
 
         [When(@"set_transform\(([a-z][a-z0-9]*), scaling\(([+-.0-9]+), ([+-.0-9]+), ([+-.0-9]+)\)\)")]
+        [And(@"set_transform\(([a-z][a-z0-9]*), scaling\(([+-.0-9]+), ([+-.0-9]+), ([+-.0-9]+)\)\)")]
         public void When_set_scale_transform(string figureId, double t1, double t2, double t3)
         {
             figure[figureId].Transformation = MatrixOperations.Geometry3D.Scale(t1, t2, t3);
+        }
+
+        [And(@"set_transform\(([a-z][a-z0-9]*), rotation_y\(π/2\)\)")]
+        public void When_set_rotation_y_transform(string figureId)
+        {
+            figure[figureId].Transformation = MatrixOperations.Geometry3D.RotateY(Math.PI / 2);
         }
 
         [Then(@"([a-z][a-z0-9]*).transform = ([a-z][_a-z0-9]*)")]
@@ -197,13 +212,13 @@ namespace Protsyk.RayTracer.Challenge.UnitTests
         [Then(@"([a-z][a-z0-9]*).saved_ray.origin = point\(([+-.0-9]+), ([+-.0-9]+), ([+-.0-9]+)\)")]
         public void Then_saved_ray_origin(string a, double t1, double t2, double t3)
         {
-            Assert.Equal(Tuple4.Point(t1, t2, t3), figure[a].SavedRay.origin);
+            Assert.Equal(Tuple4.Point(t1, t2, t3), ((TestFigure)figure[a]).SavedRay.origin);
         }
 
         [And(@"([a-z][a-z0-9]*).saved_ray.direction = vector\(([+-.0-9]+), ([+-.0-9]+), ([+-.0-9]+)\)")]
         public void Then_saved_ray_direction(string a, double t1, double t2, double t3)
         {
-            Assert.Equal(Tuple4.Vector(t1, t2, t3), figure[a].SavedRay.dir);
+            Assert.Equal(Tuple4.Vector(t1, t2, t3), ((TestFigure)figure[a]).SavedRay.dir);
         }
 
         [And(@"([a-z][a-z0-9]*).ambient ← ([+-.0-9]+)")]
@@ -227,6 +242,50 @@ namespace Protsyk.RayTracer.Challenge.UnitTests
             Assert.Equal(figure[id].Material, material[mId]);
         }
 
+        [And(@"([a-z][a-z0-9]*).parent = ([a-z][a-z0-9]*)")]
+        public void And_parent(string id, string gId)
+        {
+            Assert.Equal(figure[gId], figure[id].Parent);
+        }
+
+        [Given(@"([a-z][a-z0-9]*) ← group\(\)")]
+        [And(@"([a-z][a-z0-9]*) ← group\(\)")]
+        public void Given_group(string id)
+        {
+            figure[id] = new GroupFigure();
+        }
+
+        [When(@"add_child\(([a-z][a-z0-9]*), ([a-z][a-z0-9]*)\)")]
+        [And(@"add_child\(([a-z][a-z0-9]*), ([a-z][a-z0-9]*)\)")]
+        public void When_add_child(string id, string cId)
+        {
+            ((GroupFigure)figure[id]).Add(figure[cId]);
+        }
+
+        [When(@"([a-z][a-z0-9]*) ← world_to_object\(([a-z][a-z0-9]*), point\(([+-.0-9]+), ([+-.0-9]+), ([+-.0-9]+)\)\)")]
+        public void When_world_to_object(string a, string s, double t1, double t2, double t3)
+        {
+            tuple[a] = ((BaseFigure)figure[s]).TransformWorldPointToObjectPoint(Tuple4.Point(t1, t2, t3));
+        }
+
+        [When(@"([a-z][a-z0-9]*) ← normal_to_world\(([a-z][a-z0-9]*), vector\(([+-.0-9]+), ([+-.0-9]+), ([+-.0-9]+)\)\)")]
+        public void When_normal_to_world(string a, string s, double t1, double t2, double t3)
+        {
+            tuple[a] = ((BaseFigure)figure[s]).TransformObjectNormalToWorldNormal(Tuple4.Vector(t1, t2, t3));
+        }
+
+        [Then(@"([a-z][a-z0-9]*).parent is nothing")]
+        public void Then_group_is_not_empty(string id)
+        {
+            Assert.Null(figure[id].Parent);
+        }
+
+        [Then(@"([a-z][a-z0-9]*) = point\(([+-.0-9]+), ([+-.0-9]+), ([+-.0-9]+)\)")]
+        public void Then_point(string a, double t1, double t2, double t3)
+        {
+            Assert.Equal(Tuple4.Point(t1, t2, t3), tuple[a]);
+        }
+
         private class TestFigure : BaseFigure
         {
             public TestFigure(IMatrix transformation, IMaterial material)
@@ -248,7 +307,7 @@ namespace Protsyk.RayTracer.Challenge.UnitTests
                 return new Intersection[] { new Intersection(0, this) };
             }
 
-            protected override Tuple4 GetBaseNormal(Tuple4 pointOnSurface)
+            protected override Tuple4 GetBaseNormal(IFigure figure, Tuple4 pointOnSurface)
             {
                 return Tuple4.Vector(pointOnSurface.X, pointOnSurface.Y, pointOnSurface.Z);
             }

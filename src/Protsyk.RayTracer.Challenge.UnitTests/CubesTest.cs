@@ -105,7 +105,7 @@ namespace Protsyk.RayTracer.Challenge.UnitTests
         public void Given_local_normal_at(string id, string fId, string pId)
         {
             // Local normal is the same as normal with identity transformation
-            tuple[id] = figure[fId].GetNormal(tuple[pId]);
+            tuple[id] = figure[fId].GetNormal(null, tuple[pId]);
         }
 
         [Then(@"([a-z][a-z0-9]*) = vector\(([+-.0-9]+), ([+-.0-9]+), ([+-.0-9]+)\)")]

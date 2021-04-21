@@ -117,7 +117,7 @@ namespace Protsyk.RayTracer.Challenge.UnitTests
         [And(@"([a-z][a-z0-9]*) ← local_normal_at\(([a-z][a-z0-9]*), point\(([+-.0-9]+), ([+-.0-9]+), ([+-.0-9]+)\)\)")]
         public void Given_local_normal_at(string id, string fId, double p1, double p2, double p3)
         {
-            tuple[id] = figure[fId].GetNormal(Tuple4.Point(p1, p2, p3));
+            tuple[id] = figure[fId].GetNormal(null, Tuple4.Point(p1, p2, p3));
         }
 
         [Then(@"([a-z][a-z0-9]*) = vector\(([+-.0-9]+), ([+-.0-9]+), ([+-.0-9]+)\)")]

@@ -131,7 +131,7 @@ namespace Protsyk.RayTracer.Challenge.UnitTests
         public void When_normal_at(string id, string figureId,
                                    double p1, double p2, double p3)
         {
-            var result = figure[figureId].GetNormal(new Tuple4(p1, p2, p3, TupleFlavour.Point));
+            var result = figure[figureId].GetNormal(null, new Tuple4(p1, p2, p3, TupleFlavour.Point));
             tuple[id] = result;
         }
 

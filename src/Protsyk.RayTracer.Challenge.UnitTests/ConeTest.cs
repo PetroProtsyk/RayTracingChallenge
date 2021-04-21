@@ -116,7 +116,7 @@ namespace Protsyk.RayTracer.Challenge.UnitTests
         [And(@"([a-z][a-z0-9]*) ← local_normal_at\(([a-z][a-z0-9]*), point\(([+-.0-9]+), ([+-.0-9]+), ([+-.0-9]+)\)\)")]
         public void Given_local_normal_at(string id, string fId, double p1, double p2, double p3)
         {
-            tuple[id] = ((TestCone)figure[fId]).GetLocalNormal(Tuple4.Point(p1, p2, p3));
+            tuple[id] = ((TestCone)figure[fId]).GetLocalNormal(null, Tuple4.Point(p1, p2, p3));
         }
 
         [Then(@"([a-z][a-z0-9]*) = vector\(([+-.0-9]+), ([+-.0-9]+), ([+-.0-9]+)\)")]
@@ -174,10 +174,10 @@ namespace Protsyk.RayTracer.Challenge.UnitTests
             {
             }
 
-            public Tuple4 GetLocalNormal(Tuple4 point)
+            public Tuple4 GetLocalNormal(IFigure figure, Tuple4 point)
             {
                 var objectPoint = TransformWorldPointToObjectPoint(point);
-                var normal = GetBaseNormal(objectPoint);
+                var normal = GetBaseNormal(figure, objectPoint);
                 return normal;
             }
 

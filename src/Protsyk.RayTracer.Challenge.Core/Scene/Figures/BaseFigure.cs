@@ -76,24 +76,41 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
 
         // This method should return shape's normal at a given point on the surface
         // The returned normal does not have to be normalized
-        protected abstract Tuple4 GetBaseNormal(Tuple4 pointOnSurface);
+        protected abstract Tuple4 GetBaseNormal(IFigure figure, Tuple4 pointOnSurface);
 
-        public Tuple4 GetNormal(Tuple4 point)
+        public Tuple4 GetNormal(IFigure figure, Tuple4 point)
         {
-            return GetTransformedNormal(point).normal;
+            if (figure != null && !(figure == this || figure.Parent == this))
+            {
+                throw new ArgumentException($"{nameof(figure)} is not part of this figure");
+            }
+            return GetTransformedNormal(figure, point).normal;
         }
 
-        protected (Tuple4 normal, Tuple4 objectPoint) GetTransformedNormal(Tuple4 point)
+        protected (Tuple4 normal, Tuple4 objectPoint) GetTransformedNormal(IFigure figure, Tuple4 point)
         {
-            var objectPoint = point;
-            if (Transformation != null)
+            var objectPoint = TransformWorldPointToObjectPoint(point);
+            var normal = GetBaseNormal(figure, objectPoint);
+            return (TransformObjectNormalToWorldNormal(normal), objectPoint);
+        }
+
+        public Tuple4 TransformWorldPointToObjectPoint(Tuple4 worldPoint)
+        {
+            var objectPoint = worldPoint;
+            if (Parent != null)
             {
-                objectPoint = TransformWorldPointToObjectPoint(point);
+                objectPoint = Parent.TransformWorldPointToObjectPoint(worldPoint);
             }
+            if (inverseTransformation != null)
+            {
+                objectPoint = MatrixOperations.Geometry3D.Transform(inverseTransformation, objectPoint);
+            }
+            return objectPoint;
+        }
 
-            var normal = GetBaseNormal(objectPoint);
-
-            if (Transformation != null)
+        public Tuple4 TransformObjectNormalToWorldNormal(Tuple4 normal)
+        {
+            if (inverseTransposeTransformation != null)
             {
                 normal = MatrixOperations.Geometry3D.Transform(inverseTransposeTransformation, normal);
                 if (normal.W != 0.0)
@@ -102,12 +119,14 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
                 }
             }
 
-            return (Tuple4.Normalize(normal), objectPoint);
-        }
+            normal = Tuple4.Normalize(normal);
 
-        protected Tuple4 TransformWorldPointToObjectPoint(Tuple4 worldPoint)
-        {
-            return MatrixOperations.Geometry3D.Transform(inverseTransformation, worldPoint);
+            if (Parent != null)
+            {
+                normal = Parent.TransformObjectNormalToWorldNormal(normal);
+            }
+
+            return normal;
         }
 
         /// <summary>
@@ -168,7 +187,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
                 var figure = intersections[i].figure;
                 var distance = intersections[i].t;
                 var pointOnSurface = Tuple4.Geometry3D.MovePoint(origin, dir, distance); // orig + dir*dist
-                (var surfaceNormal, var objectPoint) = GetTransformedNormal(pointOnSurface);
+                (var surfaceNormal, var objectPoint) = ((BaseFigure)figure).GetTransformedNormal(figure, pointOnSurface);
                 var eyeVector = Tuple4.Negate(dir);
                 var isInside = false;
                 if (Tuple4.DotProduct(surfaceNormal, eyeVector) < 0)

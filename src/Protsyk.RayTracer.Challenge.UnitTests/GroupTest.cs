@@ -173,7 +173,7 @@ namespace Protsyk.RayTracer.Challenge.UnitTests
                 return new Intersection[] { new Intersection(0, this) };
             }
 
-            protected override Tuple4 GetBaseNormal(Tuple4 pointOnSurface)
+            protected override Tuple4 GetBaseNormal(IFigure figure, Tuple4 pointOnSurface)
             {
                 return Tuple4.Vector(pointOnSurface.X, pointOnSurface.Y, pointOnSurface.Z);
             }

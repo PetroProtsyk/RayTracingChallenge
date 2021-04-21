@@ -23,7 +23,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
         private static readonly Tuple4 OYMinus = Tuple4.Vector(0, -1, 0);
         private static readonly Tuple4 OZMinus = Tuple4.Vector(0, 0, -1);
 
-        protected override Tuple4 GetBaseNormal(Tuple4 pointOnSurface)
+        protected override Tuple4 GetBaseNormal(IFigure figure, Tuple4 pointOnSurface)
         {
             var absX = Math.Abs(pointOnSurface.X);
             var absY = Math.Abs(pointOnSurface.Y);

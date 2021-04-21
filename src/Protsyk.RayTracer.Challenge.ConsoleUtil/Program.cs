@@ -584,6 +584,39 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
             return (camera, scene, ColorConverters.Tuple1);
         }
 
+        static (ICamera camera, BaseScene scene, IColorConverter<Tuple4> colorConverter) SceneChapter14()
+        {
+            // Camera
+            var camera = new FovCamera2(MatrixOperations.Geometry3D.LookAtTransform(
+                                            P(0, 2.0, -2),
+                                            P(0, 1, -1),
+                                            V(0, 1, 0)), Math.PI / 3, 800, 600);
+
+            // Materials
+            var defaultMaterial = MaterialConstants.Default;
+            var middleMaterial = new SolidColorMaterial(
+                                        Tuple4.Vector(1.0, 1.0, 1.0),
+                                        defaultMaterial.Ambient,
+                                        0.9,
+                                        0.001,
+                                        10,
+                                        defaultMaterial.Reflective,
+                                        defaultMaterial.RefractiveIndex,
+                                        defaultMaterial.Transparency);
+
+            // World
+            var scene = new BaseScene().WithFigures(
+                                 HexagonFigure.CreateHexagon(MatrixOperations.Multiply(
+                                                                MatrixOperations.Geometry3D.RotateY(Math.PI / 9),
+                                                                MatrixOperations.Geometry3D.RotateZ(Math.PI / 6)), middleMaterial)
+                            ).WithLights(
+                               L(-10, 10, -10, 0.9),
+                               A(1.0)
+                            ).WithShadows(true);
+
+            return (camera, scene, ColorConverters.Tuple1);
+        }
+
         // This Scene is based on: https://github.com/javan/ray-tracer-challenge/blob/master/src/controllers/chapter_11_worker.js
         static (ICamera camera, BaseScene scene, IColorConverter<Tuple4> colorConverter) RelectionRefraction()
         {
@@ -772,6 +805,7 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
                 { "Chapter9", _=> SceneChapter9() },
                 { "Chapter10", _=> SceneChapter10() },
                 { "Chapter11", _=> SceneChapter11() },
+                { "Chapter14", _=> SceneChapter14() },
                 { "RelectionRefraction" , _=> RelectionRefraction() }
             };
 

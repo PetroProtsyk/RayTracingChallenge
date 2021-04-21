@@ -53,12 +53,10 @@ Scenario: Computing the normal on a transformed shape
     And n ← normal_at(s, point(0, 0.70711, -0.70711))
   Then n = vector(0, 0.97014, -0.24254)
 
-@ignore
 Scenario: A shape has a parent attribute
   Given s ← test_shape()
   Then s.parent is nothing
 
-@ignore
 Scenario: Converting a point from world to object space
   Given g1 ← group()
     And set_transform(g1, rotation_y(π/2))
@@ -71,7 +69,8 @@ Scenario: Converting a point from world to object space
   When p ← world_to_object(s, point(-2, 0, -10))
   Then p = point(0, 0, -1)
 
-@ignore
+# √3/3 = 0.5773503
+
 Scenario: Converting a normal from object to world space
   Given g1 ← group()
     And set_transform(g1, rotation_y(π/2))
@@ -81,10 +80,9 @@ Scenario: Converting a normal from object to world space
     And s ← sphere()
     And set_transform(s, translation(5, 0, 0))
     And add_child(g2, s)
-  When n ← normal_to_world(s, vector(√3/3, √3/3, √3/3))
-  Then n = vector(0.2857, 0.4286, -0.8571)
+  When n ← normal_to_world(s, vector(0.5773503, 0.5773503, 0.5773503))
+  Then n = vector(0.285714, 0.428571, -0.857143)
 
-@ignore
 Scenario: Finding the normal on a child object
   Given g1 ← group()
     And set_transform(g1, rotation_y(π/2))
@@ -95,4 +93,4 @@ Scenario: Finding the normal on a child object
     And set_transform(s, translation(5, 0, 0))
     And add_child(g2, s)
   When n ← normal_at(s, point(1.7321, 1.1547, -5.5774))
-  Then n = vector(0.2857, 0.4286, -0.8571)
+  Then n = vector(0.285704, 0.428543, -0.857161)
