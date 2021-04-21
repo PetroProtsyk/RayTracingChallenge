@@ -33,9 +33,19 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
             return sphere.GetNormal(pointOnSurface);
         }
 
-        protected override double[] GetBaseIntersections(Ray ray)
+        protected override Intersection[] GetBaseIntersections(Ray ray)
         {
-            return sphere.GetIntersections(ray);
+            var xs = sphere.GetIntersections(ray);
+            if (xs == null)
+            {
+                return null;
+            }
+            var r = new Intersection[xs.Length];
+            for (int i = 0; i < xs.Length; ++i)
+            {
+                r[i] = new Intersection(xs[i], this);
+            }
+            return r;
         }
 
         public override bool Equals(object obj)

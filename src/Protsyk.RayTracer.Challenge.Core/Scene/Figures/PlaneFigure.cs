@@ -21,7 +21,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
             return new Tuple4(0.0, 1.0, 0.0, TupleFlavour.Vector);
         }
 
-        protected override double[] GetBaseIntersections(Ray ray)
+        protected override Intersection[] GetBaseIntersections(Ray ray)
         {
             if (Constants.EpsilonZero(Math.Abs(ray.dir.Y)))
             {
@@ -29,7 +29,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
             }
 
             var t = -ray.origin.Y / ray.dir.Y;
-            return new double[] { t };
+            return new Intersection[] { new Intersection(t, this) };
         }
 
         public override bool Equals(object obj)

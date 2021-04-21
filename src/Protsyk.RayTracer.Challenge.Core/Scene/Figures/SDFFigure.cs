@@ -19,9 +19,19 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
             return sdf.GetNormal(pointOnSurface);
         }
 
-        protected override double[] GetBaseIntersections(Ray ray)
+        protected override Intersection[] GetBaseIntersections(Ray ray)
         {
-            return sdf.GetIntersections(ray);
+            var xs = sdf.GetIntersections(ray);
+            if (xs == null)
+            {
+                return null;
+            }
+            var r = new Intersection[xs.Length];
+            for (int i=0; i<xs.Length; ++i)
+            {
+                r[i] = new Intersection(xs[i], this);
+            }
+            return r;
         }
     }
 

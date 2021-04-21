@@ -115,17 +115,17 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
         /// </summary>
         /// <param name="ray"></param>
         /// <returns></returns>
-        protected abstract double[] GetBaseIntersections(Ray ray);
+        protected abstract Intersection[] GetBaseIntersections(Ray ray);
 
         /// <summary>
         /// The only purpose of this method is to serve unit testing
         /// </summary>
-        protected virtual double[] GetBaseIntersectionsWithAnyDirection(Ray ray)
+        protected virtual Intersection[] GetBaseIntersectionsWithAnyDirection(Ray ray)
         {
             return GetBaseIntersections(new Ray(ray.origin, Tuple4.Normalize(ray.dir)));
         }
 
-        public double[] GetIntersections(Ray ray)
+        public Intersection[] GetIntersections(Ray ray)
         {
             if (Transformation != null)
             {
@@ -141,7 +141,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
                     var len = ray.dir.Length();
                     for (int i = 0; i < result.Length; ++i)
                     {
-                        result[i] /= len;
+                        result[i] = new Intersection(result[i].t / len, result[i].figure);
                     }
                 }
             }
@@ -165,7 +165,8 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
             var result = new HitResult[intersections.Length];
             for(int i=0; i<intersections.Length; ++i)
             {
-                var distance = intersections[i];
+                var figure = intersections[i].figure;
+                var distance = intersections[i].t;
                 var pointOnSurface = Tuple4.Geometry3D.MovePoint(origin, dir, distance); // orig + dir*dist
                 (var surfaceNormal, var objectPoint) = GetTransformedNormal(pointOnSurface);
                 var eyeVector = Tuple4.Negate(dir);
@@ -178,7 +179,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
                 var pointOverSurface = Tuple4.Add(pointOnSurface, Tuple4.Scale(surfaceNormal, Constants.Epsilon));
                 var pointUnderSurface = Tuple4.Subtract(pointOnSurface, Tuple4.Scale(surfaceNormal, Constants.Epsilon));
                 var reflectionVector = Tuple4.Reflect(dir, surfaceNormal);
-                result[i] = new HitResult(true, this, distance, objectPoint, pointOnSurface, pointOverSurface, pointUnderSurface, surfaceNormal, eyeVector, reflectionVector, isInside);
+                result[i] = new HitResult(true, figure, distance, objectPoint, pointOnSurface, pointOverSurface, pointUnderSurface, surfaceNormal, eyeVector, reflectionVector, isInside);
             }
 
             return result;

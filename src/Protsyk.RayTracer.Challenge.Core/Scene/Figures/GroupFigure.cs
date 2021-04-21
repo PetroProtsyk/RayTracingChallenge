@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using Protsyk.RayTracer.Challenge.Core.Geometry;
 
@@ -11,7 +12,13 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
         public IReadOnlyCollection<IFigure> Figures => figures.AsReadOnly();
 
         public GroupFigure()
+            : this(Matrix4x4.Identity)
         {
+        }
+
+        public GroupFigure(IMatrix transform)
+        {
+            this.Transformation = transform;
         }
 
         protected override Tuple4 GetBaseNormal(Tuple4 pointOnSurface)
@@ -19,9 +26,18 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
             return Tuple4.ZeroPoint;
         }
 
-        protected override double[] GetBaseIntersections(Ray ray)
+        protected override Intersection[] GetBaseIntersections(Ray ray)
         {
-            return null;
+            var result = new List<Intersection>();
+            foreach (var figure in figures)
+            {
+                var figureIntersections = figure.GetIntersections(ray);
+                if (figureIntersections != null)
+                {
+                    result.AddRange(figureIntersections);
+                }
+            }
+            return result.Count == 0 ? null : result.OrderBy(x => x.t).ToArray();
         }
 
         public void Add(IFigure figure)

@@ -44,7 +44,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
             return pointOnSurface.Z > 0.0 ? OZPlus : OZMinus;
         }
 
-        protected override double[] GetBaseIntersections(Ray ray)
+        protected override Intersection[] GetBaseIntersections(Ray ray)
         {
             var (xtmin, xtmax) = CheckAxis(ray.origin.X, ray.dir.X);
             var (ytmin, ytmax) = CheckAxis(ray.origin.Y, ray.dir.Y);
@@ -58,7 +58,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
                 return null;
             }
 
-            return new double[] { tmin, tmax };
+            return new Intersection[] { new Intersection(tmin, this), new Intersection(tmax, this) };
         }
 
         private (double, double) CheckAxis(double origin, double direction)

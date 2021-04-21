@@ -43,7 +43,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
             return Tuple4.Vector(pointOnSurface.X, 0.0, pointOnSurface.Z);
         }
 
-        protected override double[] GetBaseIntersections(Ray ray)
+        protected override Intersection[] GetBaseIntersections(Ray ray)
         {
             var a = ray.dir.X * ray.dir.X + ray.dir.Z * ray.dir.Z;
 
@@ -108,7 +108,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
                 return null;
             }
 
-            var r = new double[len];
+            var r = new Intersection[len];
             var w = 0;
             if (capsT != null)
             {
@@ -131,22 +131,22 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
 
             if (isT0 && isT1)
             {
-                r[w] = t0;
-                r[w + 1] = t1;
+                r[w] = new Intersection(t0, this);
+                r[w + 1] = new Intersection(t1, this);
             }
             else if (isT0)
             {
-                r[w] = t0;
+                r[w] = new Intersection(t0, this);
             }
             else if (isT1)
             {
-                r[w] = t1;
+                r[w] = new Intersection(t1, this);
             }
 
             return r;
         }
 
-        private double[] GetCapsIntersections(Ray ray)
+        private Intersection[] GetCapsIntersections(Ray ray)
         {
             if (!IsClosed || Constants.EpsilonZero(ray.dir.Y))
             {
@@ -161,15 +161,15 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
 
             if (isT0 && isT1)
             {
-                return new double[] { t0, t1 };
+                return new Intersection[] { new Intersection(t0, this), new Intersection(t1, this) };
             }
             else if (isT0)
             {
-                return new double[] { t0 };
+                return new Intersection[] { new Intersection(t0, this) };
             }
             else if (isT1)
             {
-                return new double[] { t1 };
+                return new Intersection[] { new Intersection(t1, this) };
             }
 
             return null;

@@ -237,15 +237,15 @@ namespace Protsyk.RayTracer.Challenge.UnitTests
 
             public Ray SavedRay { get; private set; }
 
-            protected override double[] GetBaseIntersectionsWithAnyDirection(Ray ray)
+            protected override Intersection[] GetBaseIntersectionsWithAnyDirection(Ray ray)
             {
                 SavedRay = ray;
                 return base.GetBaseIntersectionsWithAnyDirection(ray);
             }
 
-            protected override double[] GetBaseIntersections(Ray ray)
+            protected override Intersection[] GetBaseIntersections(Ray ray)
             {
-                return new double[] { 0 };
+                return new Intersection[] { new Intersection(0, this) };
             }
 
             protected override Tuple4 GetBaseNormal(Tuple4 pointOnSurface)

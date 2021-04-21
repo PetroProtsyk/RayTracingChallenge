@@ -49,12 +49,12 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
             return Tuple4.Vector(pointOnSurface.X, y, pointOnSurface.Z);
         }
 
-        protected override double[] GetBaseIntersections(Ray ray)
+        protected override Intersection[] GetBaseIntersections(Ray ray)
         {
             return SharedUtils.JoinArrays(GetConeIntersections(ray), GetCapsIntersections(ray));
         }
 
-        private double[] GetConeIntersections(Ray ray)
+        private Intersection[] GetConeIntersections(Ray ray)
         { 
             var a = ray.dir.X * ray.dir.X - ray.dir.Y * ray.dir.Y + ray.dir.Z * ray.dir.Z;
             var b = 2 * (ray.origin.X * ray.dir.X - ray.origin.Y * ray.dir.Y + ray.origin.Z * ray.dir.Z);
@@ -71,7 +71,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
                 var yt = ray.origin.Y + t * ray.dir.Y;
                 if (Minimum < yt && yt < Maximum)
                 {
-                    return new double[] { t };
+                    return new Intersection[] { new Intersection(t, this) };
                 }
             }
 
@@ -109,20 +109,20 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
 
             if (isT0 && isT1)
             {
-                return new double[] { t0, t1 };
+                return new Intersection[] { new Intersection(t0, this), new Intersection(t1, this) };
             }
             else if (isT0)
             {
-                return new double[] { t0 };
+                return new Intersection[] { new Intersection(t0, this) };
             }
             else if (isT1)
             {
-                return new double[] { t1 };
+                return new Intersection[] { new Intersection(t1, this) };
             }
             return null;
         }
 
-        private double[] GetCapsIntersections(Ray ray)
+        private Intersection[] GetCapsIntersections(Ray ray)
         {
             if (!IsClosed || Constants.EpsilonZero(ray.dir.Y))
             {
@@ -137,15 +137,15 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
 
             if (isT0 && isT1)
             {
-                return new double[] { t0, t1 };
+                return new Intersection[] { new Intersection(t0, this), new Intersection(t1, this) };
             }
             else if (isT0)
             {
-                return new double[] { t0 };
+                return new Intersection[] { new Intersection(t0, this) };
             }
             else if (isT1)
             {
-                return new double[] { t1 };
+                return new Intersection[] { new Intersection(t1, this) };
             }
 
             return null;

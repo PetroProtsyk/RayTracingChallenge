@@ -9,6 +9,8 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene
     {
         Tuple4 GetNormal(Tuple4 pointOnSurface);
 
+        Intersection[] GetIntersections(Ray ray);
+
         IMatrix Transformation { get; set; }
 
         IMaterial Material { get; set; }

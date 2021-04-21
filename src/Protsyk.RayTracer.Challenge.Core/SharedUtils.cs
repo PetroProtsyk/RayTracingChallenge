@@ -6,7 +6,7 @@ namespace Protsyk.RayTracer.Challenge.Core
 {
     public static class SharedUtils
     {
-        public static double[] JoinArrays(double[] a, double[] b)
+        public static T[] JoinArrays<T>(T[] a, T[] b)
         {
             if (a == null)
             {
@@ -17,7 +17,7 @@ namespace Protsyk.RayTracer.Challenge.Core
                 return a;
             }
 
-            var result = new double[a.Length + b.Length];
+            var result = new T[a.Length + b.Length];
             Array.Copy(a, result, a.Length);
             Array.Copy(b, 0, result, a.Length, b.Length);
             return result;

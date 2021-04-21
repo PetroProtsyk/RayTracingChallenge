@@ -24,7 +24,7 @@ namespace Protsyk.RayTracer.Challenge.UnitTests
 
         private readonly IDictionary<string, double> schlick = new Dictionary<string, double>();
 
-        private readonly IDictionary<string, Intersection> intersection = new Dictionary<string, Intersection>();
+        private readonly IDictionary<string, Intersection?> intersection = new Dictionary<string, Intersection?>();
 
         private readonly IDictionary<string, Intersection[]> intersections = new Dictionary<string, Intersection[]>();
 
@@ -136,7 +136,7 @@ namespace Protsyk.RayTracer.Challenge.UnitTests
         {
             intersections[id] = new Intersection[]
             {
-                intersection[i1]
+                intersection[i1].Value
             };
         }
 
@@ -146,8 +146,8 @@ namespace Protsyk.RayTracer.Challenge.UnitTests
         {
             intersections[id] = new Intersection[]
             {
-                intersection[i1],
-                intersection[i2]
+                intersection[i1].Value,
+                intersection[i2].Value
             };
         }
 
@@ -156,10 +156,10 @@ namespace Protsyk.RayTracer.Challenge.UnitTests
         {
             intersections[id] = new Intersection[]
             {
-                intersection[i1],
-                intersection[i2],
-                intersection[i3],
-                intersection[i4]
+                intersection[i1].Value,
+                intersection[i2].Value,
+                intersection[i3].Value,
+                intersection[i4].Value
             };
         }
 
@@ -179,19 +179,27 @@ namespace Protsyk.RayTracer.Challenge.UnitTests
         public void When_hit(string id, string xs)
         {
             // Same as HitResult.ClosestPositiveHit
-            intersection[id] = intersections[xs].Where(i => i.t > 0).OrderBy(i => i.t).FirstOrDefault();
+            var ixs = intersections[xs].Where(i => i.t > 0).OrderBy(i => i.t).ToArray();
+            if (ixs.Length > 0)
+            {
+                intersection[id] = ixs[0];
+            }
+            else
+            {
+                intersection[id] = null;
+            }
         }
 
         [Then(@"([a-z][a-z0-9]*).t = ([+-.0-9]+)")]
         public void Then_origin(string id, double t)
         {
-            Assert.Equal(t, intersection[id].t);
+            Assert.Equal(t, intersection[id].Value.t);
         }
 
         [And(@"([a-z][a-z0-9]*).object = ([a-z][a-z0-9]*)")]
         public void Then_object(string id, string figureId)
         {
-            Assert.Equal(figure[figureId], intersection[id].figure);
+            Assert.Equal(figure[figureId], intersection[id].Value.figure);
         }
 
         [Then(@"([a-z][a-z0-9]*).count = ([+-.0-9]+)")]
@@ -199,7 +207,7 @@ namespace Protsyk.RayTracer.Challenge.UnitTests
         {
             if (v == 0)
             {
-                Assert.Null(intersections[id][0]);
+                Assert.Null(intersections[id]);
             }
             else
             {
@@ -237,7 +245,7 @@ namespace Protsyk.RayTracer.Challenge.UnitTests
         [When(@"comps ← prepare_computations\(([a-z][a-z0-9]*), ([a-z][a-z0-9]*)\)")]
         public void When_prepare_computations(string id, string rayId)
         {
-            var i = intersection[id];
+            var i = intersection[id].Value;
             var r = ray[rayId];
 
             var comps = prepareComputations(r, i, null);
@@ -249,7 +257,7 @@ namespace Protsyk.RayTracer.Challenge.UnitTests
         public void When_prepare_computations_with_intersections(string id, string rayId, string xs)
         {
             var ixs = intersections[xs];
-            var i = intersection[id];
+            var i = intersection[id].Value;
             var r = ray[rayId];
 
             var comps = prepareComputations(r, i, ixs);
@@ -290,13 +298,13 @@ namespace Protsyk.RayTracer.Challenge.UnitTests
         [Then(@"comps.t = ([a-z][a-z0-9]*).t")]
         public void Then_hit_t(string id)
         {
-            Assert.Equal(intersection[id].t, hit[ComputationsId].Distance);
+            Assert.Equal(intersection[id].Value.t, hit[ComputationsId].Distance);
         }
 
         [And(@"comps.object = ([a-z][a-z0-9]*).object")]
         public void Then_hit_object(string id)
         {
-            Assert.Equal(intersection[id].figure, hit[ComputationsId].Figure);
+            Assert.Equal(intersection[id].Value.figure, hit[ComputationsId].Figure);
         }
 
         [Then(@"comps.point = point\(([+-.0-9]+), ([+-.0-9]+), ([+-.0-9]+)\)")]
