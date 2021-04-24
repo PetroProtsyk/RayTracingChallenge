@@ -617,6 +617,164 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
             return (camera, scene, ColorConverters.Tuple1);
         }
 
+        static (ICamera camera, BaseScene scene, IColorConverter<Tuple4> colorConverter) GlassSpheres()
+        {
+            // Camera
+            var camera = new FovCamera2(MatrixOperations.Geometry3D.LookAtTransform(
+                                            P(0, 0, -5),
+                                            P(0, 0, 0),
+                                            V(0, 1, 0)), Math.PI / 3, 800, 600);
+
+            // Materials
+            var defaultMaterial = MaterialConstants.Default;
+
+            var floorMaterial = new PatternMaterial(
+                                        new CheckerPattern(MatrixOperations.Geometry3D.Scale(0.3, 0.3, 0.3),
+                                                           Tuple4.Vector(0, 0, 0),
+                                                           Tuple4.Vector(0.7, 0.7, 0.7),
+                                                           false),
+                                        1.0,
+                                        0,
+                                        0,
+                                        0,
+                                        0,
+                                        1.0,
+                                        0.0);
+
+            var middleMaterial = new SolidColorMaterial(
+                                        Tuple4.Vector(1.0, 1.0, 1.0),
+                                        defaultMaterial.Ambient,
+                                        0.9,
+                                        0.001,
+                                        10,
+                                        defaultMaterial.Reflective,
+                                        defaultMaterial.RefractiveIndex,
+                                        defaultMaterial.Transparency);
+
+            var greenMaterial = new SolidColorMaterial(
+                                        Tuple4.Point(0, 0.3, 0),
+                                        0.1,
+                                        0.4,
+                                        0.9,
+                                        300,
+                                        0.9,
+                                        1.3,
+                                        0.7);
+
+            var blueMaterial = new SolidColorMaterial(
+                                        Tuple4.Point(0, 0, 0.3),
+                                        0.1,
+                                        0.4,
+                                        0.9,
+                                        300,
+                                        0.9,
+                                        1.2,
+                                        0.7);
+
+            var redMaterial = new SolidColorMaterial(
+                                        Tuple4.Point(0.3, 0, 0),
+                                        0.1,
+                                        0.4,
+                                        0.9,
+                                        300,
+                                        0.9,
+                                        1.1,
+                                        0.7);
+
+            // World
+            var scene = new BaseScene().WithFigures(
+                                 new PlaneFigure(MatrixOperations.Multiply(MatrixOperations.Geometry3D.RotateX(Math.PI / 2),
+                                                                           MatrixOperations.Geometry3D.Translation(0, 0, 15)), floorMaterial), // floor
+                                 new SphereFigure(MatrixOperations.Geometry3D.Translation(-0.5, 0.5, 0), blueMaterial),
+                                 new SphereFigure(MatrixOperations.Geometry3D.Translation(0.5, 0.5, 0), greenMaterial),
+                                 new SphereFigure(MatrixOperations.Geometry3D.Translation(0, -0.5, 0), redMaterial)
+                            ).WithLights(
+                               L(-10, 10, -10, 0.9),
+                               A(1.0)
+                            ).WithShadows(true);
+
+            return (camera, scene, ColorConverters.Tuple1);
+        }
+
+        static (ICamera camera, BaseScene scene, IColorConverter<Tuple4> colorConverter) SceneChapter16()
+        {
+            // Camera
+            var camera = new FovCamera2(MatrixOperations.Geometry3D.LookAtTransform(
+                                            P(0, 0, -5),
+                                            P(0, 0, 0),
+                                            V(0, 1, 0)), Math.PI / 3, 800, 600);
+
+            // Materials
+            var defaultMaterial = MaterialConstants.Default;
+
+            var floorMaterial = new PatternMaterial(
+                                        new CheckerPattern(MatrixOperations.Geometry3D.Scale(0.3, 0.3, 0.3),
+                                                           Tuple4.Vector(0, 0, 0),
+                                                           Tuple4.Vector(0.7, 0.7, 0.7),
+                                                           false),
+                                        1.0,
+                                        0,
+                                        0,
+                                        0,
+                                        0,
+                                        1.0,
+                                        0.0);
+
+            var middleMaterial = new SolidColorMaterial(
+                                        Tuple4.Vector(1.0, 1.0, 1.0),
+                                        defaultMaterial.Ambient,
+                                        0.9,
+                                        0.001,
+                                        10,
+                                        defaultMaterial.Reflective,
+                                        defaultMaterial.RefractiveIndex,
+                                        defaultMaterial.Transparency);
+
+            var greenMaterial = new SolidColorMaterial(
+                                        Tuple4.Point(0, 0.3, 0),
+                                        0.1,
+                                        0.4,
+                                        0.9,
+                                        300,
+                                        0.9,
+                                        1.3,
+                                        0.7);
+
+            var blueMaterial = new SolidColorMaterial(
+                                        Tuple4.Point(0, 0, 0.3),
+                                        0.1,
+                                        0.4,
+                                        0.9,
+                                        300,
+                                        0.9,
+                                        1.2,
+                                        0.7);
+
+            var redMaterial = new SolidColorMaterial(
+                                        Tuple4.Point(0.3, 0, 0),
+                                        0.1,
+                                        0.4,
+                                        0.9,
+                                        300,
+                                        0.9,
+                                        1.1,
+                                        0.7);
+
+            // World
+            var scene = new BaseScene().WithFigures(
+                                 new PlaneFigure(MatrixOperations.Multiply(MatrixOperations.Geometry3D.RotateX(Math.PI / 2),
+                                                                           MatrixOperations.Geometry3D.Translation(0, 0, 15)), floorMaterial), // floor
+                                 new SphereFigure(MatrixOperations.Geometry3D.Translation(-0.5, 0.5, 0), blueMaterial),
+                                 new SphereFigure(MatrixOperations.Geometry3D.Translation(0.5, 0.5, 0), greenMaterial),
+                                 new SphereFigure(MatrixOperations.Geometry3D.Translation(0, -0.5, 0), redMaterial)
+                            ).WithLights(
+                               L(-10, 10, -10, 0.9),
+                               A(1.0)
+                            ).WithShadows(true);
+
+            return (camera, scene, ColorConverters.Tuple1);
+        }
+
         // This Scene is based on: https://github.com/javan/ray-tracer-challenge/blob/master/src/controllers/chapter_11_worker.js
         static (ICamera camera, BaseScene scene, IColorConverter<Tuple4> colorConverter) RelectionRefraction()
         {
@@ -806,6 +964,8 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
                 { "Chapter10", _=> SceneChapter10() },
                 { "Chapter11", _=> SceneChapter11() },
                 { "Chapter14", _=> SceneChapter14() },
+                { "GlassSpheres", _=> GlassSpheres() },
+                { "Chapter16", _=> SceneChapter16() },
                 { "RelectionRefraction" , _=> RelectionRefraction() }
             };
 
