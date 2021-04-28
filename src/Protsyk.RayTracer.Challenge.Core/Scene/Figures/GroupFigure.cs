@@ -5,7 +5,7 @@ using Protsyk.RayTracer.Challenge.Core.Geometry;
 
 namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
 {
-    public class GroupFigure : BaseFigure
+    public class GroupFigure : BaseFigure, ICompositeFigure
     {
         private readonly List<IFigure> figures = new List<IFigure>();
 
@@ -60,12 +60,12 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
             figure.Parent = null;
         }
         
-        internal void AddInternal(IFigure figure)
+        void ICompositeFigure.AddInternal(IFigure figure)
         {
             figures.Add(figure);
         }
 
-        internal void RemoveInternal(IFigure figure)
+        void ICompositeFigure.RemoveInternal(IFigure figure)
         {
             figures.Remove(figure);
         }

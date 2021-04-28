@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Protsyk.RayTracer.Challenge.Core.Scene
 {
-    public interface IFigure : ISupportsHitCheck, ISupportsGroup
+    public interface IFigure : ISupportsHitCheck, IChildFigure
     {
         /// <summary>
         /// Get normal of at a given point on the figure's surface in the world coordinates

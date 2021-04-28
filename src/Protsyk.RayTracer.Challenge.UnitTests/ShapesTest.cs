@@ -245,7 +245,7 @@ namespace Protsyk.RayTracer.Challenge.UnitTests
         [And(@"([a-z][a-z0-9]*).parent = ([a-z][a-z0-9]*)")]
         public void And_parent(string id, string gId)
         {
-            Assert.Equal(figure[gId], figure[id].Parent);
+            Assert.Same(figure[gId], figure[id].Parent);
         }
 
         [Given(@"([a-z][a-z0-9]*) ← group\(\)")]

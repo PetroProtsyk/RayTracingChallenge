@@ -12,7 +12,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
 
         private IMatrix inverseTransposeTransformation;
 
-        private GroupFigure group;
+        private ICompositeFigure parent;
 
         public IMaterial Material
         {
@@ -20,35 +20,35 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
             set;
         }
 
-        public GroupFigure Parent
+        public ICompositeFigure Parent
         {
             get
             {
-                return group;
+                return parent;
             }
             set
             {
-                if (group == value)
+                if (parent == value)
                 {
                     return;
                 }
 
-                if (group != null)
+                if (parent != null)
                 {
-                    group.RemoveInternal(this);
+                    parent.RemoveInternal(this);
                 }
 
-                group = value;
+                parent = value;
 
-                if (group != null)
+                if (parent != null)
                 {
                     try
                     {
-                        group.AddInternal(this);
+                        parent.AddInternal(this);
                     }
                     catch
                     {
-                        group = null;
+                        parent = null;
                         throw;
                     }
                 }

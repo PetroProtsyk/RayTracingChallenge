@@ -6,8 +6,8 @@ using Protsyk.RayTracer.Challenge.Core.Scene.Figures;
 
 namespace Protsyk.RayTracer.Challenge.Core.Scene
 {
-    public interface ISupportsGroup
+    public interface IChildFigure
     {
-        GroupFigure Parent { get; set; }
+        ICompositeFigure Parent { get; set; }
     }
 }
