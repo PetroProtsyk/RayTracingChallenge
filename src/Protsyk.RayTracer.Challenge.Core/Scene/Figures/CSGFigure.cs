@@ -18,7 +18,12 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
         public string Operator => op;
 
         public CSGFigure(string op, IFigure left, IFigure right)
+            : this(null, op, left, right)
+        { }
+
+        public CSGFigure(IMatrix transformation, string op, IFigure left, IFigure right)
         {
+            this.Transformation = transformation;
             this.op = op;
             left.Parent = this;
             right.Parent = this;
@@ -31,7 +36,25 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
 
         protected override Intersection[] GetBaseIntersections(Ray ray)
         {
-            return null;
+            var leftIntersections = left.GetIntersections(ray);
+            var rightIntersections = right.GetIntersections(ray);
+            var allIntersections = SharedUtils.JoinArrays(leftIntersections, rightIntersections);
+            if (allIntersections == null)
+            {
+                return null;
+            }
+
+            Array.Sort(allIntersections, (a, b) =>
+            {
+                if (a.t != b.t)
+                {
+                    return Comparer<double>.Default.Compare(a.t, b.t);
+                }
+
+                return Comparer<IFigure>.Default.Compare(a.figure, b.figure);
+            });
+
+            return FilterIntersections(allIntersections);
         }
 
         void ICompositeFigure.AddInternal(IFigure figure)
@@ -68,6 +91,50 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
             {
                 throw new InvalidOperationException("Unexpected");
             }
+        }
+
+        public static bool IntersectionAllowed(string op, bool lhit, bool inl, bool inr)
+        {
+            return op switch
+            {
+                "union" => (lhit && !inr) || (!lhit && !inl),
+                "intersection" => (lhit && inr) || (!lhit && inl),
+                "difference" => (lhit && !inr) || (!lhit && inl),
+                _ => throw new NotSupportedException($"Operation {op} is not supported"),
+            };
+        }
+
+        public Intersection[] FilterIntersections(Intersection[] xs)
+        {
+            var result = new List<Intersection>(xs.Length / 2);
+
+            // Begin outside of both children
+            bool inl = false;
+            bool inr = false;
+
+            foreach (var i in xs)
+            {
+                bool lhit = left.Includes(i.figure);
+                if (IntersectionAllowed(op, lhit, inl, inr))
+                {
+                    result.Add(i);
+                }
+                if (lhit)
+                {
+                    inl = !inl;
+                }
+                else
+                {
+                    inr = !inr;
+                }
+            }
+
+            return result.ToArray();
+        }
+
+        public override bool Includes(IFigure child)
+        {
+            return left.Includes(child) || right.Includes(child);
         }
     }
 

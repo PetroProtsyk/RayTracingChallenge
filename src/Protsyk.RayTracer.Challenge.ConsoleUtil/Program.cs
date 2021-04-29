@@ -641,16 +641,6 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
                                         1.0,
                                         0.0);
 
-            var middleMaterial = new SolidColorMaterial(
-                                        Tuple4.Vector(1.0, 1.0, 1.0),
-                                        defaultMaterial.Ambient,
-                                        0.9,
-                                        0.001,
-                                        10,
-                                        defaultMaterial.Reflective,
-                                        defaultMaterial.RefractiveIndex,
-                                        defaultMaterial.Transparency);
-
             var greenMaterial = new SolidColorMaterial(
                                         Tuple4.Point(0, 0.3, 0),
                                         0.1,
@@ -705,8 +695,6 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
                                             V(0, 1, 0)), Math.PI / 3, 800, 600);
 
             // Materials
-            var defaultMaterial = MaterialConstants.Default;
-
             var floorMaterial = new PatternMaterial(
                                         new CheckerPattern(MatrixOperations.Geometry3D.Scale(0.3, 0.3, 0.3),
                                                            Tuple4.Vector(0, 0, 0),
@@ -719,16 +707,6 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
                                         0,
                                         1.0,
                                         0.0);
-
-            var middleMaterial = new SolidColorMaterial(
-                                        Tuple4.Vector(1.0, 1.0, 1.0),
-                                        defaultMaterial.Ambient,
-                                        0.9,
-                                        0.001,
-                                        10,
-                                        defaultMaterial.Reflective,
-                                        defaultMaterial.RefractiveIndex,
-                                        defaultMaterial.Transparency);
 
             var greenMaterial = new SolidColorMaterial(
                                         Tuple4.Point(0, 0.3, 0),
@@ -764,9 +742,61 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
             var scene = new BaseScene().WithFigures(
                                  new PlaneFigure(MatrixOperations.Multiply(MatrixOperations.Geometry3D.RotateX(Math.PI / 2),
                                                                            MatrixOperations.Geometry3D.Translation(0, 0, 15)), floorMaterial), // floor
-                                 new SphereFigure(MatrixOperations.Geometry3D.Translation(-0.5, 0.5, 0), blueMaterial),
-                                 new SphereFigure(MatrixOperations.Geometry3D.Translation(0.5, 0.5, 0), greenMaterial),
-                                 new SphereFigure(MatrixOperations.Geometry3D.Translation(0, -0.5, 0), redMaterial)
+                                 new CSGFigure("union",
+                                    new SphereFigure(MatrixOperations.Geometry3D.Translation(-0.5, 0.5, 0), blueMaterial),
+                                    new CSGFigure("union", new SphereFigure(MatrixOperations.Geometry3D.Translation(0.5, 0.5, 0), greenMaterial),
+                                                           new SphereFigure(MatrixOperations.Geometry3D.Translation(0, -0.5, 0), redMaterial)))
+                            ).WithLights(
+                               L(-10, 10, -10, 0.9),
+                               A(1.0)
+                            ).WithShadows(true);
+
+            return (camera, scene, ColorConverters.Tuple1);
+        }
+
+        static (ICamera camera, BaseScene scene, IColorConverter<Tuple4> colorConverter) SceneChapter16_1()
+        {
+            // Camera
+            var camera = new FovCamera2(MatrixOperations.Geometry3D.LookAtTransform(
+                                            P(0, 0, -5),
+                                            P(0, 0, 0),
+                                            V(0, 1, 0)), Math.PI / 3, 800, 600);
+
+            // Materials
+            var defaultMaterial = MaterialConstants.Default;
+
+            var floorMaterial = new PatternMaterial(
+                                        new CheckerPattern(MatrixOperations.Geometry3D.Scale(0.3, 0.3, 0.3),
+                                                           Tuple4.Vector(0, 0, 0),
+                                                           Tuple4.Vector(0.7, 0.7, 0.7),
+                                                           false),
+                                        1.0,
+                                        0,
+                                        0,
+                                        0,
+                                        0,
+                                        1.0,
+                                        0.0);
+
+            var redMaterial = new SolidColorMaterial(
+                                        Tuple4.Point(1, 0.3, 0.2),
+                                        defaultMaterial.Ambient,
+                                        0.9,
+                                        0.001,
+                                        10,
+                                        defaultMaterial.Reflective,
+                                        defaultMaterial.RefractiveIndex,
+                                        defaultMaterial.Transparency);
+
+            // World
+            var scene = new BaseScene().WithFigures(
+                                 new PlaneFigure(MatrixOperations.Multiply(MatrixOperations.Geometry3D.RotateX(Math.PI / 2),
+                                                                           MatrixOperations.Geometry3D.Translation(0, 0, 15)), floorMaterial), // floor
+                                 new CSGFigure(MatrixOperations.Multiply(MatrixOperations.Geometry3D.RotateX(Math.PI / 3),
+                                                                         MatrixOperations.Geometry3D.RotateY(Math.PI / 3)),
+                                     "intersection",
+                                        new SphereFigure(MatrixOperations.Geometry3D.Translation(0, 0, 0), redMaterial),
+                                        new CubeFigure(MatrixOperations.Geometry3D.Scale(0.7, 0.7, 0.7), redMaterial))
                             ).WithLights(
                                L(-10, 10, -10, 0.9),
                                A(1.0)
@@ -966,6 +996,7 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
                 { "Chapter14", _=> SceneChapter14() },
                 { "GlassSpheres", _=> GlassSpheres() },
                 { "Chapter16", _=> SceneChapter16() },
+                { "Chapter16_1", _=> SceneChapter16_1() },
                 { "RelectionRefraction" , _=> RelectionRefraction() }
             };
 

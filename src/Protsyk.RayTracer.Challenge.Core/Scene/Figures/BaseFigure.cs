@@ -223,6 +223,11 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
             }
             return result;
         }
+
+        public virtual bool Includes(IFigure child)
+        {
+            return ReferenceEquals(this, child);
+        }
     }
 
 }

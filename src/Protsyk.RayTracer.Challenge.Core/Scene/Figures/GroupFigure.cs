@@ -40,6 +40,11 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
             return result.Count == 0 ? null : result.OrderBy(x => x.t).ToArray();
         }
 
+        public override bool Includes(IFigure child)
+        {
+            return figures.Any(f => f.Includes(child));
+        }
+
         public void Add(IFigure figure)
         {
             if (figure.Parent == this)

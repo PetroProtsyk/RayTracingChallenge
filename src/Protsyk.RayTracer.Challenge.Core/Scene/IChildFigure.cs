@@ -9,5 +9,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene
     public interface IChildFigure
     {
         ICompositeFigure Parent { get; set; }
+
+        bool Includes(IFigure child);
     }
 }

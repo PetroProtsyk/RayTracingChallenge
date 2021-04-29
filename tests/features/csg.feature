@@ -60,7 +60,9 @@ Scenario Outline: Filtering a list of intersections
   | difference   | 0  | 1  |
 
 Scenario: A ray misses a CSG object
-  Given c ← csg("union", sphere(), cube())
+  Given s1 ← sphere()
+    And s2 ← cube()
+    And c ← csg("union", s1, s2)
     And r ← ray(point(0, 2, -5), vector(0, 0, 1))
   When xs ← local_intersect(c, r)
   Then xs is empty

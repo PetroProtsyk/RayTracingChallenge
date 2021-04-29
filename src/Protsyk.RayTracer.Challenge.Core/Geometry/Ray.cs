@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 
 // Geometric Primitives
 namespace Protsyk.RayTracer.Challenge.Core.Geometry
@@ -8,6 +9,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Geometry
         public readonly Tuple4 origin;
         public readonly Tuple4 dir;
 
+        [DebuggerStepThrough]
         public Ray(Tuple4 origin, Tuple4 dir)
         {
             if (!origin.IsPoint())
