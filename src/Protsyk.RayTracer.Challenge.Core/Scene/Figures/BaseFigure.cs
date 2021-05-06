@@ -187,6 +187,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
                 var figure = intersections[i].figure;
                 var distance = intersections[i].t;
                 var pointOnSurface = Tuple4.Geometry3D.MovePoint(origin, dir, distance); // orig + dir*dist
+                // TODO: Remove this cast to BaseFigure
                 (var surfaceNormal, var objectPoint) = ((BaseFigure)figure).GetTransformedNormal(figure, pointOnSurface);
                 var eyeVector = Tuple4.Negate(dir);
                 var isInside = false;
