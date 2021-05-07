@@ -67,7 +67,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
                    EqualityComparer<IMatrix>.Default.Equals(Transformation, figure.Transformation) &&
                    EqualityComparer<Tuple4>.Default.Equals(P1, figure.P1) &&
                    EqualityComparer<Tuple4>.Default.Equals(P2, figure.P2) &&
-                   EqualityComparer<Tuple4>.Default.Equals(P2, figure.P3);
+                   EqualityComparer<Tuple4>.Default.Equals(P3, figure.P3);
         }
 
         public override int GetHashCode()
