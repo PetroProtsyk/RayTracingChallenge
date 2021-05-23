@@ -1,0 +1,4 @@
+I have used Obj files from these resources:
+
+* https://groups.csail.mit.edu/graphics/classes/6.837/F03/models/teapot.obj
+* https://github.com/fremag/ray-tracer/blob/master/ray-tracer-demos/teapot-lowtri.obj

@@ -75,10 +75,10 @@ Scenario: Triangulating polygons
     And t3.p3 = parser.vertices[5]
 
 Scenario: Triangles in groups
-  Given file ← the file "triangles.obj"
+  Given file ← the file triangles.obj
   When parser ← parse_obj_file(file)
-    And g1 ← "FirstGroup" from parser
-    And g2 ← "SecondGroup" from parser
+    And g1 ← FirstGroup from parser
+    And g2 ← SecondGroup from parser
     And t1 ← first child of g1
     And t2 ← first child of g2
   Then t1.p1 = parser.vertices[1]
@@ -89,12 +89,13 @@ Scenario: Triangles in groups
     And t2.p3 = parser.vertices[4]
 
 Scenario: Converting an OBJ file to a group
-  Given file ← the file "triangles.obj"
+  Given file ← the file triangles.obj
     And parser ← parse_obj_file(file)
   When g ← obj_to_group(parser)
-  Then g includes "FirstGroup" from parser
-    And g includes "SecondGroup" from parser
+  Then g includes FirstGroup from parser
+    And g includes SecondGroup from parser
 
+@ignore
 Scenario: Vertex normal records
   Given file ← a file containing:
     """
@@ -107,6 +108,7 @@ Scenario: Vertex normal records
     And parser.normals[2] = vector(0.707, 0, -0.707)
     And parser.normals[3] = vector(1, 2, 3)
 
+@ignore
 Scenario: Faces with normals
   Given file ← a file containing:
     """

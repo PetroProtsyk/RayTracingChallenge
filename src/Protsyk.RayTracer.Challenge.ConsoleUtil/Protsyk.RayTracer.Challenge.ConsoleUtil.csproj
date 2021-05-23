@@ -1,6 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <Content Include="..\..\tests\files\**\*.*">
+      <Link>%(FileName)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Protsyk.RayTracer.Challenge.Core\Protsyk.RayTracer.Challenge.Core.csproj" />
   </ItemGroup>
 

@@ -14,6 +14,7 @@ using Protsyk.RayTracer.Challenge.Core.Geometry.SignedDistanceFields;
 using static Protsyk.RayTracer.Challenge.Core.Geometry.Vectors;
 using static Protsyk.RayTracer.Challenge.ConsoleUtil.Figures;
 using Protsyk.RayTracer.Challenge.Core.Scene.Materials.Patterns;
+using Protsyk.RayTracer.Challenge.Core.FileParser;
 
 namespace Protsyk.RayTracer.Challenge.ConsoleUtil
 {
@@ -55,8 +56,8 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
         static (ICamera camera, BaseScene scene, IColorConverter<Tuple4> colorConverter) SceneWeb()
         {
             // Camera
-            var origin = P(10,5,0);
-            var fov = Math.PI/3;
+            var origin = P(10, 5, 0);
+            var fov = Math.PI / 3;
             var camera = new FovCamera(origin, fov, 320, 240);
 
             // Scene
@@ -75,14 +76,14 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
                                L(10, 3, 0, 0.75)
                             );
 
-           return (camera, scene, ColorConverters.Tuple255);
+            return (camera, scene, ColorConverters.Tuple255);
         }
 
         static (ICamera camera, BaseScene scene, IColorConverter<Tuple4> colorConverter) ScenePetro()
         {
             // Camera
             var origin = P(10, 5, -5);
-            var fov = Math.PI/3;
+            var fov = Math.PI / 3;
             var camera = new FovCamera(origin, fov, 1920, 1080);
 
             // Scene
@@ -158,7 +159,7 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
                                L(0, 0, 10, 0.75)
                             );
 
-           return (camera, scene, ColorConverters.Tuple255);
+            return (camera, scene, ColorConverters.Tuple255);
         }
 
         // https://m.habr.com/ru/post/342510/
@@ -166,11 +167,11 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
         static (ICamera camera, BaseScene scene, IColorConverter<Tuple4> colorConverter) SceneSpheres(bool useFov, bool useRotation)
         {
             // Camera
-            var origin = useRotation ? P(3,0,1) : P(0,0,0);
+            var origin = useRotation ? P(3, 0, 1) : P(0, 0, 0);
             ICamera camera;
             if (useFov)
             {
-                var fov = Math.PI/3;
+                var fov = Math.PI / 3;
                 var rotation = useRotation ? new Matrix4x4(new double[]
                 {
                     0.7071, 0, -0.7071, 0,
@@ -211,8 +212,8 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
 
         static (ICamera camera, BaseScene scene, IColorConverter<Tuple4> colorConverter) ScenePlanets()
         {
-            var origin = P(0,0,-5);
-            var fov = Math.PI/3;
+            var origin = P(0, 0, -5);
+            var fov = Math.PI / 3;
             var camera = new FovCamera(origin, fov, 1920, 1080);
 
             // Scene
@@ -237,11 +238,11 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
         static (ICamera camera, BaseScene scene, IColorConverter<Tuple4> colorConverter) SceneSpheresTransformed(bool useFov)
         {
             // Camera
-            var origin = P(0,0,0);
+            var origin = P(0, 0, 0);
             ICamera camera;
             if (useFov)
             {
-                var fov = Math.PI/3;
+                var fov = Math.PI / 3;
                 camera = new FovCamera(origin, fov, 1920, 1080);
             }
             else
@@ -265,7 +266,7 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
                                  S(MatrixOperations.Multiply(MatrixOperations.Geometry3D.Translation(-1.0, 0.0, 4.0),
                                                              MatrixOperations.Geometry3D.Scale(1.0, 0.5, 1.2)), materials[2]),
 
-                                 S(0  ,-5001  , 0, 5000  , materials[3])
+                                 S(0, -5001, 0, 5000, materials[3])
                             ).WithLights(
                                A(0.20),
                                L(2, 1, 0, 0.60)
@@ -293,7 +294,7 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
                 new SolidColorMaterial(P(255, 0, 0), 1.0, 1.0, 1.0, 1000, 1.0, 1.0, 0.0)
             };
 
-            var transformation = 
+            var transformation =
                     MatrixOperations.Multiply(MatrixOperations.Geometry3D.Shearing(0.3, 0, 0, 0, 0, 0),
                                               MatrixOperations.Geometry3D.Scale(0.5, 1, 1));
                     //MatrixOperations.Identity(4);
@@ -523,7 +524,7 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
                                  new PlaneFigure(MatrixOperations.Identity(4), floorMaterial), // floor
                                  new PlaneFigure(MatrixOperations.Multiply(
                                      MatrixOperations.Geometry3D.Translation(0.0, 0.0, 4.0),
-                                     MatrixOperations.Geometry3D.RotateX(Math.PI/2)), floorMaterial), // floor
+                                     MatrixOperations.Geometry3D.RotateX(Math.PI / 2)), floorMaterial), // floor
                                  S(MatrixOperations.Geometry3D.Translation(-0.5, 1, 0.5), middleMaterial), // middle sphere
                                  S(MatrixOperations.Multiply(
                                      MatrixOperations.Geometry3D.Translation(1.5, 0.5, -0.5),
@@ -613,6 +614,29 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
                                L(-10, 10, -10, 0.9),
                                A(1.0)
                             ).WithShadows(true);
+
+            return (camera, scene, ColorConverters.Tuple1);
+        }
+
+        static (ICamera camera, BaseScene scene, IColorConverter<Tuple4> colorConverter) SceneChapter15()
+        {
+            // Camera
+            var camera = new FovCamera2(MatrixOperations.Geometry3D.LookAtTransform(
+                                            P(0, 7.0, -20),
+                                            P(0, 1, -1),
+                                            V(0, 1, 0)), Math.PI / 3, 800, 600);
+
+            var pot = WavefrontObjParser.FromFile(Path.Combine(AppContext.BaseDirectory, "teapot-lowtri.obj")).ToFigure();
+            pot.Transformation = MatrixOperations.Multiply(MatrixOperations.Geometry3D.Scale(0.5, 0.5, 0.5),
+                                                           MatrixOperations.Geometry3D.RotateX(-Math.PI / 1.8));
+
+            // World
+            var scene = new BaseScene().WithFigures(
+                               pot
+                            ).WithLights(
+                               L(-10, 10, -10, 1),
+                               A(1.0)
+                            ).WithShadows(false);
 
             return (camera, scene, ColorConverters.Tuple1);
         }
@@ -911,7 +935,7 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
                 SolidColorMaterial.fromColorAndShininess(P(255, 0, 0), 100),
             };
 
-            var transformationBox = 
+            var transformationBox =
                      MatrixOperations.Multiply(
                          MatrixOperations.Geometry3D.Scale(0.7, 0.7, 0.7),
                          MatrixOperations.Multiply(
@@ -960,7 +984,7 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
         static ICanvas Render(ICamera camera, BaseScene scene, IColorConverter<Tuple4> colorConverter)
         {
             var canvas = new MemoryCanvas((int)camera.ScreenWidth, (int)camera.ScreenHeight);
-            var x = 0; var y =0;
+            var x = 0; var y = 0;
             for (double j = 0; j < camera.ScreenHeight; ++j)
             {
                 x = 0;
@@ -995,6 +1019,7 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
                 { "Chapter11", _=> SceneChapter11() },
                 { "Chapter14", _=> SceneChapter14() },
                 { "GlassSpheres", _=> GlassSpheres() },
+                { "Chapter15", _=> SceneChapter15() },
                 { "Chapter16", _=> SceneChapter16() },
                 { "Chapter16_1", _=> SceneChapter16_1() },
                 { "RelectionRefraction" , _=> RelectionRefraction() }
@@ -1013,7 +1038,7 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
             timer.Restart();
             using (var file = File.OpenWrite(outputFileName))
             {
-               CanvasConverters.PPM_P6.Convert(canvas, file);
+                CanvasConverters.PPM_P6.Convert(canvas, file);
             }
             Console.WriteLine($"Time to output: {timer.Elapsed}");
         }
