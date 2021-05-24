@@ -10,6 +10,8 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene
         public static readonly HitResult NoHit = new HitResult(false,
                                                                null,
                                                                -1,
+                                                               0.0,
+                                                               0.0,
                                                                Tuple4.Point(0, 0, 0),
                                                                Tuple4.Point(0, 0, 0),
                                                                Tuple4.Point(0, 0, 0),
@@ -22,6 +24,8 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene
         public readonly bool IsHit;
         public readonly IFigure Figure;
         public readonly double Distance;
+        public readonly double U;
+        public readonly double V;
         public readonly Tuple4 ObjectPoint; // Point in the object space
         public readonly Tuple4 PointOnSurface;
         public readonly Tuple4 PointOverSurface;
@@ -34,6 +38,8 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene
         public HitResult(bool isHit,
                         IFigure figure,
                         double distance,
+                        double u,
+                        double v,
                         Tuple4 objectPoint,
                         Tuple4 pointOnSurface,
                         Tuple4 pointOverSurface,
@@ -46,6 +52,8 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene
             IsHit = isHit;
             Figure = figure;
             Distance = distance;
+            U = u;
+            V = v;
             ObjectPoint = objectPoint;
             PointOnSurface = pointOnSurface;
             PointOverSurface = pointOverSurface;

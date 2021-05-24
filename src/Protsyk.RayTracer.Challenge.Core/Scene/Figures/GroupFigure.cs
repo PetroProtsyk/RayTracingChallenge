@@ -21,7 +21,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
             this.Transformation = transform;
         }
 
-        protected override Tuple4 GetBaseNormal(IFigure figure, Tuple4 pointOnSurface)
+        protected override Tuple4 GetBaseNormal(IFigure figure, Tuple4 pointOnSurface, double u, double v)
         {
             throw new InvalidOperationException("This method should never be called");
         }

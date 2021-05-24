@@ -132,7 +132,7 @@ namespace Protsyk.RayTracer.Challenge.UnitTests
         public void When_normal_at(string id, string figureId,
                                    double p1, double p2, double p3)
         {
-            var result = figure[figureId].GetNormal(null, new Tuple4(p1, p2, p3, TupleFlavour.Point));
+            var result = figure[figureId].GetNormal(null, new Tuple4(p1, p2, p3, TupleFlavour.Point), 0.0, 0.0);
             tuple[id] = result;
         }
 
@@ -307,7 +307,7 @@ namespace Protsyk.RayTracer.Challenge.UnitTests
                 return new Intersection[] { new Intersection(0, this) };
             }
 
-            protected override Tuple4 GetBaseNormal(IFigure figure, Tuple4 pointOnSurface)
+            protected override Tuple4 GetBaseNormal(IFigure figure, Tuple4 pointOnSurface, double u, double v)
             {
                 return Tuple4.Vector(pointOnSurface.X, pointOnSurface.Y, pointOnSurface.Z);
             }

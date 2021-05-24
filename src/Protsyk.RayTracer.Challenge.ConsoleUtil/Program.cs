@@ -618,7 +618,7 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
             return (camera, scene, ColorConverters.Tuple1);
         }
 
-        static (ICamera camera, BaseScene scene, IColorConverter<Tuple4> colorConverter) SceneChapter15()
+        static (ICamera camera, BaseScene scene, IColorConverter<Tuple4> colorConverter) SceneChapter15(string file)
         {
             // Camera
             var camera = new FovCamera2(MatrixOperations.Geometry3D.LookAtTransform(
@@ -626,7 +626,7 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
                                             P(0, 1, -1),
                                             V(0, 1, 0)), Math.PI / 3, 800, 600);
 
-            var pot = WavefrontObjParser.FromFile(Path.Combine(AppContext.BaseDirectory, "teapot-lowtri.obj")).ToFigure();
+            var pot = WavefrontObjParser.FromFile(Path.Combine(AppContext.BaseDirectory, file)).ToFigure();
             pot.Transformation = MatrixOperations.Multiply(MatrixOperations.Geometry3D.Scale(0.5, 0.5, 0.5),
                                                            MatrixOperations.Geometry3D.RotateX(-Math.PI / 1.8));
 
@@ -1019,7 +1019,8 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
                 { "Chapter11", _=> SceneChapter11() },
                 { "Chapter14", _=> SceneChapter14() },
                 { "GlassSpheres", _=> GlassSpheres() },
-                { "Chapter15", _=> SceneChapter15() },
+                { "Chapter15", _=> SceneChapter15("teapot-lowtri.obj") },
+                { "Chapter15_1", _=> SceneChapter15("teapot-low.obj") },
                 { "Chapter16", _=> SceneChapter16() },
                 { "Chapter16_1", _=> SceneChapter16_1() },
                 { "RelectionRefraction" , _=> RelectionRefraction() }

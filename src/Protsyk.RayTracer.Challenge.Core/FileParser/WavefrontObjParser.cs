@@ -14,6 +14,8 @@ namespace Protsyk.RayTracer.Challenge.Core.FileParser
     {
         private readonly List<Tuple4> vertices = new List<Tuple4>();
 
+        private readonly List<Tuple4> normals = new List<Tuple4>();
+
         private readonly List<Triangle> triangles = new List<Triangle>();
 
         private readonly List<TriangleGroup> groups = new List<TriangleGroup>();
@@ -21,6 +23,8 @@ namespace Protsyk.RayTracer.Challenge.Core.FileParser
         public int Lines { get; private set; }
 
         public IReadOnlyList<Tuple4> Vertices => vertices.AsReadOnly();
+
+        public IReadOnlyList<Tuple4> Normals => normals.AsReadOnly();
 
         public IReadOnlyList<Triangle> Triangles => triangles.AsReadOnly();
 
@@ -36,7 +40,14 @@ namespace Protsyk.RayTracer.Challenge.Core.FileParser
                 var subGroup = new GroupFigure();
                 foreach (var t in g.Triangles)
                 {
-                    subGroup.Add(new TriangleFigure(Matrix4x4.Identity, MaterialConstants.Default, t.P1, t.P2, t.P3));
+                    if (t.N1 != null && t.N2 != null && t.N3 != null)
+                    {
+                        subGroup.Add(new TriangleWithNormalsFigure(Matrix4x4.Identity, MaterialConstants.Default, t.P1, t.P2, t.P3, t.N1, t.N2, t.N3));
+                    }
+                    else
+                    {
+                        subGroup.Add(new TriangleFigure(Matrix4x4.Identity, MaterialConstants.Default, t.P1, t.P2, t.P3));
+                    }
                 }
                 result.Add(subGroup);
             }
@@ -61,9 +72,13 @@ namespace Protsyk.RayTracer.Challenge.Core.FileParser
                             vertices.Add(ReadVertex(parts));
                             break;
                         case "vn":
+                            normals.Add(ReadNormal(parts));
                             break;
                         case "f":
-                            var newTriangles = ReadTriangles(parts.Skip(1).Select(ReadInt).ToArray());
+                            var newTriangles = line.Contains('/') ?
+                                                ReadTrianglesWithNormals(parts.Skip(1).Select(x => ReadInt(x.Split('/')[0])).ToArray(),
+                                                                         parts.Skip(1).Select(x => ReadInt(x.Split('/')[2])).ToArray()) :
+                                                ReadTriangles(parts.Skip(1).Select(ReadInt).ToArray());
                             activeGroup.Triangles.AddRange(newTriangles);
                             triangles.AddRange(newTriangles);
                             break;
@@ -79,17 +94,31 @@ namespace Protsyk.RayTracer.Challenge.Core.FileParser
             }
         }
 
-        private IEnumerable<Triangle> ReadTriangles(int[] parts)
+        private IEnumerable<Triangle> ReadTriangles(int[] vIndex)
         {
-            for (int i = 1; i < parts.Length - 1; ++i)
+            for (int i = 1; i < vIndex.Length - 1; ++i)
             {
-                yield return new Triangle(vertices[parts[0] - 1], vertices[parts[i] - 1], vertices[parts[i + 1] - 1]);
+                yield return new Triangle(vertices[vIndex[0] - 1], vertices[vIndex[i] - 1], vertices[vIndex[i + 1] - 1]);
+            }
+        }
+
+        private IEnumerable<Triangle> ReadTrianglesWithNormals(int[] vIndex, int[] nIndex)
+        {
+            for (int i = 1; i < vIndex.Length - 1; ++i)
+            {
+                yield return new Triangle(vertices[vIndex[0] - 1], vertices[vIndex[i] - 1], vertices[vIndex[i + 1] - 1],
+                                          normals[nIndex[0] - 1], normals[nIndex[i] - 1], normals[nIndex[i + 1] - 1]);
             }
         }
 
         private Tuple4 ReadVertex(string[] parts)
         {
             return Tuple4.Point(ReadDouble(parts[1]), ReadDouble(parts[2]), ReadDouble(parts[3]));
+        }
+
+        private Tuple4 ReadNormal(string[] parts)
+        {
+            return Tuple4.Vector(ReadDouble(parts[1]), ReadDouble(parts[2]), ReadDouble(parts[3]));
         }
 
         private static int ReadInt(string value)

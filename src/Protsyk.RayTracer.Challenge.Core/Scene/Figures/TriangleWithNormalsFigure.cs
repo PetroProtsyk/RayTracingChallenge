@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
 {
-    public class TriangleFigure : BaseFigure
+    public class TriangleWithNormalsFigure : BaseFigure
     {
         public Tuple4 P1 { get; private set; }
         public Tuple4 P2 { get; private set; }
@@ -12,9 +12,11 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
 
         public Tuple4 E1 { get; private set; }
         public Tuple4 E2 { get; private set; }
-        public Tuple4 Normal { get; private set; }
+        public Tuple4 N1 { get; private set; }
+        public Tuple4 N2 { get; private set; }
+        public Tuple4 N3 { get; private set; }
 
-        public TriangleFigure(IMatrix transformation, IMaterial material, Tuple4 p1, Tuple4 p2, Tuple4 p3)
+        public TriangleWithNormalsFigure(IMatrix transformation, IMaterial material, Tuple4 p1, Tuple4 p2, Tuple4 p3, Tuple4 n1, Tuple4 n2, Tuple4 n3)
         {
             this.Material = material;
             this.Transformation = transformation;
@@ -24,12 +26,15 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
             this.P3 = p3;
             this.E1 = Tuple4.Subtract(p2, p1);
             this.E2 = Tuple4.Subtract(p3, p1);
-            this.Normal = Tuple4.Normalize(Tuple4.CrossProduct(E2, E1));
+            this.N1 = n1;
+            this.N2 = n2;
+            this.N3 = n3;
         }
 
         protected override Tuple4 GetBaseNormal(IFigure figure, Tuple4 pointOnSurface, double u, double v)
         {
-            return Normal;
+            return Tuple4.Add(Tuple4.Scale(N2, u),
+                        Tuple4.Add(Tuple4.Scale(N3, v), Tuple4.Scale(N1, (1.0 - u - v))));
         }
 
         protected override Intersection[] GetBaseIntersections(Ray ray)
@@ -57,22 +62,25 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
             }
 
             var t = f * Tuple4.DotProduct(E2, origin_cross_e1);
-            return new Intersection[] { new Intersection(t, this) };
+            return new Intersection[] { new Intersection(t, this, u, v) };
         }
 
         public override bool Equals(object obj)
         {
-            return obj is TriangleFigure figure &&
+            return obj is TriangleWithNormalsFigure figure &&
                    EqualityComparer<IMaterial>.Default.Equals(Material, figure.Material) &&
                    EqualityComparer<IMatrix>.Default.Equals(Transformation, figure.Transformation) &&
                    EqualityComparer<Tuple4>.Default.Equals(P1, figure.P1) &&
                    EqualityComparer<Tuple4>.Default.Equals(P2, figure.P2) &&
-                   EqualityComparer<Tuple4>.Default.Equals(P3, figure.P3);
+                   EqualityComparer<Tuple4>.Default.Equals(P3, figure.P3) &&
+                   EqualityComparer<Tuple4>.Default.Equals(N1, figure.N1) &&
+                   EqualityComparer<Tuple4>.Default.Equals(N2, figure.N2) &&
+                   EqualityComparer<Tuple4>.Default.Equals(N3, figure.N3);
         }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(Material.GetHashCode(), Transformation.GetHashCode(), P1, P2, P3);
+            return HashCode.Combine(Material.GetHashCode(), Transformation.GetHashCode(), P1, P2, P3, N1, N2, N3);
         }
     }
 }

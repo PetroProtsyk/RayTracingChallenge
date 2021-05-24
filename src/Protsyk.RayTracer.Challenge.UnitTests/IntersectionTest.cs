@@ -389,6 +389,38 @@ namespace Protsyk.RayTracer.Challenge.UnitTests
             Assert.True(Core.Constants.EpsilonCompare(r, schlick["reflectance"]));
         }
 
+        [Given(@"([a-z][a-z0-9]*) ← triangle\(point\(([+-.0-9]+), ([+-.0-9]+), ([+-.0-9]+)\), point\(([+-.0-9]+), ([+-.0-9]+), ([+-.0-9]+)\), point\(([+-.0-9]+), ([+-.0-9]+), ([+-.0-9]+)\)\)")]
+        public void Given_triangle_points(string id,
+                                            double p1X, double p1Y, double p1Z,
+                                            double p2X, double p2Y, double p2Z,
+                                            double p3X, double p3Y, double p3Z)
+        {
+            figure[id] = new TriangleFigure(MatrixOperations.Identity(4),
+                                            MaterialConstants.Default,
+                                            Tuple4.Point(p1X, p1Y, p1Z),
+                                            Tuple4.Point(p2X, p2Y, p2Z),
+                                            Tuple4.Point(p3X, p3Y, p3Z));
+        }
+
+        [When(@"([a-z][a-z0-9]*) ← intersection_with_uv\(([+-.0-9]+), ([a-z][a-z0-9]*), ([+-.0-9]+), ([+-.0-9]+)\)")]
+        [And(@"([a-z][a-z0-9]*) ← intersection_with_uv\(([+-.0-9]+), ([a-z][a-z0-9]*), ([+-.0-9]+), ([+-.0-9]+)\)")]
+        public void When_intersection(string id, double t, string figureId, double u, double v)
+        {
+            intersection[id] = new Intersection(t, figure[figureId], u, v);
+        }
+
+        [Then(@"([a-z][a-z0-9]*).u = ([+-.0-9]+)")]
+        public void Then_hit_u(string id, double value)
+        {
+            Assert.Equal(value, intersection[id].Value.u);
+        }
+
+        [And(@"([a-z][a-z0-9]*).v = ([+-.0-9]+)")]
+        public void Then_hit_v(string id, double value)
+        {
+            Assert.Equal(value, intersection[id].Value.v);
+        }
+
         public static (HitResult hit, double refractiveIndexEntering, double refractiveIndexExiting) prepareComputations(Ray r, Intersection i, Intersection[] ixs)
         {
             var h = i.figure

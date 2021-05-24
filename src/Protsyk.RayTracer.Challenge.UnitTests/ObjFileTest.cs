@@ -63,17 +63,25 @@ namespace Protsyk.RayTracer.Challenge.UnitTests
         }
 
         [Then(@"([a-z][a-z0-9]*) should have ignored ([0-9]+) lines")]
-        public void Then_ppm_ends_with_newline(string id, int lines)
+        public void Then_parser_ignores_lines(string id, int lines)
         {
             Assert.Equal(lines, parser[id].Lines);
         }
 
         [Then(@"([a-z][a-z0-9]*).vertices\[([0-9]+)\] = point\(([+-.0-9]+), ([+-.0-9]+), ([+-.0-9]+)\)")]
         [And(@"([a-z][a-z0-9]*).vertices\[([0-9]+)\] = point\(([+-.0-9]+), ([+-.0-9]+), ([+-.0-9]+)\)")]
-        public void Then_intersect_value(string id, int i, double x, double y, double z)
+        public void Then_parser_vertex(string id, int i, double x, double y, double z)
         {
             Assert.Equal(Tuple4.Point(x, y, z), parser[id].Vertices[i - 1]);
         }
+
+        [Then(@"([a-z][a-z0-9]*).normals\[([0-9]+)\] = vector\(([+-.0-9]+), ([+-.0-9]+), ([+-.0-9]+)\)")]
+        [And(@"([a-z][a-z0-9]*).normals\[([0-9]+)\] = vector\(([+-.0-9]+), ([+-.0-9]+), ([+-.0-9]+)\)")]
+        public void Then_parser_normal(string id, int i, double x, double y, double z)
+        {
+            Assert.Equal(Tuple4.Vector(x, y, z), parser[id].Normals[i - 1]);
+        }
+
 
         [And(@"([a-z][a-z0-9]*) ← ([a-z][a-z0-9]*).default_group")]
         public void And_group(string id, string pId)
@@ -126,6 +134,36 @@ namespace Protsyk.RayTracer.Challenge.UnitTests
         public void Then_p3(string id, string pId, int i)
         {
             Assert.Equal(triangles[id].P3, parser[pId].Vertices[i - 1]);
+        }
+
+        [And(@"([a-z][a-z0-9]*).n1 = ([a-z][a-z0-9]*).normals\[([0-9]+)\]")]
+        public void Then_n1(string id, string pId, int i)
+        {
+            Assert.Equal(triangles[id].N1, parser[pId].Normals[i - 1]);
+        }
+
+        [And(@"([a-z][a-z0-9]*).n2 = ([a-z][a-z0-9]*).normals\[([0-9]+)\]")]
+        public void Then_n2(string id, string pId, int i)
+        {
+            Assert.Equal(triangles[id].N2, parser[pId].Normals[i - 1]);
+        }
+
+        [And(@"([a-z][a-z0-9]*).n3 = ([a-z][a-z0-9]*).normals\[([0-9]+)\]")]
+        public void Then_n3(string id, string pId, int i)
+        {
+            Assert.Equal(triangles[id].N3, parser[pId].Normals[i - 1]);
+        }
+
+        [And(@"([a-z][a-z0-9]*) = ([a-z][a-z0-9]*)")]
+        public void Then_objects_quals(string a, string b)
+        {
+            Assert.Equal(triangles[a].P1, triangles[b].P1);
+            Assert.Equal(triangles[a].P2, triangles[b].P2);
+            Assert.Equal(triangles[a].P3, triangles[b].P3);
+
+            Assert.Equal(triangles[a].N1, triangles[b].N1);
+            Assert.Equal(triangles[a].N2, triangles[b].N2);
+            Assert.Equal(triangles[a].N3, triangles[b].N3);
         }
 
         [When(@"([a-z][a-z0-9]*) ← obj_to_group\(([a-z][a-z0-9]*)\)")]

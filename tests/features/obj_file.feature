@@ -95,7 +95,6 @@ Scenario: Converting an OBJ file to a group
   Then g includes FirstGroup from parser
     And g includes SecondGroup from parser
 
-@ignore
 Scenario: Vertex normal records
   Given file ← a file containing:
     """
@@ -108,7 +107,6 @@ Scenario: Vertex normal records
     And parser.normals[2] = vector(0.707, 0, -0.707)
     And parser.normals[3] = vector(1, 2, 3)
 
-@ignore
 Scenario: Faces with normals
   Given file ← a file containing:
     """

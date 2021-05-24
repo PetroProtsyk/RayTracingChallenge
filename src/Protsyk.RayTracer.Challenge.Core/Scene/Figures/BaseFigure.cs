@@ -76,21 +76,26 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
 
         // This method should return shape's normal at a given point on the surface
         // The returned normal does not have to be normalized
-        protected abstract Tuple4 GetBaseNormal(IFigure figure, Tuple4 pointOnSurface);
+        protected abstract Tuple4 GetBaseNormal(IFigure figure, Tuple4 pointOnSurface, double u, double v);
 
         public Tuple4 GetNormal(IFigure figure, Tuple4 point)
+        {
+            return GetNormal(figure, point, 0.0, 0.0);
+        }
+
+        public Tuple4 GetNormal(IFigure figure, Tuple4 point, double u, double v)
         {
             if (figure != null && !(figure == this || figure.Parent == this))
             {
                 throw new ArgumentException($"{nameof(figure)} is not part of this figure");
             }
-            return GetTransformedNormal(figure, point).normal;
+            return GetTransformedNormal(figure, point, u, v).normal;
         }
 
-        protected (Tuple4 normal, Tuple4 objectPoint) GetTransformedNormal(IFigure figure, Tuple4 point)
+        protected (Tuple4 normal, Tuple4 objectPoint) GetTransformedNormal(IFigure figure, Tuple4 point, double u, double v)
         {
             var objectPoint = TransformWorldPointToObjectPoint(point);
-            var normal = GetBaseNormal(figure, objectPoint);
+            var normal = GetBaseNormal(figure, objectPoint, u, v);
             return (TransformObjectNormalToWorldNormal(normal), objectPoint);
         }
 
@@ -160,7 +165,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
                     var len = ray.dir.Length();
                     for (int i = 0; i < result.Length; ++i)
                     {
-                        result[i] = new Intersection(result[i].t / len, result[i].figure);
+                        result[i] = new Intersection(result[i].t / len, result[i].figure, result[i].u, result[i].v);
                     }
                 }
             }
@@ -188,7 +193,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
                 var distance = intersections[i].t;
                 var pointOnSurface = Tuple4.Geometry3D.MovePoint(origin, dir, distance); // orig + dir*dist
                 // TODO: Remove this cast to BaseFigure
-                (var surfaceNormal, var objectPoint) = ((BaseFigure)figure).GetTransformedNormal(figure, pointOnSurface);
+                (var surfaceNormal, var objectPoint) = ((BaseFigure)figure).GetTransformedNormal(figure, pointOnSurface, intersections[i].u, intersections[i].v);
                 var eyeVector = Tuple4.Negate(dir);
                 var isInside = false;
                 if (Tuple4.DotProduct(surfaceNormal, eyeVector) < 0)
@@ -199,7 +204,20 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
                 var pointOverSurface = Tuple4.Add(pointOnSurface, Tuple4.Scale(surfaceNormal, Constants.Epsilon));
                 var pointUnderSurface = Tuple4.Subtract(pointOnSurface, Tuple4.Scale(surfaceNormal, Constants.Epsilon));
                 var reflectionVector = Tuple4.Reflect(dir, surfaceNormal);
-                result[i] = new HitResult(true, figure, distance, objectPoint, pointOnSurface, pointOverSurface, pointUnderSurface, surfaceNormal, eyeVector, reflectionVector, isInside);
+
+                result[i] = new HitResult(true,
+                    figure,
+                    distance,
+                    intersections[i].u,
+                    intersections[i].v,
+                    objectPoint,
+                    pointOnSurface,
+                    pointOverSurface,
+                    pointUnderSurface,
+                    surfaceNormal,
+                    eyeVector,
+                    reflectionVector,
+                    isInside);
             }
 
             return result;

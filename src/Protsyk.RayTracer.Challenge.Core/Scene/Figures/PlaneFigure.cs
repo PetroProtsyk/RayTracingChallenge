@@ -16,7 +16,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
             this.Transformation = transformation;
         }
 
-        protected override Tuple4 GetBaseNormal(IFigure figure, Tuple4 pointOnSurface)
+        protected override Tuple4 GetBaseNormal(IFigure figure, Tuple4 pointOnSurface, double u, double v)
         {
             return new Tuple4(0.0, 1.0, 0.0, TupleFlavour.Vector);
         }

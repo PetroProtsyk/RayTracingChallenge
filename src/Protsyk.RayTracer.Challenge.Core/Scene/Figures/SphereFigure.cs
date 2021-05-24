@@ -28,7 +28,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
             this.Material = material;
         }
 
-        protected override Tuple4 GetBaseNormal(IFigure figure, Tuple4 pointOnSurface)
+        protected override Tuple4 GetBaseNormal(IFigure figure, Tuple4 pointOnSurface, double u, double v)
         {
             return sphere.GetNormal(pointOnSurface);
         }

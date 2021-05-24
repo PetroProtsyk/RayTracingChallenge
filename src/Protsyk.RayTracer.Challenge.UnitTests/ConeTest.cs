@@ -177,7 +177,7 @@ namespace Protsyk.RayTracer.Challenge.UnitTests
             public Tuple4 GetLocalNormal(IFigure figure, Tuple4 point)
             {
                 var objectPoint = TransformWorldPointToObjectPoint(point);
-                var normal = GetBaseNormal(figure, objectPoint);
+                var normal = GetBaseNormal(figure, objectPoint, 0.0, 0.0);
                 return normal;
             }
 

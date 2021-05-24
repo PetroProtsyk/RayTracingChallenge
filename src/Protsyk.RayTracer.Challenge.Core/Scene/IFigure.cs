@@ -12,8 +12,10 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene
         /// </summary>
         /// <param name="figure">For composite figures (i.e. groups), should be the child figure</param>
         /// <param name="pointOnSurface">Point of the figure's surface</param>
+        /// <param name="u">Used for normal interpolation</param>
+        /// <param name="v">Used for normal interpolation</param>
         /// <returns></returns>
-        Tuple4 GetNormal(IFigure figure, Tuple4 pointOnSurface);
+        Tuple4 GetNormal(IFigure figure, Tuple4 pointOnSurface, double u, double v);
 
         Intersection[] GetIntersections(Ray ray);
 

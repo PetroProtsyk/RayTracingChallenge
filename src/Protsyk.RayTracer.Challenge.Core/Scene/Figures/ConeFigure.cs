@@ -27,7 +27,7 @@ namespace Protsyk.RayTracer.Challenge.Core.Scene.Figures
             this.IsClosed = isClosed;
         }
 
-        protected override Tuple4 GetBaseNormal(IFigure figure, Tuple4 pointOnSurface)
+        protected override Tuple4 GetBaseNormal(IFigure figure, Tuple4 pointOnSurface, double u, double v)
         {
             var d = pointOnSurface.X * pointOnSurface.X + pointOnSurface.Z * pointOnSurface.Z;
 
