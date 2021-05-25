@@ -829,6 +829,127 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
             return (camera, scene, ColorConverters.Tuple1);
         }
 
+        static (ICamera camera, BaseScene scene, IColorConverter<Tuple4> colorConverter) SceneBookCover()
+        {
+            // Camera
+            var camera = new FovCamera2(MatrixOperations.Geometry3D.LookAtTransform(
+                                            P(-6, 6, -10),
+                                            P(6, 0, 6),
+                                            V(-0.45, 1, 0)), 0.785, 1000, 1000);
+
+            // Materials
+            var defaultMaterial = MaterialConstants.Default;
+
+            var whiteMaterial = new SolidColorMaterial(
+                                        Tuple4.Point(1, 1, 1),
+                                        0.1,
+                                        0.7,
+                                        0.0,
+                                        defaultMaterial.Shininess,
+                                        0.1,
+                                        defaultMaterial.RefractiveIndex,
+                                        defaultMaterial.Transparency);
+
+            var blueMaterial = new SolidColorMaterial(
+                                        Tuple4.Point(0.537, 0.831, 0.914),
+                                        0.1,
+                                        0.7,
+                                        0.0,
+                                        defaultMaterial.Shininess,
+                                        0.1,
+                                        defaultMaterial.RefractiveIndex,
+                                        defaultMaterial.Transparency);
+
+            var redMaterial = new SolidColorMaterial(
+                                        Tuple4.Point(0.941, 0.322, 0.388),
+                                        0.1,
+                                        0.7,
+                                        0.0,
+                                        defaultMaterial.Shininess,
+                                        0.1,
+                                        defaultMaterial.RefractiveIndex,
+                                        defaultMaterial.Transparency);
+
+            var purpleMaterial = new SolidColorMaterial(
+                                        Tuple4.Point(0.373, 0.404, 0.550),
+                                        0.1,
+                                        0.7,
+                                        0.0,
+                                        defaultMaterial.Shininess,
+                                        0.1,
+                                        defaultMaterial.RefractiveIndex,
+                                        defaultMaterial.Transparency);
+
+            var sphereMaterial = new SolidColorMaterial(
+                                        Tuple4.Point(0.373, 0.404, 0.550),
+                                        0.0,
+                                        0.2,
+                                        1.0,
+                                        200,
+                                        0.7,
+                                        1.5,
+                                        0.7);
+
+            var backgroundMaterial = new SolidColorMaterial(
+                                        Tuple4.Point(1, 1, 1),
+                                        1,
+                                        0.0,
+                                        0.0,
+                                        defaultMaterial.Shininess,
+                                        defaultMaterial.Reflective,
+                                        defaultMaterial.RefractiveIndex,
+                                        defaultMaterial.Transparency);
+
+            // Transformations
+            var standardTransform = MatrixOperations.Multiply(MatrixOperations.Geometry3D.Translation(1, -1, 1),
+                                                              MatrixOperations.Geometry3D.Scale(0.5, 0.5, 0.5));
+
+            var largeObject = MatrixOperations.Multiply(standardTransform,
+                                                        MatrixOperations.Geometry3D.Scale(3.5, 3.5, 3.5));
+
+            var mediumObject = MatrixOperations.Multiply(standardTransform,
+                                                         MatrixOperations.Geometry3D.Scale(3, 3, 3));
+
+            var smallObject = MatrixOperations.Multiply(standardTransform,
+                                                        MatrixOperations.Geometry3D.Scale(2, 2, 2));
+
+            // World
+            var scene = new BaseScene().WithFigures(
+                                 // TODO: Why plane does not work?
+                                 //new PlaneFigure(MatrixOperations.Multiply(MatrixOperations.Geometry3D.RotateX(1.5707963267948966),
+                                 //                                          MatrixOperations.Geometry3D.Translation(0, 0, 500)), backgroundMaterial),
+
+                                 new CubeFigure(MatrixOperations.Multiply(MatrixOperations.Geometry3D.Translation(0, 0, 20),
+                                                                          MatrixOperations.Geometry3D.Scale(100, 100, 0.1)), backgroundMaterial),
+
+                                 new SphereFigure(largeObject, sphereMaterial),
+                                 new CubeFigure(MatrixOperations.Multiply(MatrixOperations.Geometry3D.Translation(4, 0, 0), mediumObject), whiteMaterial),
+                                 new CubeFigure(MatrixOperations.Multiply(MatrixOperations.Geometry3D.Translation(8.5, 1.5, -0.5), largeObject), blueMaterial),
+                                 new CubeFigure(MatrixOperations.Multiply(MatrixOperations.Geometry3D.Translation(0, 0, 4), largeObject), redMaterial),
+                                 new CubeFigure(MatrixOperations.Multiply(MatrixOperations.Geometry3D.Translation(4, 0, 4), smallObject), whiteMaterial),
+                                 new CubeFigure(MatrixOperations.Multiply(MatrixOperations.Geometry3D.Translation(7.5, 0.5, 4), mediumObject), purpleMaterial),
+                                 new CubeFigure(MatrixOperations.Multiply(MatrixOperations.Geometry3D.Translation(-0.25, 0.25, 8), mediumObject), whiteMaterial),
+                                 new CubeFigure(MatrixOperations.Multiply(MatrixOperations.Geometry3D.Translation(4, 1, 7.5), largeObject), blueMaterial),
+                                 new CubeFigure(MatrixOperations.Multiply(MatrixOperations.Geometry3D.Translation(10, 2, 7.5), mediumObject), redMaterial),
+                                 new CubeFigure(MatrixOperations.Multiply(MatrixOperations.Geometry3D.Translation(8, 2, 12), smallObject), whiteMaterial),
+                                 new CubeFigure(MatrixOperations.Multiply(MatrixOperations.Geometry3D.Translation(20, 1, 9), smallObject), whiteMaterial),
+                                 new CubeFigure(MatrixOperations.Multiply(MatrixOperations.Geometry3D.Translation(-0.5, -5, 0.25), largeObject), blueMaterial),
+                                 new CubeFigure(MatrixOperations.Multiply(MatrixOperations.Geometry3D.Translation(4, -4, 0), largeObject), redMaterial),
+                                 new CubeFigure(MatrixOperations.Multiply(MatrixOperations.Geometry3D.Translation(8.5, -4, 0), largeObject), whiteMaterial),
+                                 new CubeFigure(MatrixOperations.Multiply(MatrixOperations.Geometry3D.Translation(0, -4, 4), largeObject), whiteMaterial),
+                                 new CubeFigure(MatrixOperations.Multiply(MatrixOperations.Geometry3D.Translation(-0.5, -4.5, 8), largeObject), purpleMaterial),
+                                 new CubeFigure(MatrixOperations.Multiply(MatrixOperations.Geometry3D.Translation(0, -8, 4), largeObject), whiteMaterial),
+                                 new CubeFigure(MatrixOperations.Multiply(MatrixOperations.Geometry3D.Translation(-0.5, -8.5, 8), largeObject), whiteMaterial)
+
+                            ).WithLights(
+                               L(50, 100, -50, 1),
+                               // L(-400, 50, -10, 0.2),
+                               A(1.0)
+                            ).WithShadows(true);
+
+            return (camera, scene, ColorConverters.Tuple1);
+        }
+
         // This Scene is based on: https://github.com/javan/ray-tracer-challenge/blob/master/src/controllers/chapter_11_worker.js
         static (ICamera camera, BaseScene scene, IColorConverter<Tuple4> colorConverter) RelectionRefraction()
         {
@@ -1023,6 +1144,7 @@ namespace Protsyk.RayTracer.Challenge.ConsoleUtil
                 { "Chapter15_1", _=> SceneChapter15("teapot-low.obj") },
                 { "Chapter16", _=> SceneChapter16() },
                 { "Chapter16_1", _=> SceneChapter16_1() },
+                { "BookCover", _=> SceneBookCover() },
                 { "RelectionRefraction" , _=> RelectionRefraction() }
             };
 
