@@ -4,6 +4,7 @@ using System;
 
 namespace Protsyk.RayTracer.Challenge.Core.Scene.Cameras
 {
+    // https://en.wikipedia.org/wiki/Orthographic_projection
     //                    ^
     //       | ---->      |
     //       | ---->      |
