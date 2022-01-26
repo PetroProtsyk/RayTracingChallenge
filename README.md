@@ -1,5 +1,5 @@
 # Ray Tracing Challenge
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Travis Status](https://travis-ci.com/PetroProtsyk/RayTracingChallenge.svg?branch=master)](https://travis-ci.com/PetroProtsyk/RayTracingChallenge)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) ![build](https://github.com/PetroProtsyk/RayTracingChallenge/actions/workflows/dotnet-core.yml/badge.svg)
 
 ## Introduction
 ![](images/chapter8_large.png) ![](images/book_cover.png)
